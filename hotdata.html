@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ホット顧客分析（発注ベース）｜代理店・TALO担当別 2021-2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f5f7fa;color:#2d3748;font-size:14px}
+.header{background:linear-gradient(135deg,#744210 0%,#d69e2e 100%);color:white;padding:32px 40px}
+.header h1{font-size:24px;font-weight:700;margin-bottom:6px}
+.header p{font-size:13px;opacity:.85}
+.nav{background:#2d3748;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100}
+.nav a{color:#e2e8f0;text-decoration:none;padding:12px 20px;font-size:13px;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s}
+.nav a:hover,.nav a.active{background:#4a5568;border-bottom-color:#d69e2e;color:white}
+.container{max-width:1200px;margin:0 auto;padding:32px 20px}
+.section{margin-bottom:48px}
+.section-title{font-size:20px;font-weight:700;color:#744210;border-left:5px solid #d69e2e;padding-left:14px;margin-bottom:20px;padding-top:4px;padding-bottom:4px}
+.card{background:white;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px}
+.card h3{font-size:14px;font-weight:700;color:#4a5568;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}.header{padding:20px}}
+.stat-row{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.stat-card{flex:1;min-width:130px;background:white;border-radius:10px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.07);text-align:center}
+.stat-card .val{font-size:26px;font-weight:800;color:#d69e2e;line-height:1}
+.stat-card .lbl{font-size:11px;color:#718096;margin-top:6px}
+.stat-card .sub{font-size:12px;color:#4a5568;margin-top:2px}
+.insight-box{background:#fffff0;border:1px solid #f6e05e;border-radius:8px;padding:16px 20px;margin-bottom:20px}
+.insight-box h3{color:#744210;font-size:14px;font-weight:700;margin-bottom:8px}
+.insight-box p{font-size:13px;color:#5f370e;line-height:1.6}
+.warning-box{background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:16px 20px;margin-bottom:20px}
+.warning-box h3{color:#c53030;font-size:14px;font-weight:700;margin-bottom:8px}
+.warning-box p{font-size:13px;color:#742a2a;line-height:1.6}
+.def-box{background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:16px 20px;margin-bottom:20px}
+.def-box h3{color:#2b6cb0;font-size:14px;font-weight:700;margin-bottom:10px}
+.def-box li{font-size:13px;color:#2c5282;padding:5px 0;border-bottom:1px solid #bee3f8;list-style:none}
+.def-box li:last-child{border-bottom:none}
+table.dt{width:100%;border-collapse:collapse;font-size:12px}
+table.dt th{background:#2d3748;color:white;padding:8px 10px;text-align:center;font-weight:600;white-space:nowrap}
+table.dt th:first-child{text-align:left}
+table.dt td{padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center}
+table.dt td:first-child{text-align:left;font-weight:600}
+table.dt tr:nth-child(even){background:#f7fafc}
+table.dt tr:hover{background:#fffff0}
+.rh{font-weight:700;color:#276749}
+.rm{font-weight:700;color:#d69e2e}
+.rl{color:#718096}
+.rz{color:#a0aec0}
+.chart-wrap{position:relative}
+.chart-wrap canvas{max-height:320px}
+.tab-btns{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid #e2e8f0}
+.tb{padding:8px 20px;border:none;background:none;font-size:13px;cursor:pointer;color:#718096;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;font-family:inherit}
+.tb.active{color:#d69e2e;border-bottom-color:#d69e2e;font-weight:700}
+.tc{display:none}
+.tc.active{display:block}
+.fn{font-size:11px;color:#a0aec0;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>ホット顧客分析（発注ベース）</h1>
+  <p>物件番号（HU列）を発注フラグとして使用 ／ 成約につながりやすい属性を持つ顧客の件数・発注率推移 ／ 2021〜2025年</p>
+</div>
+<nav class="nav">
+  <a href="#definition" class="active">定義・概要</a>
+  <a href="#overview">全体推移</a>
+  <a href="#agency">代理店別</a>
+  <a href="#talo">TALO担当別</a>
+</nav>
+<div class="container">
+
+<div class="section" id="definition">
+  <div class="section-title">定義・概要</div>
+  <div class="def-box">
+    <h3>発注の判定：物件番号（ExcelのHU列）の入力有無</h3>
+    <ul>
+      <li><strong>物件番号あり</strong>（例：25-004、23-012）→ 発注済み</li>
+      <li>発注件数：185件 ／ 全体：14,643件 → <strong>発注率 1.26%</strong></li>
+    </ul>
+  </div>
+  <div class="def-box">
+    <h3>ホット顧客の定義（以下いずれかの属性を持つ顧客）</h3>
+    <ul>
+      <li><strong>建設予定時期が近い</strong>：〜半年 / 〜1年　→ 発注率 5〜8%（全体比 4〜6倍）</li>
+      <li><strong>予算が具体的</strong>：〜2500 / 〜3000 / 〜3500 / 〜4000万円など　→ 発注率 5〜11%</li>
+      <li><strong>建設方法が具体的</strong>：工務店 / セミセルフ　→ 発注率 3.7%</li>
+    </ul>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="val">2,627</div><div class="lbl">ホット顧客総数</div><div class="sub">全体の17.9%</div></div>
+    <div class="stat-card"><div class="val">1.26%</div><div class="lbl">全体発注率</div><div class="sub">14,643件中185件</div></div>
+    <div class="stat-card"><div class="val" style="color:#276749">3.92%</div><div class="lbl">ホット発注率</div><div class="sub">全体比 3.1倍</div></div>
+    <div class="stat-card"><div class="val">0.68%</div><div class="lbl">非ホット発注率</div><div class="sub"></div></div>
+    <div class="stat-card"><div class="val" style="color:#276749">+232%</div><div class="lbl">ホット発注率の変化</div><div class="sub">2.8%→9.3%（2021→25）</div></div>
+  </div>
+  <div class="warning-box">
+    <h3>前回レポートとの数値変更について</h3>
+    <p>前回レポートでは列298（商品型番）の入力有無を成約フラグとして使用していましたが、これは発注ではなく「検討中の商品モデル」でした。今回から<strong>物件番号（HU列）を正式な発注フラグ</strong>として使用しています。発注率は1.26%（従来の4.05%より低い）が正しい数値です。</p>
+  </div>
+  <div class="insight-box">
+    <h3>注目ポイント：NIHOの突出した発注率</h3>
+    <p>NIHO代理店のホット顧客発注率が2023年<strong>62.5%</strong>、2024年<strong>66.7%</strong>と突出して高い（件数は少ないものの）。代理店別では秀和も2021年20%・2025年50%と高水準。NOR・K10も改善傾向にある。TALO本部ではOH担当が2025年に10.5%と最高値を更新中。</p>
+  </div>
+</div>
+
+<div class="section" id="overview">
+  <div class="section-title">全体推移：ホット顧客数 ＆ 発注率</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>ホット顧客数の年度推移（代理店 vs TALO本部）</h3>
+      <div class="chart-wrap"><canvas id="countChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>ホット顧客の発注率推移（代理店 vs TALO本部）</h3>
+      <div class="chart-wrap"><canvas id="rateChart"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>全体サマリー表（発注ベース）</h3>
+    <table class="dt">
+      <thead>
+        <tr><th>年度</th><th colspan="3">全体</th><th colspan="3">TALO本部</th><th colspan="3">代理店</th></tr>
+        <tr><th></th><th>ホット数</th><th>発注数</th><th>発注率</th><th>ホット数</th><th>発注数</th><th>発注率</th><th>ホット数</th><th>発注数</th><th>発注率</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2021</td><td>938</td><td>26</td><td class="rl">2.8%</td><td>468</td><td>6</td><td class="rl">1.3%</td><td>470</td><td>20</td><td class="rl">4.3%</td></tr>
+        <tr><td>2022</td><td>891</td><td>23</td><td class="rl">2.6%</td><td>482</td><td>7</td><td class="rl">1.5%</td><td>409</td><td>16</td><td class="rl">3.9%</td></tr>
+        <tr><td>2023</td><td>396</td><td>26</td><td class="rm">6.6%</td><td>185</td><td>9</td><td class="rl">4.9%</td><td>211</td><td>17</td><td class="rm">8.1%</td></tr>
+        <tr><td>2024</td><td>252</td><td>14</td><td class="rm">5.6%</td><td>147</td><td>4</td><td class="rl">2.7%</td><td>105</td><td>10</td><td class="rh">9.5%</td></tr>
+        <tr><td>2025</td><td>150</td><td>14</td><td class="rh">9.3%</td><td>84</td><td>5</td><td class="rm">6.0%</td><td>66</td><td>9</td><td class="rh">13.6%</td></tr>
+      </tbody>
+    </table>
+    <p class="fn">※ 発注率：高（緑）≥8%、中（黄）≥4%、低（灰）＜4%</p>
+  </div>
+</div>
+
+<div class="section" id="agency">
+  <div class="section-title">代理店別：ホット顧客数 ＆ 発注率推移</div>
+  <div class="tab-btns">
+    <button class="tb active" data-tab="agency" data-id="ac">件数推移</button>
+    <button class="tb" data-tab="agency" data-id="ar">発注率推移</button>
+    <button class="tb" data-tab="agency" data-id="at">詳細テーブル</button>
+  </div>
+  <div id="ac" class="tc active">
+    <div class="card"><h3>代理店別 ホット顧客数（上位8社）</h3><div class="chart-wrap"><canvas id="agCountChart"></canvas></div></div>
+  </div>
+  <div id="ar" class="tc">
+    <div class="card"><h3>代理店別 ホット発注率（上位8社）</h3><div class="chart-wrap"><canvas id="agRateChart"></canvas></div></div>
+  </div>
+  <div id="at" class="tc">
+    <div class="card"><h3>代理店別 詳細テーブル（ホット件数 ／ 発注率）</h3><table class="dt" id="agTable"></table></div>
+  </div>
+</div>
+
+<div class="section" id="talo">
+  <div class="section-title">TALO担当別：ホット顧客数 ＆ 発注率推移</div>
+  <div class="tab-btns">
+    <button class="tb active" data-tab="staff" data-id="sc">件数推移</button>
+    <button class="tb" data-tab="staff" data-id="sr">発注率推移</button>
+    <button class="tb" data-tab="staff" data-id="st">詳細テーブル</button>
+  </div>
+  <div id="sc" class="tc active">
+    <div class="card"><h3>TALO担当別 ホット顧客数</h3><div class="chart-wrap"><canvas id="stCountChart"></canvas></div></div>
+  </div>
+  <div id="sr" class="tc">
+    <div class="card"><h3>TALO担当別 ホット発注率</h3><div class="chart-wrap"><canvas id="stRateChart"></canvas></div></div>
+  </div>
+  <div id="st" class="tc">
+    <div class="card"><h3>TALO担当別 詳細テーブル（ホット件数 ／ 発注率）</h3><table class="dt" id="stTable"></table></div>
+  </div>
+</div>
+
+</div>
+<script>
+const Y=['2021','2022','2023','2024','2025'];
+const C=['#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5','#dd6b20','#319795','#d53f8c'];
+
+const orgHot={
+  'TALO本部':{'2021':{h:468,o:6,r:1.3},'2022':{h:482,o:7,r:1.5},'2023':{h:185,o:9,r:4.9},'2024':{h:147,o:4,r:2.7},'2025':{h:84,o:5,r:6.0}},
+  '代理店':   {'2021':{h:470,o:20,r:4.3},'2022':{h:409,o:16,r:3.9},'2023':{h:211,o:17,r:8.1},'2024':{h:105,o:10,r:9.5},'2025':{h:66,o:9,r:13.6}}
+};
+const total={'2021':{h:938,o:26,r:2.8},'2022':{h:891,o:23,r:2.6},'2023':{h:396,o:26,r:6.6},'2024':{h:252,o:14,r:5.6},'2025':{h:150,o:14,r:9.3}};
+
+const agHot={
+  'K10':  {'2021':{h:132,r:3.0},'2022':{h:121,r:2.5},'2023':{h:61,r:6.6},'2024':{h:17,r:0.0},'2025':{h:18,r:11.1}},
+  'NH':   {'2021':{h:73,r:4.1},'2022':{h:68,r:1.5},'2023':{h:66,r:4.5},'2024':{h:27,r:0.0},'2025':{h:11,r:9.1}},
+  'NOR':  {'2021':{h:28,r:0.0},'2022':{h:30,r:6.7},'2023':{h:9,r:11.1},'2024':{h:10,r:0.0},'2025':{h:8,r:25.0}},
+  'ART':  {'2021':{h:49,r:6.1},'2022':{h:36,r:2.8},'2023':{h:7,r:14.3},'2024':{h:0,r:null},'2025':{h:0,r:null}},
+  'HIDE': {'2021':{h:20,r:10.0},'2022':{h:33,r:6.1},'2023':{h:10,r:0.0},'2024':{h:7,r:0.0},'2025':{h:4,r:0.0}},
+  'NIHO': {'2021':{h:33,r:9.1},'2022':{h:27,r:7.4},'2023':{h:8,r:62.5},'2024':{h:3,r:66.7},'2025':{h:0,r:null}},
+  'FUJI': {'2021':{h:19,r:5.3},'2022':{h:9,r:0.0},'2023':{h:14,r:0.0},'2024':{h:8,r:0.0},'2025':{h:1,r:0.0}},
+  '秀和': {'2021':{h:15,r:20.0},'2022':{h:12,r:8.3},'2023':{h:2,r:0.0},'2024':{h:3,r:0.0},'2025':{h:2,r:50.0}}
+};
+const stHot={
+  'OH':{'2021':{h:198,r:1.5},'2022':{h:239,r:1.7},'2023':{h:84,r:3.6},'2024':{h:68,r:5.9},'2025':{h:38,r:10.5}},
+  'JO':{'2021':{h:219,r:0.9},'2022':{h:177,r:1.1},'2023':{h:62,r:6.5},'2024':{h:39,r:0.0},'2025':{h:30,r:3.3}},
+  'KT':{'2021':{h:28,r:0.0},'2022':{h:22,r:0.0},'2023':{h:1,r:0.0},'2024':{h:2,r:0.0},'2025':{h:0,r:null}},
+  'NT':{'2021':{h:1,r:100.0},'2022':{h:0,r:null},'2023':{h:4,r:0.0},'2024':{h:12,r:0.0},'2025':{h:10,r:0.0}},
+  'EB':{'2021':{h:0,r:null},'2022':{h:0,r:null},'2023':{h:19,r:5.3},'2024':{h:15,r:0.0},'2025':{h:0,r:null}},
+  'MJ':{'2021':{h:0,r:null},'2022':{h:26,r:0.0},'2023':{h:5,r:20.0},'2024':{h:4,r:0.0},'2025':{h:0,r:null}}
+};
+
+function line(id,datasets,yPct){
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  new Chart(ctx,{type:'line',data:{labels:Y,datasets},options:{
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+    scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:11},callback:yPct?v=>v+'%':undefined}}},
+    spanGaps:true
+  }});
+}
+function ds(label,data,color,dashed){
+  return{label,data,borderColor:color,backgroundColor:color+'20',borderWidth:2.5,pointRadius:5,tension:0.3,borderDash:dashed?[6,3]:[],spanGaps:true};
+}
+function buildTable(id,data){
+  const t=document.getElementById(id);
+  let h='<thead><tr><th>名称</th>';
+  Y.forEach(y=>h+=`<th colspan="2">${y}</th>`);
+  h+='<th>5年合計</th></tr><tr><th></th>';
+  Y.forEach(()=>h+='<th>件数</th><th>発注率</th>');
+  h+='<th></th></tr></thead><tbody>';
+  const sorted=Object.entries(data).sort((a,b)=>{
+    const ta=Y.reduce((s,y)=>s+(a[1][y]?.h||0),0);
+    const tb=Y.reduce((s,y)=>s+(b[1][y]?.h||0),0);
+    return tb-ta;
+  });
+  sorted.forEach(([name,d])=>{
+    const tot=Y.reduce((s,y)=>s+(d[y]?.h||0),0);
+    h+=`<tr><td>${name}</td>`;
+    Y.forEach(y=>{
+      const v=d[y];const cnt=v?.h||0;const r=v?.r;
+      const rc=r===null||r===undefined?'rz':r>=15?'rh':r>=6?'rm':'rl';
+      h+=`<td>${cnt||'−'}</td><td class="${cnt>0?rc:''}">${r===null||r===undefined?'−':r+'%'}</td>`;
+    });
+    h+=`<td><strong>${tot}</strong></td></tr>`;
+  });
+  t.innerHTML=h+'</tbody>';
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  line('countChart',[
+    ds('代理店',Y.map(y=>orgHot['代理店'][y]?.h||0),'#e53e3e'),
+    ds('TALO本部',Y.map(y=>orgHot['TALO本部'][y]?.h||0),'#3182ce'),
+    ds('合計',Y.map(y=>total[y]?.h||0),'#718096',true)
+  ]);
+  line('rateChart',[
+    ds('代理店',Y.map(y=>orgHot['代理店'][y]?.r??null),'#e53e3e'),
+    ds('TALO本部',Y.map(y=>orgHot['TALO本部'][y]?.r??null),'#3182ce'),
+    ds('合計',Y.map(y=>total[y]?.r??null),'#718096',true)
+  ],true);
+
+  const ags=Object.keys(agHot);
+  line('agCountChart',ags.map((a,i)=>ds(a,Y.map(y=>agHot[a][y]?.h||0),C[i])));
+  line('agRateChart',ags.map((a,i)=>ds(a,Y.map(y=>agHot[a][y]?.r??null),C[i])),true);
+
+  const sts=Object.keys(stHot);
+  line('stCountChart',sts.map((s,i)=>ds(s,Y.map(y=>stHot[s][y]?.h||0),C[i])));
+  line('stRateChart',sts.map((s,i)=>ds(s,Y.map(y=>stHot[s][y]?.r??null),C[i])),true);
+
+  buildTable('agTable',agHot);
+  buildTable('stTable',stHot);
+
+  document.querySelectorAll('.tb').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      const tab=this.dataset.tab;const id=this.dataset.id;
+      this.closest('.section').querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      // hide all tc in this section
+      this.closest('.section').querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    });
+  });
+
+  const secs=document.querySelectorAll('.section');
+  const links=document.querySelectorAll('.nav a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    secs.forEach(s=>{if(window.scrollY>=s.offsetTop-80)cur=s.id;});
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+  });
+});
+</script>
+</body>
+</html>
