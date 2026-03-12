@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>K10 代理店 分析レポート</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.header{background:linear-gradient(135deg,#dc2626,#fca5a5);padding:2rem;text-align:center}
+.header h1{font-size:1.8rem;font-weight:700;color:#fff}
+.header p{color:rgba(255,255,255,0.85);margin-top:.5rem}
+.container{max-width:1200px;margin:0 auto;padding:2rem 1rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.kpi{background:#1e293b;border-radius:12px;padding:1.25rem;border-left:4px solid #dc2626}
+.kpi-val{font-size:2rem;font-weight:700;color:#fca5a5}
+.kpi-label{font-size:.8rem;color:#94a3b8;margin-top:.25rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.card{background:#1e293b;border-radius:12px;padding:1.5rem}
+.card h3{font-size:1rem;font-weight:600;color:#cbd5e1;margin-bottom:1rem;border-bottom:1px solid #334155;padding-bottom:.5rem}
+.full-card{background:#1e293b;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+.full-card h3{font-size:1rem;font-weight:600;color:#cbd5e1;margin-bottom:1rem;border-bottom:1px solid #334155;padding-bottom:.5rem}
+.chart-wrap{position:relative;height:240px}
+.chart-wrap-lg{position:relative;height:280px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#0f172a;color:#94a3b8;padding:.6rem .8rem;text-align:left;font-weight:500}
+td{padding:.55rem .8rem;border-bottom:1px solid #1e293b;color:#e2e8f0}
+tr:hover td{background:#1e293b}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:600}
+.badge-hot{background:rgba(251,191,36,.15);color:#fbbf24}
+.badge-normal{background:rgba(100,116,139,.15);color:#94a3b8}
+.section-title{font-size:1.2rem;font-weight:700;color:#e2e8f0;margin:2rem 0 1rem;padding-left:.75rem;border-left:4px solid #dc2626}
+.insight-box{background:rgba(220,38,38,0.12);border:1px solid #dc2626;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+.insight-box p{font-size:.9rem;line-height:1.7;color:#cbd5e1}
+.insight-box strong{color:#fca5a5}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🌸 K10 代理店 分析レポート</h1>
+  <p>近畿地区専門代理店（兵庫・大阪・滋賀・京都） ｜ カタログ請求データ 2021-2025年</p>
+</div>
+<div class="container">
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">1,955</div><div class="kpi-label">総カタログ請求件数</div></div>
+    <div class="kpi"><div class="kpi-val">20</div><div class="kpi-label">発注件数</div></div>
+    <div class="kpi"><div class="kpi-val">1.02%</div><div class="kpi-label">発注率</div></div>
+    <div class="kpi"><div class="kpi-val">46.5%</div><div class="kpi-label">ホット顧客率</div></div>
+    <div class="kpi"><div class="kpi-val">30.7%</div><div class="kpi-label">主要建設地（兵庫県）</div></div>
+  </div>
+
+  <div class="insight-box">
+    <p>
+      <strong>K10代理店</strong>は総件数 <strong>1,955件</strong>（全データの13.3%）で、
+      発注率 <strong>1.02%</strong>（全体平均1.29%比-0.27pt）。
+      ホット顧客 <strong>910件</strong>（46.5%）のうち発注率は <strong>1.76%</strong>（非ホット 0.38%）。
+      建設予定地の <strong>30.7%</strong> が兵庫県に集中。
+    </p>
+  </div>
+
+  <div class="section-title">📅 年度別推移</div>
+  <div class="full-card">
+    <h3>年度別 カタログ請求数・発注数・発注率</h3>
+    <div class="chart-wrap-lg">
+      <canvas id="yearChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">📍 地域分析</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>建設予定地 都道府県（上位8）</h3>
+      <div class="chart-wrap"><canvas id="buildPrefChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>顧客住所 都道府県（上位8）</h3>
+      <div class="chart-wrap"><canvas id="homePrefChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">🎯 ホット顧客分析</div>
+  <div class="full-card">
+    <h3>ホット顧客 vs 非ホット顧客</h3>
+    <table>
+      <tr><th>区分</th><th>件数</th><th>割合</th><th>発注数</th><th>発注率</th></tr>
+      <tr>
+        <td><span class="badge badge-hot">ホット</span></td>
+        <td>910</td>
+        <td>46.5%</td>
+        <td>16</td>
+        <td>1.76%</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-normal">非ホット</span></td>
+        <td>1,045</td>
+        <td>53.5%</td>
+        <td>4</td>
+        <td>0.38%</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section-title">📣 情報源分析</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>情報源 件数分布</h3>
+      <div class="chart-wrap"><canvas id="srcChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>情報源別 発注率</h3>
+      <div class="chart-wrap"><canvas id="srcRateChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">🏠 顧客属性</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>建設方法</h3>
+      <div class="chart-wrap"><canvas id="methodChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>建設予定時期</h3>
+      <div class="chart-wrap"><canvas id="timingChart"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const C1='#dc2626', C2='#fca5a5';
+const GRID={color:'rgba(148,163,184,0.1)'};
+const TICK={color:'#94a3b8',font:{size:11}};
+const defOpts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:TICK,grid:GRID},y:{ticks:TICK,grid:GRID}}};
+
+// 年度推移
+new Chart(document.getElementById('yearChart'),{
+  type:'bar',
+  data:{
+    labels:["2021", "2022", "2023", "2024", "2025"],
+    datasets:[
+      {label:'件数',data:[495, 446, 425, 331, 254],backgroundColor:'rgba(99,102,241,0.6)',yAxisID:'y'},
+      {label:'発注数',data:[5, 5, 4, 4, 2],backgroundColor:'#dc2626',yAxisID:'y'},
+      {label:'発注率(%)',data:[1.01, 1.12, 0.94, 1.21, 0.79],type:'line',borderColor:'#fca5a5',backgroundColor:'transparent',pointBackgroundColor:'#fca5a5',yAxisID:'y2'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:true,labels:{color:'#94a3b8'}}},
+    scales:{
+      x:{ticks:TICK,grid:GRID},
+      y:{ticks:TICK,grid:GRID,title:{display:true,text:'件数',color:'#94a3b8'}},
+      y2:{position:'right',ticks:TICK,grid:{display:false},title:{display:true,text:'発注率(%)',color:'#94a3b8'}}
+    }
+  }
+});
+
+// 建設予定地
+new Chart(document.getElementById('buildPrefChart'),{
+  type:'bar',
+  data:{labels:["\u5175\u5eab\u770c", "\u5927\u962a\u5e9c", "\u6ecb\u8cc0\u770c", "\u4eac\u90fd", "\u5948\u826f\u770c", "\u548c\u6b4c\u5c71\u770c", "\u5fb3\u5cf6\u770c", "\u798f\u4e95\u770c"],datasets:[{data:[600, 382, 290, 259, 162, 119, 49, 21],backgroundColor:C1+'cc'}]},
+  options:{...defOpts,indexAxis:'y'}
+});
+
+// 住所
+new Chart(document.getElementById('homePrefChart'),{
+  type:'bar',
+  data:{labels:["\u5927\u962a\u5e9c", "\u5175\u5eab\u770c", "\u4eac\u90fd", "\u6ecb\u8cc0\u770c", "\u5948\u826f\u770c", "\u548c\u6b4c\u5c71\u770c", "\u5fb3\u5cf6\u770c", "\u305d\u306e\u4ed6"],datasets:[{data:[605, 533, 289, 154, 145, 68, 45, 32],backgroundColor:'rgba(99,102,241,0.7)'}]},
+  options:{...defOpts,indexAxis:'y'}
+});
+
+// 情報源件数
+new Chart(document.getElementById('srcChart'),{
+  type:'doughnut',
+  data:{labels:["Google", "Instagram", "Yahoo!Japan", "\u305d\u306e\u4ed6", "\u4ee3\u7406\u5e97\u7d4c\u7531", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[667, 358, 315, 294, 165, 86, 70],backgroundColor:['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:11}}}}}
+});
+
+// 情報源発注率
+new Chart(document.getElementById('srcRateChart'),{
+  type:'bar',
+  data:{labels:["Google", "Instagram", "Yahoo!Japan", "\u305d\u306e\u4ed6", "\u4ee3\u7406\u5e97\u7d4c\u7531", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[0.45, 0.56, 0.95, 0.34, 6.67, 0.0, 0.0],backgroundColor:'#dc2626cc'}]},
+  options:{...defOpts,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+
+// 建設方法
+new Chart(document.getElementById('methodChart'),{
+  type:'pie',
+  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "\u5de5\u52d9\u5e97", "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "\u30bb\u30df\u30bb\u30eb\u30d5"],datasets:[{data:[991, 491, 310, 145, 18],backgroundColor:['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6']}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:11}}}}}
+});
+
+// 建設時期
+new Chart(document.getElementById('timingChart'),{
+  type:'bar',
+  data:{labels:["\u672a\u5b9a", "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "1\u5e74\u4ee5\u5185", "\u534a\u5e74\u4ee5\u5185"],datasets:[{data:[756, 721, 354, 124],backgroundColor:'#fca5a5cc'}]},
+  options:{...defOpts,indexAxis:'y'}
+});
+</script>
+</body>
+</html>

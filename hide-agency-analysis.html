@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>HIDE 代理店 分析レポート</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.header{background:linear-gradient(135deg,#059669,#6ee7b7);padding:2rem;text-align:center}
+.header h1{font-size:1.8rem;font-weight:700;color:#fff}
+.header p{color:rgba(255,255,255,0.85);margin-top:.5rem}
+.container{max-width:1200px;margin:0 auto;padding:2rem 1rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.kpi{background:#1e293b;border-radius:12px;padding:1.25rem;border-left:4px solid #059669}
+.kpi-val{font-size:2rem;font-weight:700;color:#6ee7b7}
+.kpi-label{font-size:.8rem;color:#94a3b8;margin-top:.25rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.card{background:#1e293b;border-radius:12px;padding:1.5rem}
+.card h3{font-size:1rem;font-weight:600;color:#cbd5e1;margin-bottom:1rem;border-bottom:1px solid #334155;padding-bottom:.5rem}
+.full-card{background:#1e293b;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+.full-card h3{font-size:1rem;font-weight:600;color:#cbd5e1;margin-bottom:1rem;border-bottom:1px solid #334155;padding-bottom:.5rem}
+.chart-wrap{position:relative;height:240px}
+.chart-wrap-lg{position:relative;height:280px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:#0f172a;color:#94a3b8;padding:.6rem .8rem;text-align:left;font-weight:500}
+td{padding:.55rem .8rem;border-bottom:1px solid #1e293b;color:#e2e8f0}
+tr:hover td{background:#1e293b}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:9999px;font-size:.75rem;font-weight:600}
+.badge-hot{background:rgba(251,191,36,.15);color:#fbbf24}
+.badge-normal{background:rgba(100,116,139,.15);color:#94a3b8}
+.section-title{font-size:1.2rem;font-weight:700;color:#e2e8f0;margin:2rem 0 1rem;padding-left:.75rem;border-left:4px solid #059669}
+.insight-box{background:rgba(5,150,105,0.12);border:1px solid #059669;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+.insight-box p{font-size:.9rem;line-height:1.7;color:#cbd5e1}
+.insight-box strong{color:#6ee7b7}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🗻 HIDE 代理店 分析レポート</h1>
+  <p>静岡県専門代理店 ｜ カタログ請求データ 2021-2025年</p>
+</div>
+<div class="container">
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">376</div><div class="kpi-label">総カタログ請求件数</div></div>
+    <div class="kpi"><div class="kpi-val">7</div><div class="kpi-label">発注件数</div></div>
+    <div class="kpi"><div class="kpi-val">1.86%</div><div class="kpi-label">発注率</div></div>
+    <div class="kpi"><div class="kpi-val">48.1%</div><div class="kpi-label">ホット顧客率</div></div>
+    <div class="kpi"><div class="kpi-val">87.0%</div><div class="kpi-label">主要建設地（静岡県）</div></div>
+  </div>
+
+  <div class="insight-box">
+    <p>
+      <strong>HIDE代理店</strong>は総件数 <strong>376件</strong>（全データの2.6%）で、
+      発注率 <strong>1.86%</strong>（全体平均1.29%比+0.57pt）。
+      ホット顧客 <strong>181件</strong>（48.1%）のうち発注率は <strong>3.31%</strong>（非ホット 0.51%）。
+      建設予定地の <strong>87.0%</strong> が静岡県に集中。
+    </p>
+  </div>
+
+  <div class="section-title">📅 年度別推移</div>
+  <div class="full-card">
+    <h3>年度別 カタログ請求数・発注数・発注率</h3>
+    <div class="chart-wrap-lg">
+      <canvas id="yearChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">📍 地域分析</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>建設予定地 都道府県（上位8）</h3>
+      <div class="chart-wrap"><canvas id="buildPrefChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>顧客住所 都道府県（上位8）</h3>
+      <div class="chart-wrap"><canvas id="homePrefChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">🎯 ホット顧客分析</div>
+  <div class="full-card">
+    <h3>ホット顧客 vs 非ホット顧客</h3>
+    <table>
+      <tr><th>区分</th><th>件数</th><th>割合</th><th>発注数</th><th>発注率</th></tr>
+      <tr>
+        <td><span class="badge badge-hot">ホット</span></td>
+        <td>181</td>
+        <td>48.1%</td>
+        <td>6</td>
+        <td>3.31%</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-normal">非ホット</span></td>
+        <td>195</td>
+        <td>51.9%</td>
+        <td>1</td>
+        <td>0.51%</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section-title">📣 情報源分析</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>情報源 件数分布</h3>
+      <div class="chart-wrap"><canvas id="srcChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>情報源別 発注率</h3>
+      <div class="chart-wrap"><canvas id="srcRateChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">🏠 顧客属性</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>建設方法</h3>
+      <div class="chart-wrap"><canvas id="methodChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>建設予定時期</h3>
+      <div class="chart-wrap"><canvas id="timingChart"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const C1='#059669', C2='#6ee7b7';
+const GRID={color:'rgba(148,163,184,0.1)'};
+const TICK={color:'#94a3b8',font:{size:11}};
+const defOpts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:TICK,grid:GRID},y:{ticks:TICK,grid:GRID}}};
+
+// 年度推移
+new Chart(document.getElementById('yearChart'),{
+  type:'bar',
+  data:{
+    labels:["2021", "2022", "2023", "2024", "2025"],
+    datasets:[
+      {label:'件数',data:[61, 105, 66, 71, 68],backgroundColor:'rgba(99,102,241,0.6)',yAxisID:'y'},
+      {label:'発注数',data:[2, 3, 0, 1, 1],backgroundColor:'#059669',yAxisID:'y'},
+      {label:'発注率(%)',data:[3.28, 2.86, 0.0, 1.41, 1.47],type:'line',borderColor:'#6ee7b7',backgroundColor:'transparent',pointBackgroundColor:'#6ee7b7',yAxisID:'y2'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:true,labels:{color:'#94a3b8'}}},
+    scales:{
+      x:{ticks:TICK,grid:GRID},
+      y:{ticks:TICK,grid:GRID,title:{display:true,text:'件数',color:'#94a3b8'}},
+      y2:{position:'right',ticks:TICK,grid:{display:false},title:{display:true,text:'発注率(%)',color:'#94a3b8'}}
+    }
+  }
+});
+
+// 建設予定地
+new Chart(document.getElementById('buildPrefChart'),{
+  type:'bar',
+  data:{labels:["\u9759\u5ca1\u770c", "\u795e\u5948\u5ddd\u770c", "\u305d\u306e\u4ed6", "\u6771\u4eac\u90fd", "\u5c71\u68a8\u770c", "\u9577\u91ce\u770c"],datasets:[{data:[327, 37, 6, 2, 2, 2],backgroundColor:C1+'cc'}]},
+  options:{...defOpts,indexAxis:'y'}
+});
+
+// 住所
+new Chart(document.getElementById('homePrefChart'),{
+  type:'bar',
+  data:{labels:["\u9759\u5ca1\u770c", "\u795e\u5948\u5ddd\u770c", "\u6771\u4eac\u90fd", "\u305d\u306e\u4ed6", "\u611b\u77e5\u770c", "\u5343\u8449\u770c", "\u57fc\u7389\u770c", "\u5927\u962a\u5e9c"],datasets:[{data:[253, 59, 33, 11, 6, 4, 3, 2],backgroundColor:'rgba(99,102,241,0.7)'}]},
+  options:{...defOpts,indexAxis:'y'}
+});
+
+// 情報源件数
+new Chart(document.getElementById('srcChart'),{
+  type:'doughnut',
+  data:{labels:["Google", "\u305d\u306e\u4ed6", "Instagram", "\u4ee3\u7406\u5e97\u7d4c\u7531", "Yahoo!Japan", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[114, 84, 65, 51, 43, 13, 6],backgroundColor:['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:11}}}}}
+});
+
+// 情報源発注率
+new Chart(document.getElementById('srcRateChart'),{
+  type:'bar',
+  data:{labels:["Google", "\u305d\u306e\u4ed6", "Instagram", "\u4ee3\u7406\u5e97\u7d4c\u7531", "Yahoo!Japan", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[1.75, 2.38, 0.0, 3.92, 2.33, 0.0, 0.0],backgroundColor:'#059669cc'}]},
+  options:{...defOpts,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+
+// 建設方法
+new Chart(document.getElementById('methodChart'),{
+  type:'pie',
+  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "\u5de5\u52d9\u5e97", "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "\u30bb\u30df\u30bb\u30eb\u30d5"],datasets:[{data:[230, 76, 48, 20, 2],backgroundColor:['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6']}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:11}}}}}
+});
+
+// 建設時期
+new Chart(document.getElementById('timingChart'),{
+  type:'bar',
+  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "1\u5e74\u4ee5\u5185", "\u534a\u5e74\u4ee5\u5185"],datasets:[{data:[161, 115, 73, 27],backgroundColor:'#6ee7b7cc'}]},
+  options:{...defOpts,indexAxis:'y'}
+});
+</script>
+</body>
+</html>
