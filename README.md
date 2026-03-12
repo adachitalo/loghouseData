@@ -6,7 +6,7 @@ Interactive HTML reports analyzing 5 years of catalog request data (2021–2025)
 
 ## Reports
 
-### Overall Analysis (6 reports)
+### Overall Analysis (7 reports)
 
 | File | Description |
 |------|-------------|
@@ -16,6 +16,7 @@ Interactive HTML reports analyzing 5 years of catalog request data (2021–2025)
 | [talo-hq-analysis.html](./talo-hq-analysis.html) | TALO HQ (direct) performance analysis |
 | [gap-analysis.html](./gap-analysis.html) | Budget vs. actual construction cost gap analysis (outlier-corrected) |
 | [scoring-analysis.html](./scoring-analysis.html) | Conversion prediction scoring model (D–S rank, 32x lift between D and A) |
+| [price-barrier-analysis.html](./price-barrier-analysis.html) | Price barrier analysis: structural shift in buyer demographics due to 64% cost increase |
 
 ### Agency Reports (6 reports)
 
