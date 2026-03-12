@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>発注予測スコアリング — TALOログハウス</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:#f0f2f5;color:#2c3e50;line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:32px 20px}
+
+/* Summary */
+.summary{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);color:#fff;border-radius:16px;padding:32px;margin-bottom:32px;position:relative;overflow:hidden}
+.summary::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M20 20.5V18H0v-2h20V0h2v16h18v2H22v4.5a3.5 3.5 0 1 1-2 0z'/%3E%3C/g%3E%3C/svg%3E")}
+.summary h2{font-size:20px;margin-bottom:14px;position:relative}
+.summary p{font-size:14px;opacity:0.92;line-height:1.7;position:relative}
+.summary .highlight{background:rgba(255,255,255,0.18);border-radius:6px;padding:2px 8px;font-weight:700}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:32px}
+.kpi{background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-top:4px solid #2563eb}
+.kpi .num{font-size:28px;font-weight:800;color:#2563eb}
+.kpi .lbl{font-size:12px;color:#64748b;margin-top:4px}
+
+/* Section */
+.section{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px;margin-bottom:24px}
+.section h3{font-size:17px;font-weight:700;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #e2e8f0}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8fafc;padding:10px 12px;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}
+td{padding:9px 12px;border-bottom:1px solid #f1f5f9}
+tr:hover{background:#f8fafc}
+.bar-cell{position:relative}
+.bar-bg{position:absolute;left:0;top:2px;bottom:2px;background:#dbeafe;border-radius:4px}
+.bar-val{position:relative;z-index:1;font-weight:600}
+
+/* Rank badges */
+.rank{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.rank-s{background:#fef3c7;color:#92400e}
+.rank-a{background:#dcfce7;color:#166534}
+.rank-b{background:#dbeafe;color:#1e40af}
+.rank-c{background:#f1f5f9;color:#475569}
+.rank-d{background:#fee2e2;color:#991b1b}
+
+/* Score badge */
+.score-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;min-width:36px;text-align:center}
+.score-30{background:#dcfce7;color:#166534}
+.score-20{background:#d1fae5;color:#047857}
+.score-15{background:#dbeafe;color:#1e40af}
+.score-10{background:#e0e7ff;color:#3730a3}
+.score-5{background:#f1f5f9;color:#475569}
+.score-0{background:#fee2e2;color:#991b1b}
+
+/* Chart containers */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:700px){.chart-row{grid-template-columns:1fr}}
+.chart-box{position:relative;height:300px}
+
+/* Insight */
+.insight{background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 8px 8px 0;padding:16px 20px;margin-bottom:20px;font-size:14px}
+.insight strong{color:#1e40af}
+
+/* Scoring formula */
+.formula{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:12px;padding:24px;text-align:center;margin-bottom:24px}
+.formula h4{font-size:15px;margin-bottom:12px;color:#334155}
+.formula .eq{font-size:18px;font-weight:700;color:#2563eb;font-family:'Courier New',monospace}
+
+footer{text-align:center;padding:24px;font-size:12px;color:#94a3b8}
+footer a{color:#2563eb;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Summary -->
+<div class="summary">
+<h2>サマリー</h2>
+<p>カタログ請求14,714件のアンケート回答5項目（情報源・予算・建設方法・建設時期・用途）から発注確率を予測するスコアリングモデルを構築。
+各項目の<span class="highlight">リフト値</span>（全体発注率との比）をポイント化し合算することで、
+<span class="highlight">Dランク 0.36%</span> → <span class="highlight">Aランク 11.44%</span> と約32倍の精度で発注見込みを判別できる。
+最大の予測因子は「代理店経由」（リフト7.4倍）、次いで「予算3000万台以上」「工務店施工」の順。</p>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-grid">
+<div class="kpi"><div class="num">5項目</div><div class="lbl">予測に使用する属性</div></div>
+<div class="kpi"><div class="num">32倍</div><div class="lbl">D→A ランク差</div></div>
+<div class="kpi"><div class="num">11.4%</div><div class="lbl">Aランク発注率</div></div>
+<div class="kpi"><div class="num">503件</div><div class="lbl">A+Sランク件数</div></div>
+<div class="kpi"><div class="num">56件</div><div class="lbl">A+Sランク発注数</div></div>
+</div>
+
+<!-- Score Distribution -->
+<div class="section">
+<h3>スコアランク別 発注率</h3>
+<div class="insight">
+スコアが上がるほど発注率が劇的に上昇。<strong>Aランク（60〜79pt）は全体平均の9倍</strong>にあたる11.4%。
+Dランク（10,674件）は発注率わずか0.36%で営業リソースの優先度を下げてよい層。
+</div>
+<div class="chart-row">
+<div class="chart-box"><canvas id="scoreDistChart"></canvas></div>
+<div class="chart-box"><canvas id="scoreRateChart"></canvas></div>
+</div>
+<table>
+<thead><tr><th>ランク</th><th>スコア範囲</th><th>件数</th><th>発注数</th><th>発注率</th><th>全体比リフト</th></tr></thead>
+<tbody>
+<tr><td><span class="rank rank-s">S 最高</span></td><td>80〜pt</td><td>66</td><td>6</td><td>9.09%</td><td>7.0x</td></tr>
+<tr><td><span class="rank rank-a">A 高</span></td><td>60〜79pt</td><td>437</td><td>50</td><td>11.44%</td><td>8.9x</td></tr>
+<tr><td><span class="rank rank-b">B 中</span></td><td>40〜59pt</td><td>862</td><td>39</td><td>4.52%</td><td>3.5x</td></tr>
+<tr><td><span class="rank rank-c">C やや低</span></td><td>20〜39pt</td><td>2,675</td><td>57</td><td>2.13%</td><td>1.7x</td></tr>
+<tr><td><span class="rank rank-d">D 低</span></td><td>0〜19pt</td><td>10,674</td><td>38</td><td>0.36%</td><td>0.3x</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Scoring Formula -->
+<div class="formula">
+<h4>スコア計算式</h4>
+<div class="eq">スコア = 情報源pt + 予算帯pt + 建設方法pt + 建設時期pt + 用途pt</div>
+<p style="margin-top:10px;font-size:13px;color:#64748b">各項目はリフト値に応じて 0〜30pt を付与。合算スコアでランク判定。</p>
+</div>
+
+<!-- Top Factors -->
+<div class="section">
+<h3>発注予測の主要因子（リフト値順）</h3>
+<div class="insight">
+<strong>「代理店経由」の情報源が最強因子</strong>（リフト7.4倍、発注率9.6%）。
+次いで「予算3000万〜4000万以上」の高予算帯、「工務店施工」が高リフト。
+逆に「Instagram/Facebook」「1000〜1500万」「未定」は発注率が極めて低い。
+</div>
+<table>
+<thead><tr><th>カテゴリ</th><th>属性値</th><th>件数</th><th>発注</th><th>発注率</th><th>リフト</th><th>スコア</th></tr></thead>
+<tbody id="topFactorsBody"></tbody>
+</table>
+</div>
+
+<!-- Per-Attribute Charts -->
+<div class="section">
+<h3>属性別 発注率とスコア配点</h3>
+
+<h4 style="margin:20px 0 12px;font-size:15px;color:#334155">情報源</h4>
+<div style="height:280px"><canvas id="sourceChart"></canvas></div>
+
+<h4 style="margin:20px 0 12px;font-size:15px;color:#334155">予算帯</h4>
+<div style="height:280px"><canvas id="budgetChart"></canvas></div>
+
+<h4 style="margin:20px 0 12px;font-size:15px;color:#334155">建設方法</h4>
+<div style="height:260px"><canvas id="methodChart"></canvas></div>
+
+<h4 style="margin:20px 0 12px;font-size:15px;color:#334155">建設予定時期</h4>
+<div style="height:260px"><canvas id="timingChart"></canvas></div>
+</div>
+
+<!-- Practical Use -->
+<div class="section">
+<h3>実務での活用方法</h3>
+<table>
+<thead><tr><th>ランク</th><th>推奨アクション</th><th>目安件数/月</th></tr></thead>
+<tbody>
+<tr><td><span class="rank rank-s">S</span> + <span class="rank rank-a">A</span></td>
+<td>即日電話＋個別提案書送付。展示場への来場誘導を最優先。担当者が直接フォロー。</td>
+<td>約100件/年 ≒ 8件/月</td></tr>
+<tr><td><span class="rank rank-b">B</span></td>
+<td>1週間以内に電話。メールで施工事例送付。定期フォロー（月1回）。</td>
+<td>約170件/年 ≒ 14件/月</td></tr>
+<tr><td><span class="rank rank-c">C</span></td>
+<td>メールでの情報提供中心。メルマガ登録誘導。3ヶ月ごとのフォロー。</td>
+<td>約535件/年 ≒ 45件/月</td></tr>
+<tr><td><span class="rank rank-d">D</span></td>
+<td>自動メール対応のみ。リソースは上位ランクに集中。再請求があれば再スコアリング。</td>
+<td>約2,135件/年 ≒ 178件/月</td></tr>
+</tbody>
+</table>
+</div>
+
+<footer>
+<a href="index.html">← 目次に戻る</a> · TALOログハウス データ分析
+</footer>
+</div>
+
+<script>
+// -- Data --
+const scoreDist = [
+  {label:'S (最高)',count:66,orders:6,rate:9.09,color:'#f59e0b'},
+  {label:'A (高)',count:437,orders:50,rate:11.44,color:'#22c55e'},
+  {label:'B (中)',count:862,orders:39,rate:4.52,color:'#3b82f6'},
+  {label:'C (やや低)',count:2675,orders:57,rate:2.13,color:'#94a3b8'},
+  {label:'D (低)',count:10674,orders:38,rate:0.36,color:'#ef4444'}
+];
+
+const topFactors = [
+  {cat:'情報源',val:'代理店経由',total:669,orders:64,rate:9.57,lift:7.4,score:30},
+  {cat:'予算帯',val:'4000万以上',total:33,orders:3,rate:9.09,lift:7.0,score:30},
+  {cat:'予算帯',val:'3000万台',total:137,orders:12,rate:8.76,lift:6.8,score:30},
+  {cat:'用途',val:'離れ',total:23,orders:2,rate:8.70,lift:6.7,score:30},
+  {cat:'予算帯',val:'2500万台',total:116,orders:7,rate:6.03,lift:4.7,score:20},
+  {cat:'予算帯',val:'2000万台',total:165,orders:7,rate:4.24,lift:3.3,score:20},
+  {cat:'建設方法',val:'工務店',total:2228,orders:83,rate:3.73,lift:2.9,score:15},
+  {cat:'建設方法',val:'セミセルフ',total:58,orders:2,rate:3.45,lift:2.7,score:15},
+  {cat:'予算帯',val:'4000万',total:160,orders:4,rate:2.50,lift:1.9,score:10},
+  {cat:'建設時期',val:'1年以内',total:2693,orders:63,rate:2.34,lift:1.8,score:10},
+  {cat:'予算帯',val:'3000万',total:794,orders:17,rate:2.14,lift:1.7,score:10},
+  {cat:'予算帯',val:'5000万',total:154,orders:3,rate:1.95,lift:1.5,score:10},
+  {cat:'予算帯',val:'2500万',total:1295,orders:21,rate:1.62,lift:1.3,score:5},
+  {cat:'予算帯',val:'3500万',total:333,orders:5,rate:1.50,lift:1.2,score:5},
+  {cat:'建設時期',val:'半年以内',total:970,orders:14,rate:1.44,lift:1.1,score:5},
+  {cat:'用途',val:'別荘',total:3631,orders:43,rate:1.18,lift:0.9,score:0},
+  {cat:'情報源',val:'Yahoo',total:2092,orders:24,rate:1.15,lift:0.9,score:0},
+  {cat:'用途',val:'住宅',total:7887,orders:93,rate:1.18,lift:0.9,score:0},
+  {cat:'建設方法',val:'セルフビルド',total:1005,orders:13,rate:1.29,lift:1.0,score:5},
+  {cat:'情報源',val:'Google',total:5296,orders:41,rate:0.77,lift:0.6,score:0}
+];
+
+// Top factors table
+const tbody = document.getElementById('topFactorsBody');
+topFactors.forEach(f => {
+  const scoreClass = f.score >= 30 ? 'score-30' : f.score >= 20 ? 'score-20' : f.score >= 15 ? 'score-15' : f.score >= 10 ? 'score-10' : f.score >= 5 ? 'score-5' : 'score-0';
+  tbody.innerHTML += `<tr>
+    <td>${f.cat}</td><td><strong>${f.val}</strong></td>
+    <td>${f.total.toLocaleString()}</td><td>${f.orders}</td>
+    <td><strong>${f.rate.toFixed(2)}%</strong></td>
+    <td>${f.lift.toFixed(1)}x</td>
+    <td><span class="score-badge ${scoreClass}">${f.score}pt</span></td>
+  </tr>`;
+});
+
+// Score distribution chart
+new Chart(document.getElementById('scoreDistChart'),{
+  type:'bar',
+  data:{
+    labels: scoreDist.map(d=>d.label),
+    datasets:[{
+      label:'件数',
+      data: scoreDist.map(d=>d.count),
+      backgroundColor: scoreDist.map(d=>d.color+'33'),
+      borderColor: scoreDist.map(d=>d.color),
+      borderWidth:2,borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{title:{display:true,text:'ランク別 件数分布',font:{size:14}},legend:{display:false}},
+    scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'}}}
+  }
+});
+
+// Score rate chart
+new Chart(document.getElementById('scoreRateChart'),{
+  type:'bar',
+  data:{
+    labels: scoreDist.map(d=>d.label),
+    datasets:[{
+      label:'発注率(%)',
+      data: scoreDist.map(d=>d.rate),
+      backgroundColor: scoreDist.map(d=>d.color+'33'),
+      borderColor: scoreDist.map(d=>d.color),
+      borderWidth:2,borderRadius:6
+    },{
+      label:'全体平均(1.29%)',
+      data: scoreDist.map(()=>1.29),
+      type:'line',
+      borderColor:'#ef4444',
+      borderDash:[6,4],
+      borderWidth:2,
+      pointRadius:0,
+      fill:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{title:{display:true,text:'ランク別 発注率',font:{size:14}},legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'},ticks:{callback:v=>v+'%'}}}
+  }
+});
+
+// Source chart
+const srcData = [
+  {label:'代理店経由',rate:9.57,score:30,total:669},
+  {label:'その他',rate:1.48,score:5,total:3035},
+  {label:'Yahoo',rate:1.15,score:0,total:2092},
+  {label:'田舎暮らし/日経',rate:0.93,score:0,total:643},
+  {label:'Google',rate:0.77,score:0,total:5296},
+  {label:'Instagram',rate:0.36,score:0,total:2497},
+  {label:'Facebook',rate:0.21,score:0,total:482}
+];
+new Chart(document.getElementById('sourceChart'),{
+  type:'bar',
+  data:{
+    labels:srcData.map(d=>`${d.label} (${d.total.toLocaleString()}件)`),
+    datasets:[{
+      label:'発注率(%)',
+      data:srcData.map(d=>d.rate),
+      backgroundColor:srcData.map(d=>d.rate>1.29?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.15)'),
+      borderColor:srcData.map(d=>d.rate>1.29?'#22c55e':'#ef4444'),
+      borderWidth:2,borderRadius:6
+    },{
+      label:'全体平均',data:srcData.map(()=>1.29),type:'line',borderColor:'#ef4444',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{x:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}}}
+  }
+});
+
+// Budget chart
+const budgetData = [
+  {label:'4000万以上',rate:9.09,total:33},
+  {label:'3000万台',rate:8.76,total:137},
+  {label:'2500万台',rate:6.03,total:116},
+  {label:'2000万台',rate:4.24,total:165},
+  {label:'4000万',rate:2.50,total:160},
+  {label:'3000万',rate:2.14,total:794},
+  {label:'5000万',rate:1.95,total:154},
+  {label:'2500万',rate:1.62,total:1295},
+  {label:'3500万',rate:1.50,total:333},
+  {label:'2000万',rate:0.83,total:2640},
+  {label:'1500万',rate:0.30,total:3033},
+  {label:'1000万',rate:0.27,total:4069}
+];
+new Chart(document.getElementById('budgetChart'),{
+  type:'bar',
+  data:{
+    labels:budgetData.map(d=>`${d.label} (${d.total.toLocaleString()}件)`),
+    datasets:[{
+      label:'発注率(%)',
+      data:budgetData.map(d=>d.rate),
+      backgroundColor:budgetData.map(d=>d.rate>1.29?'rgba(37,99,235,0.25)':'rgba(239,68,68,0.12)'),
+      borderColor:budgetData.map(d=>d.rate>1.29?'#2563eb':'#ef4444'),
+      borderWidth:2,borderRadius:6
+    },{
+      label:'全体平均',data:budgetData.map(()=>1.29),type:'line',borderColor:'#ef4444',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{x:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}}}
+  }
+});
+
+// Method chart
+const methodData = [
+  {label:'工務店',rate:3.73,total:2228},
+  {label:'セミセルフ',rate:3.45,total:58},
+  {label:'セルフビルド',rate:1.29,total:1005},
+  {label:'未定',rate:0.60,total:3506},
+  {label:'未記入',rate:0.90,total:7917}
+];
+new Chart(document.getElementById('methodChart'),{
+  type:'bar',
+  data:{
+    labels:methodData.map(d=>`${d.label} (${d.total.toLocaleString()}件)`),
+    datasets:[{
+      label:'発注率(%)',data:methodData.map(d=>d.rate),
+      backgroundColor:methodData.map(d=>d.rate>1.29?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.12)'),
+      borderColor:methodData.map(d=>d.rate>1.29?'#22c55e':'#ef4444'),
+      borderWidth:2,borderRadius:6
+    },{
+      label:'全体平均',data:methodData.map(()=>1.29),type:'line',borderColor:'#ef4444',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{x:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}}}
+  }
+});
+
+// Timing chart
+const timingData = [
+  {label:'1年以内',rate:2.34,total:2693},
+  {label:'半年以内',rate:1.44,total:970},
+  {label:'未記入',rate:1.86,total:5471},
+  {label:'未定',rate:0.20,total:5580}
+];
+new Chart(document.getElementById('timingChart'),{
+  type:'bar',
+  data:{
+    labels:timingData.map(d=>`${d.label} (${d.total.toLocaleString()}件)`),
+    datasets:[{
+      label:'発注率(%)',data:timingData.map(d=>d.rate),
+      backgroundColor:timingData.map(d=>d.rate>1.29?'rgba(139,92,246,0.25)':'rgba(239,68,68,0.12)'),
+      borderColor:timingData.map(d=>d.rate>1.29?'#8b5cf6':'#ef4444'),
+      borderWidth:2,borderRadius:6
+    },{
+      label:'全体平均',data:timingData.map(()=>1.29),type:'line',borderColor:'#ef4444',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    scales:{x:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}}}
+  }
+});
+</script>
+</body>
+</html>
