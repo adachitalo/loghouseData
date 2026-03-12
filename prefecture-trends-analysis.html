@@ -7,731 +7,685 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: #f5f7fa; color: #2d3748; font-size: 14px; }
+  body { font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: #f0f2f5; color: #2c3e50; font-size: 14px; }
 
-  .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 32px 40px; }
-  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-  .header p { font-size: 13px; opacity: 0.85; }
+  .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px; }
+  .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .header p { font-size: 13px; opacity: 0.85; margin-top: 6px; }
+  .header .badge-note { display:inline-block; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.35); border-radius:4px; padding:2px 10px; font-size:12px; margin-top:10px; }
+
+  .kpi-bar { background:#fff; border-bottom:1px solid #e2e8f0; display:flex; justify-content:center; gap:40px; padding:18px 24px; flex-wrap:wrap; }
+  .kpi { text-align:center; }
+  .kpi .num { font-size:24px; font-weight:700; color:#2b6cb0; }
+  .kpi .lbl { font-size:11px; color:#94a3b8; margin-top:2px; letter-spacing:0.5px; }
 
   .nav { background: #2d3748; display: flex; gap: 0; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
   .nav a { color: #e2e8f0; text-decoration: none; padding: 12px 20px; font-size: 13px; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
   .nav a:hover, .nav a.active { background: #4a5568; border-bottom-color: #63b3ed; color: white; }
 
   .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
-
   .section { margin-bottom: 48px; }
-  .section-title { font-size: 20px; font-weight: 700; color: #1a365d; border-left: 5px solid #3182ce; padding-left: 14px; margin-bottom: 20px; padding-top: 4px; padding-bottom: 4px; }
-  .section-sub { font-size: 16px; font-weight: 700; color: #2d3748; margin: 24px 0 12px; }
+  .section-title { font-size: 19px; font-weight: 700; color: #1a365d; border-left: 5px solid #3182ce; padding: 4px 0 4px 14px; margin-bottom: 20px; }
 
   .insight-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
   .insight-box h3 { color: #2b6cb0; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .insight-box p { font-size: 13px; color: #2c5282; line-height: 1.6; }
-  .insight-box .highlight { color: #c53030; font-weight: 700; }
+  .insight-box p { font-size: 13px; color: #2c5282; line-height: 1.7; }
+  .insight-box .hl { color: #c53030; font-weight: 700; }
 
-  .alert-box { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
-  .alert-box h3 { color: #c53030; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .alert-box p { font-size: 13px; color: #742a2a; line-height: 1.6; }
-
-  .success-box { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
-  .success-box h3 { color: #276749; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .success-box p { font-size: 13px; color: #22543d; line-height: 1.6; }
-
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-
-  @media (max-width: 768px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .header { padding: 20px; }
-    .header h1 { font-size: 18px; }
-  }
-
-  .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 20px; }
   .card h3 { font-size: 14px; font-weight: 700; color: #4a5568; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
 
-  .chart-container { position: relative; }
-  .chart-container canvas { max-height: 320px; }
-  .chart-container-tall canvas { max-height: 420px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .header { padding: 20px; } }
 
-  /* Tables */
-  .pref-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .pref-table th { background: #2d3748; color: white; padding: 8px 10px; text-align: center; font-weight: 600; white-space: nowrap; }
-  .pref-table th:first-child { text-align: left; }
-  .pref-table td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; text-align: center; }
-  .pref-table td:first-child { text-align: left; font-weight: 600; }
-  .pref-table tr:nth-child(even) { background: #f7fafc; }
-  .pref-table tr:hover { background: #ebf8ff; }
-  .pref-table .rank { color: #718096; font-size: 11px; margin-right: 4px; }
+  .tag-build { display:inline-block; background:#dbeafe; color:#1d4ed8; border-radius:4px; padding:2px 8px; font-size:11px; font-weight:700; margin-left:6px; }
+  .tag-home { display:inline-block; background:#d1fae5; color:#065f46; border-radius:4px; padding:2px 8px; font-size:11px; font-weight:700; margin-left:6px; }
 
-  .trend-up { color: #276749; font-weight: 700; }
-  .trend-up::before { content: '▲ '; font-size: 10px; }
-  .trend-down { color: #c53030; }
-  .trend-down::before { content: '▼ '; font-size: 10px; }
-  .trend-flat { color: #718096; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th { background:#2d3748; color:white; padding:8px 10px; text-align:center; font-weight:600; }
+  td { padding:7px 10px; border-bottom:1px solid #e2e8f0; text-align:center; }
+  tr:nth-child(even) { background:#f7fafc; }
+  tr:hover { background:#ebf8ff; }
 
-  .bar-cell { position: relative; }
-  .bar-bg { position: absolute; left: 0; top: 0; bottom: 0; background: #bee3f8; opacity: 0.5; border-radius: 2px; z-index: 0; }
-  .bar-val { position: relative; z-index: 1; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:700; }
+  .badge-green { background:#d1fae5; color:#065f46; }
+  .badge-blue { background:#dbeafe; color:#1d4ed8; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
 
-  /* Heat colors */
-  .heat-1 { background-color: #ebf8ff; }
-  .heat-2 { background-color: #bee3f8; }
-  .heat-3 { background-color: #90cdf4; }
-  .heat-4 { background-color: #63b3ed; color: white; }
-  .heat-5 { background-color: #3182ce; color: white; }
-
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; }
-  .badge-blue { background: #dbeafe; color: #1d4ed8; }
-  .badge-green { background: #d1fae5; color: #065f46; }
-  .badge-red { background: #fee2e2; color: #991b1b; }
-  .badge-yellow { background: #fef3c7; color: #92400e; }
-
-  .stat-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-  .stat-card { flex: 1; min-width: 120px; background: white; border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.07); text-align: center; }
-  .stat-card .val { font-size: 28px; font-weight: 800; color: #2b6cb0; line-height: 1; }
-  .stat-card .lbl { font-size: 11px; color: #718096; margin-top: 6px; }
-  .stat-card .sub { font-size: 12px; color: #4a5568; margin-top: 2px; }
-
-  .tab-container { margin-bottom: 24px; }
-  .tab-buttons { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; }
-  .tab-btn { padding: 8px 20px; border: none; background: none; font-size: 13px; cursor: pointer; color: #718096; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; font-family: inherit; }
-  .tab-btn.active { color: #2b6cb0; border-bottom-color: #2b6cb0; font-weight: 700; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  .footnote { font-size: 11px; color: #a0aec0; margin-top: 8px; }
-
-  .legend-item { display: inline-flex; align-items: center; gap: 6px; margin-right: 16px; font-size: 12px; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  footer { text-align:center; padding:28px; font-size:12px; color:#94a3b8; border-top:1px solid #e2e8f0; background:#fff; margin-top:40px; }
+  footer a { color:#3182ce; text-decoration:none; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>都道府県別推移分析｜カタログ請求データ 2021–2025年</h1>
-  <p>現住所・建設地の都道府県別年度別推移 ／ 成約率ランキング ／ 地域別トレンド</p>
+  <div style="max-width:1200px;margin:0 auto;">
+    <h1>🗾 都道府県別推移分析</h1>
+    <p>カタログ請求データ 2021〜2025年 ／ 建設予定地・現住所の都道府県別推移・発注率分析</p>
+    <div class="badge-note">⚠️ 建設予定地と現住所は別データです。各セクションのラベルを確認してください。</div>
+  </div>
+</div>
+
+<div class="kpi-bar">
+  <div class="kpi"><div class="num">14,714</div><div class="lbl">総請求件数</div></div>
+  <div class="kpi"><div class="num">190</div><div class="lbl">発注件数</div></div>
+  <div class="kpi"><div class="num">1.29%</div><div class="lbl">全体発注率</div></div>
+  <div class="kpi"><div class="num">5年分</div><div class="lbl">2021〜2025年</div></div>
+  <div class="kpi"><div class="num">47都道府県</div><div class="lbl">カバーエリア</div></div>
 </div>
 
 <nav class="nav">
-  <a href="#overview" class="active">📊 概要</a>
   <a href="#comparison">🗺️ 現住所 vs 建設地</a>
-  <a href="#current">🏠 現住所推移</a>
-  <a href="#build">🏗️ 建設地推移</a>
-  <a href="#region">🌏 地域別推移</a>
-  <a href="#conversion">🎯 成約率</a>
+  <a href="#build">🏗️ 建設予定地の推移</a>
+  <a href="#home">🏠 現住所の推移</a>
+  <a href="#conv-build">📈 建設地別発注率</a>
+  <a href="#conv-home">📈 現住所別発注率</a>
+  <a href="#region">🌏 地域別集計</a>
 </nav>
 
 <div class="container">
 
-  <!-- ① 概要 -->
-  <div class="section" id="overview">
-    <div class="section-title">📊 概要・主要インサイト</div>
-
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="val">14,714</div>
-        <div class="lbl">総カタログ請求件数</div>
-        <div class="sub">2021〜2025年</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" style="color:#c53030">−39%</div>
-        <div class="lbl">全体トレンド</div>
-        <div class="sub">2021比 2025年</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" style="color:#276749">山梨</div>
-        <div class="lbl">唯一の増加県（建設地）</div>
-        <div class="sub">+23% (2021→2025)</div>
-      </div>
-      <div class="stat-card">
-        <div class="val">10.3%</div>
-        <div class="lbl">最高成約率（建設地）</div>
-        <div class="sub">山梨県</div>
-      </div>
-      <div class="stat-card">
-        <div class="val" style="color:#d69e2e">長野</div>
-        <div class="lbl">建設地件数 No.1</div>
-        <div class="sub">1,363件（全期間）</div>
-      </div>
-    </div>
-
-    <div class="success-box">
-      <h3>✅ 注目発見：山梨県は逆行成長中</h3>
-      <p>全国で件数が減少するなか、建設地として山梨県は <span style="color:#276749;font-weight:700">2021年117件 → 2025年144件（+23%）</span>と唯一増加傾向。成約率も10.3%と全国最高水準。山梨エリアへの営業強化が有効と考えられます。</p>
-    </div>
-
+  <!-- インサイト -->
+  <div class="section">
     <div class="insight-box">
-      <h3>🏠 現住所 vs 建設地：居住地と建設地の乖離</h3>
-      <p>現住所では<span class="highlight">東京都が断トツ1位（2,398件）</span>だが、建設地1位は<span class="highlight">長野県（1,363件）</span>。神奈川・東京など都市部在住者が地方（長野・山梨・北海道）に別荘・セカンドハウスを建設する傾向が明確。</p>
-    </div>
-
-    <div class="alert-box">
-      <h3>⚠️ 全体的な減少傾向</h3>
-      <p>ほぼすべての都道府県で件数が減少。特に関東・近畿圏の下落が顕著（2021→2025年で約40%減）。北海道・長野は比較的安定、山梨のみ増加という二極化が進んでいます。</p>
+      <h3>🔑 主要インサイト（列228 物件番号ベース、正確な発注フラグ）</h3>
+      <p>
+        • 建設予定地1位は<span class="hl">長野県（1,374件・発注率2.1%）</span>。現住所1位は<span class="hl">東京都（2,413件）</span>だが建設予定地としては934件（0.4%）にとどまる。<br>
+        • <strong>都市在住者が地方に建設する傾向が顕著</strong>：東京・神奈川・埼玉の現住所合計5,443件に対し、建設予定地合計2,262件。差分3,181件が「都市→地方」移住需要を示す。<br>
+        • 発注率では<span class="hl">山梨県2.9%</span>、<span class="hl">長野県2.1%</span>が高水準。代理店カバーエリアと一致。<br>
+        • 全体発注率は<strong>1.29%（190件/14,714件）</strong>。
+      </p>
     </div>
   </div>
 
-  <!-- ② 現住所 vs 建設地 比較 -->
+  <!-- 現住所 vs 建設地 対比 -->
   <div class="section" id="comparison">
-    <div class="section-title">🗺️ 現住所 vs 建設地：都道府県ランキング比較</div>
-
-    <div class="insight-box">
-      <h3>💡 読み方のポイント</h3>
-      <p>「現住所」=カタログ請求者の居住地、「建設地」=実際に家を建てる予定の場所。両者の差が大きいほど「都市在住者が地方に建てる」パターン。</p>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h3>🏠 現住所ランキング TOP15（全期間合計）</h3>
-        <table class="pref-table">
-          <thead>
-            <tr><th>都道府県</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>合計</th><th>増減</th></tr>
-          </thead>
-          <tbody id="cur-pref-table"></tbody>
-        </table>
-      </div>
-      <div class="card">
-        <h3>🏗️ 建設地ランキング TOP15（全期間合計）</h3>
-        <table class="pref-table">
-          <thead>
-            <tr><th>都道府県</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>合計</th><th>増減</th></tr>
-          </thead>
-          <tbody id="build-pref-table"></tbody>
-        </table>
+    <div class="section-title">🗺️ 現住所 vs 建設予定地：都道府県ランキング比較</div>
+    <div class="card">
+      <h3>建設予定地TOP10と現住所の対比 <span class="tag-build">建設予定地</span><span class="tag-home">現住所</span></h3>
+      <div style="height:320px; margin-bottom:20px;">
+        <canvas id="crossChart"></canvas>
       </div>
     </div>
-    <p class="footnote">※ 増減 = 2021年比 2025年の変化率</p>
+    <div class="card">
+      <h3>都道府県ごとの乖離（建設予定地件数 - 現住所件数）</h3>
+      <table>
+        <thead><tr><th>都道府県</th><th>建設予定地</th><th>現住所</th><th>差分（+は建設地↑）</th><th>発注数/率</th></tr></thead>
+        <tbody><tr>
+          <td><strong>長野県</strong></td>
+          <td>1,374</td>
+          <td>556</td>
+          <td><span style="color:#276749;font-weight:700">+818</span> <span class="badge badge-green">建設地↑</span></td>
+          <td>29件 <span style="color:#2b6cb0;font-weight:700">2.1%</span></td>
+        </tr>
+<tr>
+          <td><strong>千葉県</strong></td>
+          <td>1,108</td>
+          <td>879</td>
+          <td><span style="color:#276749;font-weight:700">+229</span> <span class="badge badge-green">建設地↑</span></td>
+          <td>17件 <span style="color:#2b6cb0;font-weight:700">1.5%</span></td>
+        </tr>
+<tr>
+          <td><strong>東京都</strong></td>
+          <td>934</td>
+          <td>2,413</td>
+          <td><span style="color:#c53030;font-weight:700">-1,479</span> <span class="badge badge-red">現住所↑</span></td>
+          <td>4件 <span style="color:#2b6cb0;font-weight:700">0.4%</span></td>
+        </tr>
+<tr>
+          <td><strong>神奈川県</strong></td>
+          <td>866</td>
+          <td>1,393</td>
+          <td><span style="color:#c53030;font-weight:700">-527</span> <span class="badge badge-red">現住所↑</span></td>
+          <td>7件 <span style="color:#2b6cb0;font-weight:700">0.8%</span></td>
+        </tr>
+<tr>
+          <td><strong>北海道</strong></td>
+          <td>801</td>
+          <td>644</td>
+          <td><span style="color:#276749;font-weight:700">+157</span> <span class="badge badge-green">建設地↑</span></td>
+          <td>10件 <span style="color:#2b6cb0;font-weight:700">1.2%</span></td>
+        </tr>
+<tr>
+          <td><strong>山梨県</strong></td>
+          <td>645</td>
+          <td>163</td>
+          <td><span style="color:#276749;font-weight:700">+482</span> <span class="badge badge-green">建設地↑</span></td>
+          <td>19件 <span style="color:#2b6cb0;font-weight:700">2.9%</span></td>
+        </tr>
+<tr>
+          <td><strong>兵庫県</strong></td>
+          <td>616</td>
+          <td>611</td>
+          <td><span style="color:#276749;font-weight:700">+5</span> <span class="badge badge-green">建設地↑</span></td>
+          <td>12件 <span style="color:#2b6cb0;font-weight:700">1.9%</span></td>
+        </tr>
+<tr>
+          <td><strong>静岡県</strong></td>
+          <td>558</td>
+          <td>406</td>
+          <td><span style="color:#276749;font-weight:700">+152</span> <span class="badge badge-green">建設地↑</span></td>
+          <td>7件 <span style="color:#2b6cb0;font-weight:700">1.3%</span></td>
+        </tr>
+<tr>
+          <td><strong>埼玉県</strong></td>
+          <td>462</td>
+          <td>637</td>
+          <td><span style="color:#c53030;font-weight:700">-175</span> <span class="badge badge-red">現住所↑</span></td>
+          <td>6件 <span style="color:#2b6cb0;font-weight:700">1.3%</span></td>
+        </tr>
+<tr>
+          <td><strong>愛知県</strong></td>
+          <td>437</td>
+          <td>616</td>
+          <td><span style="color:#c53030;font-weight:700">-179</span> <span class="badge badge-red">現住所↑</span></td>
+          <td>5件 <span style="color:#2b6cb0;font-weight:700">1.1%</span></td>
+        </tr></tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- ③ 現住所推移 -->
-  <div class="section" id="current">
-    <div class="section-title">🏠 現住所：都道府県別年度別推移</div>
-
-    <div class="card" style="margin-bottom:24px">
-      <h3>現住所 TOP10 都道府県の年度別推移</h3>
-      <div class="chart-container-tall chart-container">
-        <canvas id="curPrefChart"></canvas>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h3>現住所 地域別 年度推移（棒グラフ）</h3>
-        <div class="chart-container">
-          <canvas id="curRegionChart"></canvas>
-        </div>
-      </div>
-      <div class="card">
-        <h3>現住所 地域別 構成比推移</h3>
-        <div class="chart-container">
-          <canvas id="curRegionPctChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ④ 建設地推移 -->
+  <!-- 建設予定地 年度別推移 -->
   <div class="section" id="build">
-    <div class="section-title">🏗️ 建設地：都道府県別年度別推移</div>
-
-    <div class="card" style="margin-bottom:24px">
-      <h3>建設地 TOP10 都道府県の年度別推移</h3>
-      <div class="chart-container-tall chart-container">
-        <canvas id="buildPrefChart"></canvas>
+    <div class="section-title">🏗️ 建設予定地（列223）の年度別推移 <span class="tag-build">建設予定地ベース</span></div>
+    <div class="card">
+      <h3>都道府県別・年度別件数（上位20都道府県）</h3>
+      <div style="height:360px;">
+        <canvas id="buildChart"></canvas>
       </div>
     </div>
+  </div>
 
-    <div class="card" style="margin-bottom:24px; border: 2px solid #c6f6d5;">
-      <h3>🌟 山梨県：唯一の増加傾向（建設地）</h3>
-      <div class="chart-container">
-        <canvas id="yamanashiChart"></canvas>
+  <!-- 現住所 年度別推移 -->
+  <div class="section" id="home">
+    <div class="section-title">🏠 現住所（列1）の年度別推移 <span class="tag-home">現住所ベース</span></div>
+    <div class="card">
+      <h3>都道府県別・年度別件数（上位20都道府県）</h3>
+      <div style="height:360px;">
+        <canvas id="homeChart"></canvas>
       </div>
-      <p class="footnote" style="margin-top:12px">※ 山梨県は2021→2025年で+23%増。長野・北海道は比較的安定、他県は軒並み減少。</p>
     </div>
+  </div>
 
+  <!-- 発注率（建設予定地） -->
+  <div class="section" id="conv-build">
+    <div class="section-title">📈 建設予定地別 発注率ランキング <span class="tag-build">建設予定地ベース</span></div>
+    <div class="card">
+      <h3>発注率が高い都道府県TOP15（50件以上の都道府県）</h3>
+      <div style="height:300px; margin-bottom:20px;">
+        <canvas id="buildConvChart"></canvas>
+      </div>
+      <table>
+        <thead><tr><th>都道府県</th><th>請求件数</th><th>発注件数</th><th>発注率</th></tr></thead>
+        <tbody><tr>
+          <td><strong>富山県</strong></td>
+          <td>98</td>
+          <td>5</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:80%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#276749">5.1%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>島根県</strong></td>
+          <td>88</td>
+          <td>3</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:53%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#276749">3.4%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>山梨県</strong></td>
+          <td>645</td>
+          <td>19</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:45%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.9%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>青森県</strong></td>
+          <td>138</td>
+          <td>4</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:45%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.9%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>鳥取県</strong></td>
+          <td>79</td>
+          <td>2</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:39%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.5%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>佐賀県</strong></td>
+          <td>81</td>
+          <td>2</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:39%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.5%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>群馬県</strong></td>
+          <td>287</td>
+          <td>7</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:37%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.4%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>宮崎県</strong></td>
+          <td>138</td>
+          <td>3</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:34%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.2%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>長野県</strong></td>
+          <td>1,374</td>
+          <td>29</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:32%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.1%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>兵庫県</strong></td>
+          <td>616</td>
+          <td>12</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:29%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.9%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>石川県</strong></td>
+          <td>120</td>
+          <td>2</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:26%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.7%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>茨城県</strong></td>
+          <td>353</td>
+          <td>6</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:26%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.7%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>山形県</strong></td>
+          <td>119</td>
+          <td>2</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:26%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.7%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>千葉県</strong></td>
+          <td>1,108</td>
+          <td>17</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:23%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.5%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>岡山県</strong></td>
+          <td>196</td>
+          <td>3</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:23%;background:#3182ce;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.5%</strong>
+            </div>
+          </td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 発注率（現住所） -->
+  <div class="section" id="conv-home">
+    <div class="section-title">📈 現住所別 発注率ランキング <span class="tag-home">現住所ベース</span></div>
+    <div class="card">
+      <h3>発注率が高い都道府県TOP15（50件以上の都道府県）</h3>
+      <table>
+        <thead><tr><th>都道府県</th><th>請求件数</th><th>発注件数</th><th>発注率</th></tr></thead>
+        <tbody><tr>
+          <td><strong>鳥取県</strong></td>
+          <td>52</td>
+          <td>2</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:80%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#276749">3.8%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>島根県</strong></td>
+          <td>84</td>
+          <td>3</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:75%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#276749">3.6%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>宮崎県</strong></td>
+          <td>115</td>
+          <td>3</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:54%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.6%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>山梨県</strong></td>
+          <td>163</td>
+          <td>4</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:52%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.5%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>群馬県</strong></td>
+          <td>191</td>
+          <td>4</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:44%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">2.1%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>茨城県</strong></td>
+          <td>289</td>
+          <td>5</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:35%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.7%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>鹿児島県</strong></td>
+          <td>173</td>
+          <td>3</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:35%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.7%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>千葉県</strong></td>
+          <td>879</td>
+          <td>14</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:33%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#2b6cb0">1.6%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>埼玉県</strong></td>
+          <td>637</td>
+          <td>9</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:29%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.4%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>佐賀県</strong></td>
+          <td>71</td>
+          <td>1</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:29%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.4%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>長野県</strong></td>
+          <td>556</td>
+          <td>7</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:27%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.3%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>東京都</strong></td>
+          <td>2,413</td>
+          <td>31</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:27%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.3%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>兵庫県</strong></td>
+          <td>611</td>
+          <td>8</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:27%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.3%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>新潟県</strong></td>
+          <td>168</td>
+          <td>2</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:25%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.2%</strong>
+            </div>
+          </td>
+        </tr>
+<tr>
+          <td><strong>富山県</strong></td>
+          <td>86</td>
+          <td>1</td>
+          <td>
+            <div style="position:relative;height:18px;background:#edf2f7;border-radius:3px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:25%;background:#38a169;opacity:0.5;border-radius:3px;"></div>
+              <strong style="position:relative;z-index:1;padding-left:6px;color:#718096">1.2%</strong>
+            </div>
+          </td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 地域別 -->
+  <div class="section" id="region">
+    <div class="section-title">🌏 地域別年度推移（積み上げ）</div>
     <div class="grid-2">
       <div class="card">
-        <h3>建設地 地域別 年度推移</h3>
-        <div class="chart-container">
+        <h3>建設予定地ベース <span class="tag-build">建設予定地</span></h3>
+        <div style="height:280px;">
           <canvas id="buildRegionChart"></canvas>
         </div>
       </div>
       <div class="card">
-        <h3>建設地 地域別 構成比推移</h3>
-        <div class="chart-container">
-          <canvas id="buildRegionPctChart"></canvas>
+        <h3>現住所ベース <span class="tag-home">現住所</span></h3>
+        <div style="height:280px;">
+          <canvas id="homeRegionChart"></canvas>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ⑤ 地域別推移詳細表 -->
-  <div class="section" id="region">
-    <div class="section-title">🌏 地域別推移：現住所 vs 建設地</div>
+</div>
 
-    <div class="tab-container">
-      <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTab('region', 'build-region')">建設地（地域別）</button>
-        <button class="tab-btn" onclick="switchTab('region', 'cur-region')">現住所（地域別）</button>
-        <button class="tab-btn" onclick="switchTab('region', 'diff-region')">差分（建設地−現住所）</button>
-      </div>
-
-      <div id="region-build-region" class="tab-content active">
-        <div class="card">
-          <h3>建設地：地域別年度別件数</h3>
-          <table class="pref-table" id="build-region-table"></table>
-        </div>
-      </div>
-      <div id="region-cur-region" class="tab-content">
-        <div class="card">
-          <h3>現住所：地域別年度別件数</h3>
-          <table class="pref-table" id="cur-region-table"></table>
-        </div>
-      </div>
-      <div id="region-diff-region" class="tab-content">
-        <div class="card">
-          <h3>建設地件数 − 現住所件数（＋は建設地が多い＝他地域からの流入）</h3>
-          <table class="pref-table" id="diff-region-table"></table>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>建設地 vs 現住所：地域別比較（2021〜2025合計）</h3>
-      <div class="chart-container">
-        <canvas id="regionCompareChart"></canvas>
-      </div>
-      <p class="footnote" style="margin-top:10px">※ 中部（長野・山梨・静岡等含む）・北海道は建設地 > 現住所。関東・近畿は現住所 > 建設地（都市住民が地方に建てる流れ）</p>
-    </div>
-  </div>
-
-  <!-- ⑥ 成約率 -->
-  <div class="section" id="conversion">
-    <div class="section-title">🎯 都道府県別 成約率ランキング</div>
-
-    <div class="success-box">
-      <h3>🏆 成約率の見方</h3>
-      <p>「建設地」ベースの成約率が最も実態に近い営業指標。建設地として山梨・静岡・長野など移住・リゾートエリアが上位に。現住所ベースとの差異も重要で、「東京在住→地方建設」パターンで成約率が高い傾向。</p>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h3>🏗️ 建設地 成約率 TOP15</h3>
-        <table class="pref-table">
-          <thead>
-            <tr><th>都道府県</th><th>件数</th><th>成約数</th><th>成約率</th></tr>
-          </thead>
-          <tbody id="build-conv-table"></tbody>
-        </table>
-      </div>
-      <div class="card">
-        <h3>🏠 現住所 成約率 TOP15</h3>
-        <table class="pref-table">
-          <thead>
-            <tr><th>都道府県</th><th>件数</th><th>成約数</th><th>成約率</th></tr>
-          </thead>
-          <tbody id="cur-conv-table"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:24px">
-      <h3>建設地 成約率 TOP15（横棒グラフ）</h3>
-      <div class="chart-container">
-        <canvas id="convChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /container -->
+<footer>
+  <a href="https://github.com/adachitalo/loghouseData" target="_blank">github.com/adachitalo/loghouseData</a>
+  &nbsp;·&nbsp; Generated with Claude (Cowork)
+</footer>
 
 <script>
-// ===== DATA =====
-const years = [2021, 2022, 2023, 2024, 2025];
+const YEARS = ["2021", "2022", "2023", "2024", "2025"];
+const TICK = {color:'#64748b',font:{size:11}};
+const GRID = {color:'rgba(0,0,0,0.06)'};
+const LEGEND = {labels:{font:{size:11},boxWidth:12}};
 
-const curPref = {"東京都":{"2021":563,"2022":538,"2023":434,"2024":462,"2025":401},"神奈川県":{"2021":330,"2022":317,"2023":283,"2024":246,"2025":206},"千葉県":{"2021":200,"2022":191,"2023":211,"2024":156,"2025":118},"大阪府":{"2021":183,"2022":158,"2023":160,"2024":145,"2025":88},"北海道":{"2021":163,"2022":123,"2023":133,"2024":130,"2025":91},"埼玉県":{"2021":164,"2022":135,"2023":143,"2024":107,"2025":87},"愛知県":{"2021":153,"2022":129,"2023":115,"2024":120,"2025":95},"兵庫県":{"2021":160,"2022":140,"2023":136,"2024":97,"2025":74},"長野県":{"2021":123,"2022":120,"2023":119,"2024":95,"2025":97},"福岡県":{"2021":127,"2022":109,"2023":85,"2024":65,"2025":51},"静岡県":{"2021":88,"2022":77,"2023":83,"2024":81,"2025":73},"京都府":{"2021":88,"2022":63,"2023":82,"2024":49,"2025":55},"茨城県":{"2021":62,"2022":65,"2023":67,"2024":54,"2025":39},"宮城県":{"2021":53,"2022":61,"2023":70,"2024":45,"2025":30},"広島県":{"2021":68,"2022":50,"2023":50,"2024":47,"2025":34},"福島県":{"2021":58,"2022":50,"2023":40,"2024":36,"2025":32},"群馬県":{"2021":32,"2022":43,"2023":40,"2024":41,"2025":35},"栃木県":{"2021":39,"2022":41,"2023":32,"2024":24,"2025":45},"岐阜県":{"2021":44,"2022":31,"2023":38,"2024":41,"2025":26},"鹿児島県":{"2021":34,"2022":46,"2023":32,"2024":39,"2025":21}};
-
-const buildPref = {"長野県":{"2021":291,"2022":283,"2023":277,"2024":265,"2025":247},"千葉県":{"2021":272,"2022":254,"2023":263,"2024":177,"2025":138},"東京都":{"2021":232,"2022":217,"2023":176,"2024":170,"2025":137},"神奈川県":{"2021":222,"2022":216,"2023":172,"2024":135,"2025":117},"北海道":{"2021":187,"2022":155,"2023":161,"2024":168,"2025":121},"山梨県":{"2021":117,"2022":134,"2023":105,"2024":138,"2025":144},"兵庫県":{"2021":162,"2022":148,"2023":131,"2024":103,"2025":70},"静岡県":{"2021":134,"2022":109,"2023":114,"2024":104,"2025":91},"埼玉県":{"2021":129,"2022":94,"2023":100,"2024":70,"2025":68},"愛知県":{"2021":114,"2022":98,"2023":85,"2024":79,"2025":58},"福岡県":{"2021":117,"2022":102,"2023":74,"2024":59,"2025":48},"大阪府":{"2021":101,"2022":91,"2023":87,"2024":79,"2025":37},"茨城県":{"2021":78,"2022":78,"2023":81,"2024":65,"2025":50},"栃木県":{"2021":68,"2022":62,"2023":69,"2024":58,"2025":68},"滋賀県":{"2021":71,"2022":64,"2023":69,"2024":62,"2025":42},"群馬県":{"2021":58,"2022":60,"2023":52,"2024":70,"2025":45},"京都府":{"2021":76,"2022":51,"2023":62,"2024":36,"2025":42},"宮城県":{"2021":55,"2022":63,"2023":65,"2024":43,"2025":39},"福島県":{"2021":65,"2022":63,"2023":47,"2024":46,"2025":36},"岐阜県":{"2021":59,"2022":45,"2023":49,"2024":56,"2025":37}};
-
-const buildConv = {"山梨県":{"total":638,"contracted":66,"rate":10.3},"静岡県":{"total":552,"contracted":41,"rate":7.4},"富山県":{"total":98,"contracted":7,"rate":7.1},"長野県":{"total":1363,"contracted":96,"rate":7.0},"秋田県":{"total":105,"contracted":7,"rate":6.7},"愛知県":{"total":434,"contracted":25,"rate":5.8},"北海道":{"total":792,"contracted":44,"rate":5.6},"鳥取県":{"total":79,"contracted":4,"rate":5.1},"青森県":{"total":138,"contracted":7,"rate":5.1},"山形県":{"total":119,"contracted":6,"rate":5.0},"岐阜県":{"total":246,"contracted":12,"rate":4.9},"香川県":{"total":104,"contracted":5,"rate":4.8},"沖縄県":{"total":145,"contracted":7,"rate":4.8},"鹿児島県":{"total":220,"contracted":10,"rate":4.5},"山口県":{"total":139,"contracted":6,"rate":4.3}};
-
-const curConv = {"鳥取県":{"total":52,"contracted":4,"rate":7.7},"静岡県":{"total":402,"contracted":24,"rate":6.0},"秋田県":{"total":85,"contracted":5,"rate":5.9},"東京都":{"total":2398,"contracted":134,"rate":5.6},"山梨県":{"total":160,"contracted":9,"rate":5.6},"鹿児島県":{"total":172,"contracted":9,"rate":5.2},"愛知県":{"total":612,"contracted":31,"rate":5.1},"長野県":{"total":554,"contracted":27,"rate":4.9},"香川県":{"total":90,"contracted":4,"rate":4.4},"北海道":{"total":640,"contracted":27,"rate":4.2},"千葉県":{"total":876,"contracted":35,"rate":4.0},"山口県":{"total":109,"contracted":4,"rate":3.7},"神奈川県":{"total":1382,"contracted":49,"rate":3.5},"宮崎県":{"total":115,"contracted":4,"rate":3.5},"沖縄県":{"total":132,"contracted":4,"rate":3.0}};
-
-const buildRegion = {"中国":{"2021":192,"2022":160,"2023":146,"2024":138,"2025":101},"中部":{"2021":790,"2022":780,"2023":728,"2024":750,"2025":638},"九州":{"2021":370,"2022":327,"2023":308,"2024":262,"2025":196},"北海道":{"2021":187,"2022":155,"2023":161,"2024":168,"2025":121},"四国":{"2021":97,"2022":89,"2023":75,"2024":51,"2025":46},"東北":{"2021":257,"2022":242,"2023":228,"2024":178,"2025":157},"近畿":{"2021":462,"2022":412,"2023":378,"2024":332,"2025":219},"関東":{"2021":1059,"2022":981,"2023":913,"2024":745,"2025":623}};
-
-const curRegion = {"中国":{"2021":168,"2022":146,"2023":126,"2024":128,"2025":95},"中部":{"2021":522,"2022":495,"2023":473,"2024":464,"2025":378},"九州":{"2021":346,"2022":294,"2023":283,"2024":232,"2025":171},"北海道":{"2021":163,"2022":123,"2023":133,"2024":130,"2025":91},"四国":{"2021":95,"2022":82,"2023":61,"2024":49,"2025":39},"東北":{"2021":221,"2022":212,"2023":206,"2024":151,"2025":125},"近畿":{"2021":487,"2022":428,"2023":409,"2024":347,"2025":246},"関東":{"2021":1390,"2022":1330,"2023":1210,"2024":1090,"2025":931}};
-
-// ===== COLORS =====
-const colorPalette = [
-  '#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5',
-  '#dd6b20','#319795','#d53f8c','#718096','#2b6cb0',
-  '#c53030','#276749','#b7791f','#6b46c1','#2c7a7b'
-];
-
-// ===== HELPERS =====
-function getTotal(data) {
-  return years.reduce((s, y) => s + (data[y] || 0), 0);
-}
-function calcChange(data) {
-  const v2021 = data['2021'] || data[2021] || 0;
-  const v2025 = data['2025'] || data[2025] || 0;
-  if (!v2021) return null;
-  return ((v2025 - v2021) / v2021 * 100).toFixed(1);
-}
-function changeBadge(pct) {
-  if (pct === null) return '';
-  const n = parseFloat(pct);
-  if (n > 5) return `<span class="trend-up">${pct}%</span>`;
-  if (n < -10) return `<span class="trend-down">${Math.abs(pct)}%</span>`;
-  return `<span class="trend-flat">${n > 0 ? '+' : ''}${pct}%</span>`;
-}
-function heatClass(val, max) {
-  if (max === 0) return '';
-  const r = val / max;
-  if (r > 0.8) return 'heat-5';
-  if (r > 0.6) return 'heat-4';
-  if (r > 0.4) return 'heat-3';
-  if (r > 0.2) return 'heat-2';
-  if (r > 0) return 'heat-1';
-  return '';
-}
-
-// ===== POPULATE TABLES =====
-function populatePrefTable(tbodyId, data, limit=15) {
-  const tbody = document.getElementById(tbodyId);
-  const entries = Object.entries(data).slice(0, limit);
-  const maxVal = Math.max(...entries.map(([k,v]) => getTotal(v)));
-  entries.forEach(([pref, vals], i) => {
-    const total = getTotal(vals);
-    const chg = calcChange(vals);
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td><span class="rank">${i+1}</span>${pref}</td>
-      ${years.map(y => `<td class="${heatClass(vals[y+'']||vals[y]||0, Math.max(...entries.map(([,v])=>v[y+'']||v[y]||0)))}">${vals[y+'']||vals[y]||0}</td>`).join('')}
-      <td><strong>${total}</strong></td>
-      <td>${changeBadge(chg)}</td>
-    `;
-    tbody.appendChild(row);
-  });
-}
-
-function populateConvTable(tbodyId, data) {
-  const tbody = document.getElementById(tbodyId);
-  const entries = Object.entries(data);
-  const maxRate = Math.max(...entries.map(([,v])=>v.rate));
-  entries.forEach(([pref, v], i) => {
-    const row = document.createElement('tr');
-    const barWidth = (v.rate / maxRate * 100).toFixed(0);
-    row.innerHTML = `
-      <td><span class="rank">${i+1}</span>${pref}</td>
-      <td>${v.total.toLocaleString()}</td>
-      <td>${v.contracted}</td>
-      <td>
-        <div class="bar-cell" style="position:relative;min-width:80px">
-          <div class="bar-bg" style="width:${barWidth}%"></div>
-          <div class="bar-val"><strong style="color:${v.rate>=7?'#276749':v.rate>=5?'#d69e2e':'#4a5568'}">${v.rate}%</strong></div>
-        </div>
-      </td>
-    `;
-    tbody.appendChild(row);
-  });
-}
-
-function populateRegionTable(tableId, regionData, otherData, isDiff) {
-  const table = document.getElementById(tableId);
-  const regions = Object.keys(regionData).sort();
-
-  let html = `<thead><tr><th>地域</th>${years.map(y=>`<th>${y}</th>`).join('')}<th>合計</th><th>増減</th></tr></thead><tbody>`;
-
-  regions.forEach(r => {
-    const d = regionData[r];
-    const chg = calcChange(d);
-    let total = 0;
-    const cells = years.map(y => {
-      let v = d[y] || 0;
-      if (isDiff && otherData && otherData[r]) {
-        v = v - (otherData[r][y] || 0);
-      }
-      total += v;
-      const style = isDiff ? (v > 0 ? 'color:#276749;font-weight:700' : v < 0 ? 'color:#c53030' : '') : '';
-      return `<td style="${style}">${isDiff && v > 0 ? '+' : ''}${v}</td>`;
-    }).join('');
-    html += `<tr><td><strong>${r}</strong></td>${cells}<td><strong>${isDiff ? (total > 0 ? '+' : '') + total : total}</strong></td><td>${isDiff ? '' : changeBadge(chg)}</td></tr>`;
-  });
-  html += '</tbody>';
-  table.innerHTML = html;
-}
-
-// ===== CHARTS =====
-function makeLineChart(id, labels, datasets, opts={}) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
-      scales: {
-        x: { grid: { display: false } },
-        y: { beginAtZero: true, ticks: { font: { size: 11 } } }
-      },
-      ...opts
-    }
-  });
-}
-
-function makeBarChart(id, labels, datasets, stacked=false) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
-      scales: {
-        x: { stacked, grid: { display: false } },
-        y: { stacked, beginAtZero: true, ticks: { font: { size: 11 } } }
-      }
-    }
-  });
-}
-
-function makeHBarChart(id, labels, values, colors) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{ data: values, backgroundColor: colors, borderRadius: 4 }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { beginAtZero: true, max: 12, ticks: { callback: v => v + '%' } },
-        y: { ticks: { font: { size: 12 } } }
-      }
-    }
-  });
-}
-
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-
-  // Tables
-  populatePrefTable('cur-pref-table', curPref, 15);
-  populatePrefTable('build-pref-table', buildPref, 15);
-  populateConvTable('build-conv-table', buildConv);
-  populateConvTable('cur-conv-table', curConv);
-  populateRegionTable('build-region-table', buildRegion, null, false);
-  populateRegionTable('cur-region-table', curRegion, null, false);
-  populateRegionTable('diff-region-table', buildRegion, curRegion, true);
-
-  const yearLabels = years.map(String);
-
-  // --- 現住所 TOP10 Line Chart ---
-  const curTop10 = Object.entries(curPref).slice(0, 10);
-  makeLineChart('curPrefChart', yearLabels,
-    curTop10.map(([pref, vals], i) => ({
-      label: pref,
-      data: years.map(y => vals[y] || 0),
-      borderColor: colorPalette[i],
-      backgroundColor: colorPalette[i] + '20',
-      borderWidth: pref === '東京都' ? 3 : 2,
-      pointRadius: 4,
-      tension: 0.3
-    }))
-  );
-
-  // --- 建設地 TOP10 Line Chart ---
-  const buildTop10 = Object.entries(buildPref).slice(0, 10);
-  makeLineChart('buildPrefChart', yearLabels,
-    buildTop10.map(([pref, vals], i) => ({
-      label: pref,
-      data: years.map(y => vals[y] || 0),
-      borderColor: colorPalette[i],
-      backgroundColor: colorPalette[i] + '20',
-      borderWidth: pref === '長野県' ? 3 : pref === '山梨県' ? 3 : 2,
-      pointRadius: 4,
-      tension: 0.3,
-      borderDash: pref === '山梨県' ? [] : []
-    }))
-  );
-
-  // --- 山梨特集 ---
-  makeLineChart('yamanashiChart', yearLabels, [
-    {
-      label: '山梨県（建設地）',
-      data: [117,134,105,138,144],
-      borderColor: '#276749', backgroundColor: '#c6f6d540',
-      borderWidth: 3, pointRadius: 6, tension: 0.3
-    },
-    {
-      label: '長野県（建設地）',
-      data: [291,283,277,265,247],
-      borderColor: '#3182ce', backgroundColor: '#bee3f820',
-      borderWidth: 2, pointRadius: 4, tension: 0.3
-    },
-    {
-      label: '北海道（建設地）',
-      data: [187,155,161,168,121],
-      borderColor: '#718096', backgroundColor: '#e2e8f020',
-      borderWidth: 2, pointRadius: 4, tension: 0.3
-    },
-    {
-      label: '千葉県（建設地）',
-      data: [272,254,263,177,138],
-      borderColor: '#e53e3e', backgroundColor: '#fed7d720',
-      borderWidth: 2, pointRadius: 4, tension: 0.3
-    }
-  ]);
-
-  // --- 現住所 地域別 積み上げ棒 ---
-  const regionOrder = ['関東','中部','近畿','九州','東北','北海道','中国','四国'];
-  const regionColors = ['#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5','#dd6b20','#319795','#d53f8c'];
-
-  makeBarChart('curRegionChart', yearLabels,
-    regionOrder.map((r, i) => ({
-      label: r,
-      data: years.map(y => curRegion[r] ? curRegion[r][y] || 0 : 0),
-      backgroundColor: regionColors[i],
-      borderRadius: 2
-    })), true
-  );
-
-  // 現住所 構成比
-  const curRegionPct = regionOrder.map(r =>
-    years.map(y => {
-      const total = regionOrder.reduce((s, rr) => s + (curRegion[rr] ? curRegion[rr][y]||0 : 0), 0);
-      return total > 0 ? ((curRegion[r] ? curRegion[r][y]||0 : 0) / total * 100).toFixed(1) : 0;
-    })
-  );
-  new Chart(document.getElementById('curRegionPctChart'), {
-    type: 'bar',
-    data: {
-      labels: yearLabels,
-      datasets: regionOrder.map((r, i) => ({
-        label: r,
-        data: curRegionPct[i],
-        backgroundColor: regionColors[i],
-        borderRadius: 2
-      }))
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
-      scales: {
-        x: { stacked: true, grid: { display: false } },
-        y: { stacked: true, ticks: { callback: v => v + '%', font: { size: 11 } }, max: 100 }
-      }
-    }
-  });
-
-  // --- 建設地 地域別 ---
-  makeBarChart('buildRegionChart', yearLabels,
-    regionOrder.map((r, i) => ({
-      label: r,
-      data: years.map(y => buildRegion[r] ? buildRegion[r][y] || 0 : 0),
-      backgroundColor: regionColors[i],
-      borderRadius: 2
-    })), true
-  );
-
-  const buildRegionPct = regionOrder.map(r =>
-    years.map(y => {
-      const total = regionOrder.reduce((s, rr) => s + (buildRegion[rr] ? buildRegion[rr][y]||0 : 0), 0);
-      return total > 0 ? ((buildRegion[r] ? buildRegion[r][y]||0 : 0) / total * 100).toFixed(1) : 0;
-    })
-  );
-  new Chart(document.getElementById('buildRegionPctChart'), {
-    type: 'bar',
-    data: {
-      labels: yearLabels,
-      datasets: regionOrder.map((r, i) => ({
-        label: r,
-        data: buildRegionPct[i],
-        backgroundColor: regionColors[i],
-        borderRadius: 2
-      }))
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
-      scales: {
-        x: { stacked: true, grid: { display: false } },
-        y: { stacked: true, ticks: { callback: v => v + '%', font: { size: 11 } }, max: 100 }
-      }
-    }
-  });
-
-  // --- 地域別比較（建設地 vs 現住所 合計） ---
-  new Chart(document.getElementById('regionCompareChart'), {
-    type: 'bar',
-    data: {
-      labels: regionOrder,
-      datasets: [
-        {
-          label: '建設地（合計）',
-          data: regionOrder.map(r => years.reduce((s,y) => s + (buildRegion[r]?buildRegion[r][y]||0:0), 0)),
-          backgroundColor: '#3182ce',
-          borderRadius: 4
-        },
-        {
-          label: '現住所（合計）',
-          data: regionOrder.map(r => years.reduce((s,y) => s + (curRegion[r]?curRegion[r][y]||0:0), 0)),
-          backgroundColor: '#e53e3e',
-          borderRadius: 4
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
-      scales: {
-        x: { grid: { display: false } },
-        y: { beginAtZero: true, ticks: { font: { size: 11 } } }
-      }
-    }
-  });
-
-  // --- 成約率 横棒 ---
-  const convEntries = Object.entries(buildConv);
-  makeHBarChart('convChart',
-    convEntries.map(([p]) => p),
-    convEntries.map(([,v]) => v.rate),
-    convEntries.map(([,v]) => v.rate >= 7 ? '#276749' : v.rate >= 5 ? '#3182ce' : '#718096')
-  );
-
-  // Nav scroll spy
-  const sections = document.querySelectorAll('.section');
-  const navLinks = document.querySelectorAll('.nav a');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 80) current = s.id;
-    });
-    navLinks.forEach(a => {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-    });
-  });
+// Cross chart
+new Chart(document.getElementById('crossChart'), {
+  type:'bar',
+  data:{
+    labels:["長野県", "千葉県", "東京都", "神奈川県", "北海道", "山梨県", "兵庫県", "静岡県", "埼玉県", "愛知県"],
+    datasets:[
+      {label:'建設予定地',data:[1374, 1108, 934, 866, 801, 645, 616, 558, 462, 437],backgroundColor:'rgba(49,130,206,0.7)',borderColor:'#3182ce',borderWidth:1},
+      {label:'現住所',data:[556, 879, 2413, 1393, 644, 163, 611, 406, 637, 616],backgroundColor:'rgba(56,161,105,0.7)',borderColor:'#38a169',borderWidth:1}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:LEGEND},scales:{x:{ticks:TICK,grid:GRID},y:{ticks:TICK,grid:GRID}}}
 });
 
-function switchTab(group, tabId) {
-  document.querySelectorAll(`[id^="${group}-"]`).forEach(el => el.classList.remove('active'));
-  document.querySelectorAll(`#${group}-${tabId}`).forEach(el => el.classList.add('active'));
-  document.querySelectorAll(`.tab-btn`).forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${tabId}'`));
+// Build yearly chart
+const buildDs = [{"label": "長野県", "data": [291, 283, 277, 265, 247], "backgroundColor": "#3182ce", "borderColor": "#3182ce", "borderWidth": 2}, {"label": "千葉県", "data": [272, 254, 263, 177, 138], "backgroundColor": "#e53e3e", "borderColor": "#e53e3e", "borderWidth": 2}, {"label": "東京都", "data": [232, 217, 176, 170, 137], "backgroundColor": "#38a169", "borderColor": "#38a169", "borderWidth": 2}, {"label": "神奈川県", "data": [222, 216, 172, 135, 117], "backgroundColor": "#d69e2e", "borderColor": "#d69e2e", "borderWidth": 2}, {"label": "北海道", "data": [187, 155, 161, 168, 121], "backgroundColor": "#805ad5", "borderColor": "#805ad5", "borderWidth": 2}, {"label": "山梨県", "data": [117, 134, 105, 138, 144], "backgroundColor": "#dd6b20", "borderColor": "#dd6b20", "borderWidth": 2}, {"label": "兵庫県", "data": [162, 148, 131, 103, 70], "backgroundColor": "#00b5d8", "borderColor": "#00b5d8", "borderWidth": 2}, {"label": "静岡県", "data": [134, 109, 114, 104, 91], "backgroundColor": "#e84393", "borderColor": "#e84393", "borderWidth": 2}, {"label": "埼玉県", "data": [129, 94, 100, 70, 68], "backgroundColor": "#2f855a", "borderColor": "#2f855a", "borderWidth": 2}, {"label": "愛知県", "data": [114, 98, 85, 79, 58], "backgroundColor": "#975a16", "borderColor": "#975a16", "borderWidth": 2}, {"label": "福岡県", "data": [117, 102, 74, 59, 48], "backgroundColor": "#2b6cb0", "borderColor": "#2b6cb0", "borderWidth": 2}, {"label": "大阪府", "data": [101, 91, 87, 79, 37], "backgroundColor": "#9b2c2c", "borderColor": "#9b2c2c", "borderWidth": 2}, {"label": "茨城県", "data": [78, 78, 81, 65, 50], "backgroundColor": "#276749", "borderColor": "#276749", "borderWidth": 2}, {"label": "栃木県", "data": [68, 62, 69, 58, 68], "backgroundColor": "#b7791f", "borderColor": "#b7791f", "borderWidth": 2}, {"label": "滋賀県", "data": [71, 64, 69, 62, 42], "backgroundColor": "#6b46c1", "borderColor": "#6b46c1", "borderWidth": 2}, {"label": "群馬県", "data": [58, 60, 52, 70, 45], "backgroundColor": "#c05621", "borderColor": "#c05621", "borderWidth": 2}, {"label": "京都", "data": [76, 51, 62, 36, 42], "backgroundColor": "#086f83", "borderColor": "#086f83", "borderWidth": 2}, {"label": "宮城県", "data": [55, 63, 65, 43, 39], "backgroundColor": "#b83280", "borderColor": "#b83280", "borderWidth": 2}, {"label": "福島県", "data": [65, 63, 47, 46, 36], "backgroundColor": "#22543d", "borderColor": "#22543d", "borderWidth": 2}, {"label": "岐阜県", "data": [59, 45, 49, 56, 37], "backgroundColor": "#744210", "borderColor": "#744210", "borderWidth": 2}];
+new Chart(document.getElementById('buildChart'), {
+  type:'bar',
+  data:{labels:YEARS,datasets:buildDs},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:LEGEND},
+    scales:{x:{stacked:true,ticks:TICK,grid:GRID},y:{stacked:true,ticks:TICK,grid:GRID}}
+  }
+});
+
+// Home yearly chart
+const homeDs = [{"label": "東京都", "data": [563, 538, 434, 462, 401], "backgroundColor": "#3182ce", "borderColor": "#3182ce", "borderWidth": 2}, {"label": "神奈川県", "data": [330, 317, 283, 246, 206], "backgroundColor": "#e53e3e", "borderColor": "#e53e3e", "borderWidth": 2}, {"label": "千葉県", "data": [200, 191, 211, 156, 118], "backgroundColor": "#38a169", "borderColor": "#38a169", "borderWidth": 2}, {"label": "大阪府", "data": [183, 158, 160, 145, 88], "backgroundColor": "#d69e2e", "borderColor": "#d69e2e", "borderWidth": 2}, {"label": "北海道", "data": [163, 123, 133, 130, 91], "backgroundColor": "#805ad5", "borderColor": "#805ad5", "borderWidth": 2}, {"label": "埼玉県", "data": [164, 135, 143, 107, 87], "backgroundColor": "#dd6b20", "borderColor": "#dd6b20", "borderWidth": 2}, {"label": "愛知県", "data": [153, 129, 115, 120, 95], "backgroundColor": "#00b5d8", "borderColor": "#00b5d8", "borderWidth": 2}, {"label": "兵庫県", "data": [160, 140, 136, 97, 74], "backgroundColor": "#e84393", "borderColor": "#e84393", "borderWidth": 2}, {"label": "長野県", "data": [123, 120, 119, 95, 97], "backgroundColor": "#2f855a", "borderColor": "#2f855a", "borderWidth": 2}, {"label": "福岡県", "data": [127, 109, 85, 65, 51], "backgroundColor": "#975a16", "borderColor": "#975a16", "borderWidth": 2}, {"label": "静岡県", "data": [88, 77, 83, 81, 73], "backgroundColor": "#2b6cb0", "borderColor": "#2b6cb0", "borderWidth": 2}, {"label": "京都", "data": [88, 63, 82, 49, 55], "backgroundColor": "#9b2c2c", "borderColor": "#9b2c2c", "borderWidth": 2}, {"label": "茨城県", "data": [62, 65, 67, 54, 39], "backgroundColor": "#276749", "borderColor": "#276749", "borderWidth": 2}, {"label": "宮城県", "data": [53, 61, 70, 45, 30], "backgroundColor": "#b7791f", "borderColor": "#b7791f", "borderWidth": 2}, {"label": "広島県", "data": [68, 50, 50, 47, 34], "backgroundColor": "#6b46c1", "borderColor": "#6b46c1", "borderWidth": 2}, {"label": "福島県", "data": [58, 50, 40, 36, 32], "backgroundColor": "#c05621", "borderColor": "#c05621", "borderWidth": 2}, {"label": "群馬県", "data": [32, 43, 40, 41, 35], "backgroundColor": "#086f83", "borderColor": "#086f83", "borderWidth": 2}, {"label": "栃木県", "data": [39, 41, 32, 24, 45], "backgroundColor": "#b83280", "borderColor": "#b83280", "borderWidth": 2}, {"label": "岐阜県", "data": [44, 31, 38, 41, 26], "backgroundColor": "#22543d", "borderColor": "#22543d", "borderWidth": 2}, {"label": "鹿児島県", "data": [34, 46, 32, 39, 21], "backgroundColor": "#744210", "borderColor": "#744210", "borderWidth": 2}];
+new Chart(document.getElementById('homeChart'), {
+  type:'bar',
+  data:{labels:YEARS,datasets:homeDs},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:LEGEND},
+    scales:{x:{stacked:true,ticks:TICK,grid:GRID},y:{stacked:true,ticks:TICK,grid:GRID}}
+  }
+});
+
+// Build conv chart
+new Chart(document.getElementById('buildConvChart'), {
+  type:'bar',
+  data:{
+    labels:["富山県", "島根県", "山梨県", "青森県", "鳥取県", "佐賀県", "群馬県", "宮崎県", "長野県", "兵庫県", "石川県", "茨城県", "山形県", "千葉県", "岡山県"],
+    datasets:[{
+      label:'発注率(%)',
+      data:[5.1, 3.4, 2.9, 2.9, 2.5, 2.5, 2.4, 2.2, 2.1, 1.9, 1.7, 1.7, 1.7, 1.5, 1.5],
+      backgroundColor:["富山県", "島根県", "山梨県", "青森県", "鳥取県", "佐賀県", "群馬県", "宮崎県", "長野県", "兵庫県", "石川県", "茨城県", "山形県", "千葉県", "岡山県"].map(l=>{
+        const r={"富山県": {"total": 98, "ordered": 5, "rate": 5.1}, "島根県": {"total": 88, "ordered": 3, "rate": 3.4}, "山梨県": {"total": 645, "ordered": 19, "rate": 2.9}, "青森県": {"total": 138, "ordered": 4, "rate": 2.9}, "鳥取県": {"total": 79, "ordered": 2, "rate": 2.5}, "佐賀県": {"total": 81, "ordered": 2, "rate": 2.5}, "群馬県": {"total": 287, "ordered": 7, "rate": 2.4}, "宮崎県": {"total": 138, "ordered": 3, "rate": 2.2}, "長野県": {"total": 1374, "ordered": 29, "rate": 2.1}, "兵庫県": {"total": 616, "ordered": 12, "rate": 1.9}, "石川県": {"total": 120, "ordered": 2, "rate": 1.7}, "茨城県": {"total": 353, "ordered": 6, "rate": 1.7}, "山形県": {"total": 119, "ordered": 2, "rate": 1.7}, "千葉県": {"total": 1108, "ordered": 17, "rate": 1.5}, "岡山県": {"total": 196, "ordered": 3, "rate": 1.5}}[l]?.rate||0;
+        return r>=3?'rgba(39,103,73,0.7)':r>=2?'rgba(43,108,176,0.7)':'rgba(113,128,150,0.7)';
+      }),
+      borderWidth:1
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{x:{ticks:{...TICK,callback:v=>v+'%'},grid:GRID},y:{ticks:TICK,grid:GRID}}
+  }
+});
+
+// Region stacked charts
+const buildRegDs = [{"label": "北海道", "data": [187, 155, 161, 168, 121], "backgroundColor": "#3182ce"}, {"label": "東北", "data": [257, 242, 228, 178, 157], "backgroundColor": "#805ad5"}, {"label": "関東", "data": [1059, 981, 913, 745, 623], "backgroundColor": "#e53e3e"}, {"label": "中部", "data": [790, 780, 728, 750, 638], "backgroundColor": "#38a169"}, {"label": "近畿", "data": [462, 412, 378, 332, 219], "backgroundColor": "#d69e2e"}, {"label": "中国", "data": [192, 160, 146, 138, 101], "backgroundColor": "#00b5d8"}, {"label": "四国", "data": [97, 89, 75, 51, 46], "backgroundColor": "#e84393"}, {"label": "九州", "data": [370, 327, 308, 262, 196], "backgroundColor": "#dd6b20"}];
+new Chart(document.getElementById('buildRegionChart'), {
+  type:'bar',
+  data:{labels:YEARS,datasets:buildRegDs},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:LEGEND},
+    scales:{x:{stacked:true,ticks:TICK,grid:GRID},y:{stacked:true,ticks:TICK,grid:GRID}}
+  }
+});
+
+const homeRegDs = [{"label": "北海道", "data": [163, 123, 133, 130, 91], "backgroundColor": "#3182ce"}, {"label": "東北", "data": [221, 212, 206, 151, 125], "backgroundColor": "#805ad5"}, {"label": "関東", "data": [1390, 1330, 1210, 1090, 931], "backgroundColor": "#e53e3e"}, {"label": "中部", "data": [522, 495, 473, 464, 378], "backgroundColor": "#38a169"}, {"label": "近畿", "data": [487, 428, 409, 347, 246], "backgroundColor": "#d69e2e"}, {"label": "中国", "data": [168, 146, 126, 128, 95], "backgroundColor": "#00b5d8"}, {"label": "四国", "data": [95, 82, 61, 49, 39], "backgroundColor": "#e84393"}, {"label": "九州", "data": [346, 294, 283, 232, 171], "backgroundColor": "#dd6b20"}];
+new Chart(document.getElementById('homeRegionChart'), {
+  type:'bar',
+  data:{labels:YEARS,datasets:homeRegDs},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:LEGEND},
+    scales:{x:{stacked:true,ticks:TICK,grid:GRID},y:{stacked:true,ticks:TICK,grid:GRID}}
+  }
+});
+
+// Nav active on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', ()=>{
+  let cur='';
+  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-80) cur=s.id; });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href')==='#'+cur);
   });
-}
+});
 </script>
 </body>
 </html>
