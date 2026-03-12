@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALO本部 カタログ請求分析レポート</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',sans-serif;background:#f0f2f5;color:#2c3e50;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+h1{font-size:1.8rem;font-weight:700;margin-bottom:8px;color:#1e293b}
+.subtitle{color:#64748b;font-size:0.95rem;margin-bottom:24px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-left:4px solid #2563eb}
+.kpi.warn{border-left-color:#f59e0b}
+.kpi.good{border-left-color:#10b981}
+.kpi .label{font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.5px}
+.kpi .value{font-size:1.8rem;font-weight:700;color:#1e293b;margin:4px 0}
+.kpi .sub{font-size:0.85rem;color:#94a3b8}
+.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.card h2{font-size:1.2rem;font-weight:600;margin-bottom:16px;color:#1e293b;border-bottom:2px solid #e2e8f0;padding-bottom:8px}
+.insight-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:16px;margin-bottom:20px}
+.insight-box h3{color:#1e40af;font-size:1rem;margin-bottom:8px}
+.insight-box ul{margin-left:20px;color:#1e3a5f}
+.insight-box li{margin-bottom:6px;font-size:0.92rem}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:768px){.chart-row{grid-template-columns:1fr}}
+.chart-box{position:relative;height:320px}
+.compare-box{background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:16px;margin-bottom:20px}
+.compare-box h3{color:#92400e;font-size:1rem;margin-bottom:8px}
+table{width:100%;border-collapse:collapse;font-size:0.9rem}
+th{background:#f1f5f9;padding:10px 12px;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}
+td{padding:10px 12px;border-bottom:1px solid #f1f5f9}
+tr:hover{background:#f8fafc}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600}
+.tag-blue{background:#dbeafe;color:#1d4ed8}
+.tag-green{background:#d1fae5;color:#065f46}
+.tag-red{background:#fee2e2;color:#991b1b}
+.rate-bar{display:inline-block;height:8px;background:#2563eb;border-radius:4px;margin-right:8px;vertical-align:middle}
+footer{text-align:center;padding:20px;color:#94a3b8;font-size:0.8rem}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>TALO本部 カタログ請求分析レポート</h1>
+<p class="subtitle">2021〜2025年 カタログ請求データ（列228 物件番号ベース）｜建設予定地: 列223</p>
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi"><div class="label">総リード数</div><div class="value">8,084</div><div class="sub">全体14,714件の54.9%</div></div>
+  <div class="kpi warn"><div class="label">発注数</div><div class="value">59</div><div class="sub">発注率 0.73%</div></div>
+  <div class="kpi"><div class="label">ホット顧客</div><div class="value">3,797</div><div class="sub">47.0% がホット判定</div></div>
+  <div class="kpi good"><div class="label">ホット発注率</div><div class="value">1.26%</div><div class="sub">48件 / 一般の2.98倍</div></div>
+  <div class="kpi warn"><div class="label">代理店比較</div><div class="value">0.73%<span style="font-size:0.9rem;color:#ef4444"> vs 1.98%</span></div><div class="sub">代理店の約1/3の発注率</div></div>
+</div>
+
+<!-- Insights -->
+<div class="insight-box">
+  <h3>主要インサイト</h3>
+  <ul>
+    <li><strong>発注率の課題:</strong> TALO本部 0.73% は代理店全体 1.98% の約1/3。リード数は多いがコンバージョンが低い</li>
+    <li><strong>担当者OH:</strong> 3,268件担当（本部の40%）で発注率1.10%。2024年は1.78%と上昇傾向</li>
+    <li><strong>担当者JO:</strong> 2,642件担当で0.61%。2023年の1.61%から2024年に0.22%へ急落</li>
+    <li><strong>セミセルフ:</strong> わずか22件だが発注率9.09%。小さい母数ながら高コンバージョン</li>
+    <li><strong>工務店希望:</strong> 1,162件で発注率1.89%（本部平均の2.6倍）</li>
+    <li><strong>1年以内建設:</strong> 1,517件で発注率1.71%。半年以内は532件で1.32%</li>
+    <li><strong>予算3000万台:</strong> 発注率2.04%で最も高い予算帯。2500万以上で発注率が明確に上昇</li>
+    <li><strong>建設予定地:</strong> 長野県が最多1,005件（発注率1.69%）、次いで山梨525件（1.52%）、群馬278件（2.16%）</li>
+    <li><strong>Instagram:</strong> 1,302件（16%）と急成長だが発注率は0.38%と最低水準</li>
+  </ul>
+</div>
+
+<!-- Compare -->
+<div class="compare-box">
+  <h3>TALO本部 vs 代理店 比較</h3>
+  <table>
+    <tr><th></th><th>TALO本部</th><th>代理店合計</th></tr>
+    <tr><td>リード数</td><td>8,084件（54.9%）</td><td>6,630件（45.1%）</td></tr>
+    <tr><td>発注数</td><td>59件</td><td>131件</td></tr>
+    <tr><td>発注率</td><td><span class="tag tag-red">0.73%</span></td><td><span class="tag tag-green">1.98%</span></td></tr>
+    <tr><td>特徴</td><td>Web集客中心・広域分散</td><td>地域密着・対面営業</td></tr>
+  </table>
+</div>
+
+<!-- Year trend -->
+<div class="card">
+  <h2>年度別推移</h2>
+  <div class="chart-box"><canvas id="yearChart"></canvas></div>
+</div>
+
+<!-- Staff -->
+<div class="card">
+  <h2>担当者別 年度推移（OH / JO）</h2>
+  <div class="chart-row">
+    <div class="chart-box"><canvas id="staffOH"></canvas></div>
+    <div class="chart-box"><canvas id="staffJO"></canvas></div>
+  </div>
+</div>
+
+<!-- Source -->
+<div class="chart-row">
+  <div class="card"><h2>情報源別</h2><div class="chart-box"><canvas id="srcChart"></canvas></div></div>
+  <div class="card"><h2>建設方法別</h2><div class="chart-box"><canvas id="metChart"></canvas></div></div>
+</div>
+
+<!-- Timing / Budget -->
+<div class="chart-row">
+  <div class="card"><h2>建設時期別</h2><div class="chart-box"><canvas id="timChart"></canvas></div></div>
+  <div class="card"><h2>予算帯別</h2><div class="chart-box"><canvas id="budChart"></canvas></div></div>
+</div>
+
+<!-- Usage -->
+<div class="card">
+  <h2>用途別</h2>
+  <div class="chart-box" style="height:260px"><canvas id="useChart"></canvas></div>
+</div>
+
+<!-- Prefecture -->
+<div class="card">
+  <h2>建設予定地 TOP15 <span class="tag tag-blue">建設予定地（列223）</span></h2>
+  <div class="chart-box" style="height:400px"><canvas id="prefChart"></canvas></div>
+</div>
+
+<!-- Hot -->
+<div class="card">
+  <h2>ホット顧客 年度推移</h2>
+  <p style="color:#64748b;font-size:0.85rem;margin-bottom:12px">定義: 建設時期1年以内 OR 予算2500万以上 OR 工務店/セミセルフ（OR条件）</p>
+  <div class="chart-box"><canvas id="hotChart"></canvas></div>
+</div>
+
+<!-- Pref Table -->
+<div class="card">
+  <h2>建設予定地 発注率テーブル TOP15</h2>
+  <table>
+    <tr><th>都道府県</th><th>件数</th><th>発注</th><th>発注率</th><th></th></tr>
+    <tr><td>長野県</td><td>1,005</td><td>17</td><td>1.69%</td><td><span class="rate-bar" style="width:85px"></span></td></tr>
+    <tr><td>東京都</td><td>905</td><td>1</td><td>0.11%</td><td><span class="rate-bar" style="width:6px"></span></td></tr>
+    <tr><td>神奈川県</td><td>806</td><td>3</td><td>0.37%</td><td><span class="rate-bar" style="width:19px"></span></td></tr>
+    <tr><td>山梨県</td><td>525</td><td>8</td><td>1.52%</td><td><span class="rate-bar" style="width:76px"></span></td></tr>
+    <tr><td>福岡県</td><td>397</td><td>3</td><td>0.76%</td><td><span class="rate-bar" style="width:38px"></span></td></tr>
+    <tr><td>茨城県</td><td>338</td><td>2</td><td>0.59%</td><td><span class="rate-bar" style="width:30px"></span></td></tr>
+    <tr><td>愛知県</td><td>332</td><td>2</td><td>0.60%</td><td><span class="rate-bar" style="width:30px"></span></td></tr>
+    <tr><td>栃木県</td><td>284</td><td>1</td><td>0.35%</td><td><span class="rate-bar" style="width:18px"></span></td></tr>
+    <tr><td>群馬県</td><td>278</td><td>6</td><td>2.16%</td><td><span class="rate-bar" style="width:108px"></span></td></tr>
+    <tr><td>宮城県</td><td>264</td><td>1</td><td>0.38%</td><td><span class="rate-bar" style="width:19px"></span></td></tr>
+    <tr><td>埼玉県</td><td>247</td><td>1</td><td>0.40%</td><td><span class="rate-bar" style="width:20px"></span></td></tr>
+    <tr><td>三重県</td><td>185</td><td>1</td><td>0.54%</td><td><span class="rate-bar" style="width:27px"></span></td></tr>
+    <tr><td>熊本県</td><td>174</td><td>0</td><td>0.00%</td><td></td></tr>
+    <tr><td>新潟県</td><td>168</td><td>0</td><td>0.00%</td><td></td></tr>
+    <tr><td>北海道</td><td>151</td><td>1</td><td>0.66%</td><td><span class="rate-bar" style="width:33px"></span></td></tr>
+  </table>
+</div>
+
+</div>
+
+<footer>TALO International Inc. カタログ請求データ分析 | 列228（物件番号）ベース | 建設予定地=列223</footer>
+
+<script>
+const C = Chart;
+const gridColor = 'rgba(0,0,0,0.06)';
+const tickColor = '#64748b';
+const blue = '#2563eb';
+const orange = '#f59e0b';
+const green = '#10b981';
+const red = '#ef4444';
+
+function dualChart(id, labels, counts, rates, barLabel, lineLabel, barColor){
+  new C(document.getElementById(id),{type:'bar',data:{labels,datasets:[
+    {type:'bar',label:barLabel,data:counts,backgroundColor:barColor||blue+'99',borderRadius:6,yAxisID:'y'},
+    {type:'line',label:lineLabel,data:rates,borderColor:red,backgroundColor:red+'33',tension:0.3,pointRadius:5,yAxisID:'y1'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tickColor}}},scales:{
+    y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:tickColor}},
+    y1:{position:'right',beginAtZero:true,grid:{display:false},ticks:{color:red,callback:v=>v+'%'}},
+    x:{grid:{display:false},ticks:{color:tickColor}}
+  }}});
+}
+
+function barRateChart(id, labels, counts, rates, color){
+  new C(document.getElementById(id),{type:'bar',data:{labels,datasets:[
+    {label:'件数',data:counts,backgroundColor:color||blue+'99',borderRadius:6,yAxisID:'y'},
+    {type:'line',label:'発注率',data:rates,borderColor:red,tension:0.3,pointRadius:4,yAxisID:'y1'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tickColor}}},scales:{
+    y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:tickColor}},
+    y1:{position:'right',beginAtZero:true,grid:{display:false},ticks:{color:red,callback:v=>v+'%'}},
+    x:{grid:{display:false},ticks:{color:tickColor,maxRotation:45}}
+  }}});
+}
+
+// Year
+dualChart('yearChart',['2021','2022','2023','2024','2025'],[1827,1731,1651,1571,1272],[0.44,0.58,0.91,0.83,0.86],'リード数','発注率');
+
+// Staff OH
+dualChart('staffOH',['2021','2022','2023','2024','2025'],[705,709,631,618,590],[0.57,0.99,0.79,1.78,1.36],'OH件数','OH発注率','#3b82f699');
+
+// Staff JO
+dualChart('staffJO',['2021','2022','2023','2024','2025'],[858,650,434,460,240],[0.35,0.31,1.61,0.22,0.83],'JO件数','JO発注率','#8b5cf699');
+
+// Source
+barRateChart('srcChart',['Google','その他','Instagram','Yahoo!','田舎暮らし','Facebook','代理店経由'],[3082,1855,1302,1139,380,272,54],[0.58,1.35,0.38,0.53,0.79,0.0,3.7],'#0ea5e999');
+
+// Method
+barRateChart('metChart',['その他/未記入','未定','工務店','セルフビルド','セミセルフ'],[4496,1868,1162,536,22],[0.42,0.43,1.89,1.49,9.09],'#10b98199');
+
+// Timing
+barRateChart('timChart',['半年以内','1年以内','未定','その他/未記入'],[532,1517,3132,2903],[1.32,1.71,0.16,0.72],'#f59e0b99');
+
+// Budget
+barRateChart('budChart',['〜1000万','1500万','2000万','2500万','3000万','3500万','4000万〜','その他'],[2233,1765,1612,781,489,226,240,738],[0.22,0.34,0.56,1.41,2.04,1.33,1.67,1.49],'#6366f199');
+
+// Usage
+barRateChart('useChart',['住宅','別荘','その他/未記入','商業/公共','離れ'],[4230,2123,1347,373,11],[0.64,0.99,0.74,0.0,9.09],'#ec489999');
+
+// Prefecture
+new C(document.getElementById('prefChart'),{type:'bar',data:{labels:['長野','東京','神奈川','山梨','福岡','茨城','愛知','栃木','群馬','宮城','埼玉','三重','熊本','新潟','北海道'],datasets:[
+  {label:'件数',data:[1005,905,806,525,397,338,332,284,278,264,247,185,174,168,151],backgroundColor:'#2563eb99',borderRadius:6,yAxisID:'y'},
+  {type:'line',label:'発注率',data:[1.69,0.11,0.37,1.52,0.76,0.59,0.60,0.35,2.16,0.38,0.40,0.54,0.00,0.00,0.66],borderColor:red,tension:0.3,pointRadius:4,yAxisID:'y1'}
+]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:tickColor}}},scales:{
+  y:{grid:{display:false},ticks:{color:tickColor}},
+  x:{beginAtZero:true,grid:{color:gridColor},ticks:{color:tickColor}},
+  y1:{position:'top',beginAtZero:true,grid:{display:false},ticks:{color:red,callback:v=>v+'%'}}
+}}});
+
+// Hot
+dualChart('hotChart',['2021','2022','2023','2024','2025'],[881,851,687,749,610],[0.91,1.06,1.60,1.20,1.48],'ホット顧客数','ホット発注率','#10b98199');
+</script>
+</body>
+</html>
