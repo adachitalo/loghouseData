@@ -2,219 +2,356 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NH代理店 分析レポート</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NH代理店 分析レポート | TALOログハウス</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg:#0f172a; --card:#1e293b; --border:#334155; --text:#e2e8f0; --muted:#94a3b8;
-    --accent:#34d399; --blue:#38bdf8; --orange:#fb923c; --purple:#a78bfa; --yellow:#fbbf24; --red:#f87171;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.5;}
-  .page-header{background:linear-gradient(135deg,#0c2e1a 0%,#145230 50%,#0c2a1c 100%);padding:40px 32px 36px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
-  .page-header::after{content:'';position:absolute;right:-60px;top:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(52,211,153,0.08) 0%,transparent 70%);pointer-events:none;}
-  .header-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);border-radius:20px;padding:4px 14px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
-  .header-badge::before{content:'●';font-size:8px;}
-  .page-header h1{font-size:28px;font-weight:700;margin-bottom:6px;}
-  .page-header p{color:var(--muted);font-size:13px;}
-  .header-note{display:inline-block;margin-top:10px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:4px 12px;font-size:12px;color:var(--blue);}
-  .container{max-width:1200px;margin:0 auto;padding:28px 24px;}
-  .section-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-left:2px;}
-  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;}
-  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px;}
-  .kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;}
-  .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-  .kpi.green::before{background:var(--accent);} .kpi.blue::before{background:var(--blue);} .kpi.orange::before{background:var(--orange);} .kpi.purple::before{background:var(--purple);}
-  .kpi-label{font-size:11px;color:var(--muted);margin-bottom:8px;}
-  .kpi-val{font-size:32px;font-weight:700;line-height:1;margin-bottom:4px;}
-  .kpi.green .kpi-val{color:var(--accent);} .kpi.blue .kpi-val{color:var(--blue);} .kpi.orange .kpi-val{color:var(--orange);} .kpi.purple .kpi-val{color:var(--purple);}
-  .kpi-sub{font-size:12px;color:var(--muted);}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
-  .card h3{font-size:13px;font-weight:600;margin-bottom:16px;color:var(--text);}
-  .chart-wrap{position:relative;}
-  .insight{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:12px;color:#a7f3d0;line-height:1.6;}
-  .insight-warn{background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:12px;color:#fde68a;line-height:1.6;}
-  table{width:100%;border-collapse:collapse;font-size:12px;}
-  th{background:#0f172a;color:var(--muted);font-weight:600;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:0.5px;}
-  td{padding:10px 12px;border-bottom:1px solid #1e293b;vertical-align:top;}
-  tr:hover td{background:rgba(255,255,255,0.02);}
-  .rate-bar{display:flex;align-items:center;gap:8px;}
-  .bar{height:6px;border-radius:3px;background:var(--accent);min-width:2px;}
-  .rate-val{font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;}
-  .obj-num{font-family:monospace;color:var(--blue);font-weight:600;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+
+/* ── ヘッダー ── */
+.page-header{background:linear-gradient(135deg,#0891b2 0%,#67e8f9 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M20 20.5V18H0v5h5v5H0v5h20v-5h15v-4.5zm0 2v1.5H15V22h5zm-5 4h5v1H15v-1z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-header .badge{display:inline-block;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;position:relative}
+.page-header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:700;color:#fff;position:relative}
+.page-header p{font-size:.9rem;color:rgba(255,255,255,.8);margin-top:.5rem;position:relative}
+.back-link{position:absolute;top:1rem;left:1.25rem;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;display:flex;align-items:center;gap:.3rem}
+.back-link:hover{color:#fff}
+
+/* ── コンテナ ── */
+.container{max-width:1200px;margin:0 auto;padding:2rem 1.25rem}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.75rem}
+.kpi{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;border-left:4px solid #0891b2;transition:transform .15s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi-val{font-size:1.9rem;font-weight:700;color:#67e8f9;line-height:1}
+.kpi-label{font-size:.78rem;color:#94a3b8;margin-top:.4rem;line-height:1.4}
+.kpi-sub{font-size:.72rem;color:#64748b;margin-top:.2rem}
+
+/* ── インサイトボックス ── */
+.insight{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.75rem;border-left:4px solid #0891b2}
+.insight p{font-size:.88rem;line-height:1.8;color:#cbd5e1}
+.insight strong{color:#67e8f9}
+
+/* ── セクション ── */
+.section-title{font-size:1.05rem;font-weight:700;color:#e2e8f0;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #0891b2;display:flex;align-items:center;gap:.5rem}
+
+/* ── グリッド ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+
+/* ── カード ── */
+.card{background:#1e293b;border-radius:12px;padding:1.4rem}
+.card-full{background:#1e293b;border-radius:12px;padding:1.4rem;margin-bottom:1.25rem}
+.card h3,.card-full h3{font-size:.88rem;font-weight:600;color:#94a3b8;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #334155;padding-bottom:.6rem}
+
+/* ── チャート ── */
+.chart-sm{position:relative;height:220px}
+.chart-md{position:relative;height:260px}
+.chart-lg{position:relative;height:300px}
+
+/* ── テーブル ── */
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead th{background:#0f172a;color:#64748b;padding:.6rem .8rem;text-align:left;font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.4px}
+tbody td{padding:.6rem .8rem;border-bottom:1px solid #0f172a;color:#e2e8f0;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#243447}
+
+/* ── バッジ ── */
+.badge-hot{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:9999px;font-size:.75rem;font-weight:600;background:rgba(251,191,36,.15);color:#fbbf24}
+.badge-normal{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:9999px;font-size:.75rem;font-weight:600;background:rgba(100,116,139,.15);color:#94a3b8}
+
+/* ── フッター ── */
+.page-footer{text-align:center;padding:2rem;font-size:.78rem;color:#475569;border-top:1px solid #1e293b;margin-top:2rem}
+.page-footer a{color:#0891b2;text-decoration:none}
+
+@media(max-width:768px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .kpi-val{font-size:1.5rem}
+}
 </style>
 </head>
 <body>
+
 <div class="page-header">
-  <div class="header-badge">代理店分析</div>
-  <h1>NH 代理店 — データ分析レポート</h1>
-  <p>カタログ請求データ分析 ｜ 2021〜2025年（全期間）</p>
-  <span class="header-note">千葉県特化型代理店 ｜ 建設地の96%が千葉県</span>
+  <a class="back-link" href="index.html">← 目次へ戻る</a>
+  <div class="badge">代理店分析レポート</div>
+  <h1>🌊 NH 代理店</h1>
+  <p>千葉県専門代理店 ／ カタログ請求データ 2021–2025年</p>
 </div>
+
 <div class="container">
 
-  <div class="section-title">サマリー</div>
-  <div class="grid-4">
-    <div class="kpi blue">
-      <div class="kpi-label">総請求件数</div>
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi">
       <div class="kpi-val">1,092</div>
-      <div class="kpi-sub">2021〜2025年</div>
+      <div class="kpi-label">総カタログ請求件数</div>
+      <div class="kpi-sub">全体の 7.4%</div>
     </div>
-    <div class="kpi green">
-      <div class="kpi-label">発注件数 / 発注率</div>
+    <div class="kpi">
       <div class="kpi-val">17</div>
-      <div class="kpi-sub">発注率 1.56%（全体平均 1.29%）</div>
+      <div class="kpi-label">発注件数</div>
     </div>
-    <div class="kpi orange">
-      <div class="kpi-label">ホット顧客数</div>
-      <div class="kpi-val">561</div>
-      <div class="kpi-sub">全体の 51.4%</div>
+    <div class="kpi">
+      <div class="kpi-val">1.56%</div>
+      <div class="kpi-label">発注率</div>
+      <div class="kpi-sub">全体平均比 +0.27pt</div>
     </div>
-    <div class="kpi purple">
-      <div class="kpi-label">ホット顧客 発注率</div>
-      <div class="kpi-val">1.96%</div>
-      <div class="kpi-sub">非ホット 1.13%</div>
+    <div class="kpi">
+      <div class="kpi-val">51.4%</div>
+      <div class="kpi-label">ホット顧客率</div>
+      <div class="kpi-sub">561件</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">96.0%</div>
+      <div class="kpi-label">主要建設地集中度</div>
+      <div class="kpi-sub">千葉県 1,048件</div>
     </div>
   </div>
 
-  <div class="section-title">年度別推移 & 地域</div>
+  <!-- インサイト -->
+  <div class="insight">
+    <p>
+      <strong>NH代理店</strong>はカタログ請求 <strong>1,092件</strong>（全体の7.4%）、
+      発注率 <strong>1.56%</strong>（全体平均1.29%比 +0.27pt）。
+      ホット顧客は <strong>561件</strong>（51.4%）で発注率 <strong>1.96%</strong>、
+      非ホット発注率 1.13%。
+      建設予定地の <strong>96.0%</strong> が千葉県に集中している。
+    </p>
+  </div>
+
+  <!-- 年度別推移 -->
+  <div class="section-title">📅 年度別推移</div>
+  <div class="card-full">
+    <h3>年度別 カタログ請求件数・発注数・発注率</h3>
+    <div class="chart-lg"><canvas id="yearChart"></canvas></div>
+  </div>
+
+  <!-- 地域分析 -->
+  <div class="section-title">📍 地域分析</div>
   <div class="grid-2">
     <div class="card">
-      <h3>年度別 — 請求数 / ホット顧客数 / 発注率</h3>
-      <div class="chart-wrap" style="height:240px"><canvas id="yearChart"></canvas></div>
-      <div class="insight">2023年が最高発注率（2.3%）。2024年は0.6%と低迷したが2025年は2.2%に回復。ホット顧客の絶対数は年々減少傾向に注目。</div>
+      <h3>建設予定地 都道府県（上位8）</h3>
+      <div class="chart-md"><canvas id="buildPrefChart"></canvas></div>
     </div>
     <div class="card">
-      <h3>建設予定地 & 現住所（上位）</h3>
-      <div class="chart-wrap" style="height:240px"><canvas id="prefChart"></canvas></div>
-      <div class="insight">建設地は<strong>千葉県が96%（1,048件）</strong>に集中。現住所も千葉（695件）・東京（228件）・神奈川（100件）と首都圏に特化。千葉県内移住・同県建設が主力。</div>
+      <h3>顧客住所 都道府県（上位8）</h3>
+      <div class="chart-md"><canvas id="homePrefChart"></canvas></div>
     </div>
   </div>
 
-  <div class="section-title">情報源・流入チャネル</div>
+  <!-- ホット顧客 -->
+  <div class="section-title">🎯 ホット顧客分析</div>
   <div class="grid-2">
     <div class="card">
-      <h3>情報源別 — 件数</h3>
-      <div class="chart-wrap" style="height:220px"><canvas id="srcCountChart"></canvas></div>
+      <h3>ホット顧客 vs 非ホット顧客</h3>
+      <table>
+        <thead><tr><th>区分</th><th>件数</th><th>割合</th><th>発注数</th><th>発注率</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge-hot">🔥 ホット</span></td>
+            <td>561</td><td>51.4%</td>
+            <td>11</td><td>1.96%</td>
+          </tr>
+          <tr>
+            <td><span class="badge-normal">非ホット</span></td>
+            <td>531</td><td>48.6%</td>
+            <td>6</td><td>1.13%</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="card">
-      <h3>情報源別 — 発注率</h3>
-      <div class="chart-wrap" style="height:220px"><canvas id="srcRateChart"></canvas></div>
-      <div class="insight"><strong>代理店経由（161件）が発注率6.2%</strong>でダントツ1位。Googleは最多件数（359件）だが発注率1.1%。Instagram・Facebook・田舎暮らし/日経からの発注はゼロ。</div>
+      <h3>ホット顧客 発注率比較</h3>
+      <div class="chart-sm"><canvas id="hotChart"></canvas></div>
     </div>
   </div>
 
-  <div class="section-title">顧客属性</div>
+  <!-- 情報源 -->
+  <div class="section-title">📣 情報源分析</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>情報源 件数分布</h3>
+      <div class="chart-md"><canvas id="srcDistChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>情報源別 発注率・件数</h3>
+      <table>
+        <thead><tr><th>情報源</th><th>件数</th><th>発注数</th><th>発注率</th></tr></thead>
+        <tbody><tr>
+          <td>Google</td><td style="text-align:right">359</td>
+          <td style="text-align:right">4</td>
+          <td style="text-align:right">1.11%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:17%"></div>
+            </div>
+          </td></tr><tr>
+          <td>その他</td><td style="text-align:right">218</td>
+          <td style="text-align:right">2</td>
+          <td style="text-align:right">0.92%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:14%"></div>
+            </div>
+          </td></tr><tr>
+          <td>代理店経由</td><td style="text-align:right">161</td>
+          <td style="text-align:right">10</td>
+          <td style="text-align:right">6.21%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:100%"></div>
+            </div>
+          </td></tr><tr>
+          <td>Yahoo!Japan</td><td style="text-align:right">154</td>
+          <td style="text-align:right">1</td>
+          <td style="text-align:right">0.65%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:10%"></div>
+            </div>
+          </td></tr><tr>
+          <td>Instagram</td><td style="text-align:right">139</td>
+          <td style="text-align:right">0</td>
+          <td style="text-align:right">0.0%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:0%"></div>
+            </div>
+          </td></tr><tr>
+          <td>田舎暮らし/日経</td><td style="text-align:right">40</td>
+          <td style="text-align:right">0</td>
+          <td style="text-align:right">0.0%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:0%"></div>
+            </div>
+          </td></tr><tr>
+          <td>Facebook</td><td style="text-align:right">21</td>
+          <td style="text-align:right">0</td>
+          <td style="text-align:right">0.0%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#0891b2;height:4px;border-radius:3px;width:0%"></div>
+            </div>
+          </td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 顧客属性 -->
+  <div class="section-title">🏠 顧客属性</div>
   <div class="grid-3">
     <div class="card">
-      <h3>予算帯 — 件数 & 発注率</h3>
-      <table><thead><tr><th>予算</th><th>件数</th><th>発注率</th></tr></thead><tbody><tr><td>1000万</td><td>285</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>1500万</td><td>195</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>2000万</td><td>193</td><td><div class="rate-bar"><div class="bar" style="width:5px"></div><span class="rate-val">0.5%</span></div></td></tr>
-<tr><td>2500万</td><td>99</td><td><div class="rate-bar"><div class="bar" style="width:34px"></div><span class="rate-val">3.0%</span></div></td></tr>
-<tr><td>3000万</td><td>56</td><td><div class="rate-bar"><div class="bar" style="width:41px"></div><span class="rate-val">3.6%</span></div></td></tr>
-<tr><td>3500万</td><td>15</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>4000万</td><td>18</td><td><div class="rate-bar"><div class="bar" style="width:64px"></div><span class="rate-val">5.6%</span></div></td></tr>
-<tr><td>4000万以上</td><td>5</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>4500万</td><td>5</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>未定</td><td>1</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>その他/未記入</td><td>130</td><td><div class="rate-bar"><div class="bar" style="width:80px"></div><span class="rate-val">6.9%</span></div></td></tr>
-<tr><td>その他</td><td>90</td><td><div class="rate-bar"><div class="bar" style="width:12px"></div><span class="rate-val">1.1%</span></div></td></tr>
-</tbody></table>
-      <div class="insight">1000万・1500万の低予算層が多いが発注ゼロ。記入なし（その他/未記入）の発注率6.9%が最高 — 代理店経由の口コミ顧客と推察。</div>
+      <h3>建設方法</h3>
+      <div class="chart-sm"><canvas id="methodChart"></canvas></div>
     </div>
     <div class="card">
-      <h3>建設予定時期 — 件数 & 発注率</h3>
-      <table><thead><tr><th>時期</th><th>件数</th><th>発注率</th></tr></thead><tbody><tr><td>その他/未記入</td><td>453</td><td><div class="rate-bar"><div class="bar" style="width:80px"></div><span class="rate-val">2.6%</span></div></td></tr>
-<tr><td>未定</td><td>330</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>1年以内</td><td>215</td><td><div class="rate-bar"><div class="bar" style="width:58px"></div><span class="rate-val">1.9%</span></div></td></tr>
-<tr><td>半年以内</td><td>94</td><td><div class="rate-bar"><div class="bar" style="width:33px"></div><span class="rate-val">1.1%</span></div></td></tr>
-</tbody></table>
-      <div class="insight">「未定」が330件と多く発注ゼロ。1年以内の発注率は1.9%。未記入層に12件の発注が集中（代理店経由と相関）。</div>
+      <h3>建設予定時期</h3>
+      <div class="chart-sm"><canvas id="timingChart"></canvas></div>
     </div>
     <div class="card">
-      <h3>建設方法 — 件数 & 発注率</h3>
-      <table><thead><tr><th>方法</th><th>件数</th><th>発注率</th></tr></thead><tbody><tr><td>その他/未記入</td><td>578</td><td><div class="rate-bar"><div class="bar" style="width:31px"></div><span class="rate-val">1.4%</span></div></td></tr>
-<tr><td>未定</td><td>251</td><td><div class="rate-bar"><div class="bar" style="width:17px"></div><span class="rate-val">0.8%</span></div></td></tr>
-<tr><td>工務店</td><td>192</td><td><div class="rate-bar"><div class="bar" style="width:80px"></div><span class="rate-val">3.6%</span></div></td></tr>
-<tr><td>セルフビルド</td><td>59</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-<tr><td>セミセルフ</td><td>12</td><td><div class="rate-bar"><div class="bar" style="width:0px"></div><span class="rate-val">0.0%</span></div></td></tr>
-</tbody></table>
-      <div class="insight"><strong>工務店が発注率3.6%</strong>と最高。セルフビルド（59件）は発注ゼロ。工務店志向の顧客が実際の発注に繋がっている。</div>
+      <h3>用途</h3>
+      <div class="chart-sm"><canvas id="usageChart"></canvas></div>
     </div>
   </div>
 
-  <div class="section-title">発注済み案件一覧（全17件）</div>
-  <div class="card" style="margin-bottom:28px">
-    <table>
-      <thead><tr><th>発送日</th><th>物件番号</th><th>現住所</th><th>建設予定地</th><th>予算</th><th>建設時期</th><th>建設方法</th></tr></thead>
-      <tbody><tr><td>2021.1.31</td><td><span class="obj-num">08-044</span></td><td>千葉県松戸市六高台2-62-304</td><td>山梨県八ヶ岳</td><td>〜3000</td><td>2年〜</td><td></td></tr>
-<tr><td>2023.5.23</td><td><span class="obj-num">19-008</span></td><td>東京都目黒区祐天寺1-11-10グランデュー…</td><td>山梨県</td><td>3500～4000万円位（資金調達方…</td><td>〜2年</td><td>未定</td></tr>
-<tr><td>2021.7.1</td><td><span class="obj-num">21-022</span></td><td>千葉県市原市五井3956-1</td><td>千葉県富津市</td><td>〜1500</td><td>〜半年</td><td>工務店</td></tr>
-<tr><td>2021.7.1</td><td><span class="obj-num">21-023</span></td><td>東京都足立区舎人1-24-4</td><td>千葉県富津市佐貫町49.20.51</td><td></td><td></td><td></td></tr>
-<tr><td>2021.10.11</td><td><span class="obj-num">21−038</span></td><td>千葉県千葉市花見川区幕張本郷2-5-1-10…</td><td>千葉県南房総市久枝字山岸1274番７</td><td></td><td></td><td></td></tr>
-<tr><td>2022.6.17</td><td><span class="obj-num">22-014</span></td><td>千葉県佐倉市山崎166-1-314</td><td>千葉県酒々井町</td><td></td><td>〜1年</td><td>工務店</td></tr>
-<tr><td>2022.3.7</td><td><span class="obj-num">22-002</span></td><td>神奈川県川崎市中原区上平間239-9</td><td>千葉県富津市</td><td></td><td></td><td></td></tr>
-<tr><td>2025.1.24</td><td><span class="obj-num">25-002</span></td><td>千葉県 市川市市川南１丁目 ７－１０</td><td>東京都八王子市初沢町1457-2</td><td>2000～2500万円位（資金調達方…</td><td>三年以内</td><td>工務店</td></tr>
-<tr><td>2021.11.25</td><td><span class="obj-num">21-048</span></td><td>千葉県富津市篠部2224</td><td>千葉県富津市篠部2224-1</td><td></td><td></td><td>工務店</td></tr>
-<tr><td>2023.4.3</td><td><span class="obj-num">23-011</span></td><td>千葉県習志野市屋敷5-10-13</td><td>千葉県習志野市屋敷5-10-13</td><td></td><td></td><td></td></tr>
-<tr><td>2023.12.22</td><td><span class="obj-num">23-041</span></td><td>千葉県 袖ケ浦市三ツ作 1369－1</td><td>千葉県 袖ケ浦市</td><td>2500〜3000万円位（資金調達方…</td><td>〜1年</td><td>工務店</td></tr>
-<tr><td>2023.2.15</td><td><span class="obj-num">23-003</span></td><td>千葉県 佐倉市大崎台 大崎台2-5-17 C…</td><td>千葉県山武市美杉野</td><td>2000～2500万円位（資金調達方…</td><td>二年以内</td><td>未定</td></tr>
-<tr><td>2023.12.22</td><td><span class="obj-num">23-043</span></td><td>東京都 杉並区宮前2-13-22-111 グ…</td><td>千葉県 茂原市六ツ野櫻園南271-7,8</td><td>位（資金調達方法：）</td><td>１年以内</td><td>工務店</td></tr>
-<tr><td>2023.11.10</td><td><span class="obj-num">23-035</span></td><td>東京都品川区大井4-17-13　8F</td><td>千葉県富津市笹毛芹田902-8</td><td>〜2500</td><td>〜1年</td><td>工務店</td></tr>
-<tr><td>2024.1.24</td><td><span class="obj-num">23-042</span></td><td>千葉県鴨川市太尾698</td><td>千葉県富津市</td><td></td><td></td><td></td></tr>
-<tr><td>2025.1.15</td><td><span class="obj-num">25-001</span></td><td>神奈川県横浜市戸塚区平戸5-2-1</td><td>千葉県佐倉市吉見494-15</td><td></td><td></td><td></td></tr>
-<tr><td>2025.12.26</td><td><span class="obj-num">25-021</span></td><td>東京都 板橋区小茂根 3-9-8 コートハウ…</td><td>千葉県 いすみ市岬町中原</td><td>1500〜2000万円位（資金調達方…</td><td>一年以内</td><td></td></tr>
-</tbody>
-    </table>
-  </div>
+</div><!-- /container -->
 
+<div class="page-footer">
+  <a href="index.html">← レポート一覧</a> &nbsp;·&nbsp;
+  <a href="https://github.com/adachitalo/loghouseData" target="_blank">github.com/adachitalo/loghouseData</a>
+  &nbsp;·&nbsp; Generated with Claude (Cowork)
 </div>
 
 <script>
-const cd = {
-  plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
-  scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}},y:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}}}
+const C1='#0891b2', C2='#67e8f9';
+const PIE_COLORS=['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
+const GRID_COLOR='rgba(148,163,184,0.1)';
+const TICK_STYLE={color:'#94a3b8',font:{size:11}};
+const baseScales={
+  x:{ticks:TICK_STYLE,grid:{color:GRID_COLOR}},
+  y:{ticks:TICK_STYLE,grid:{color:GRID_COLOR}}
 };
+const hBarScales={
+  x:{ticks:TICK_STYLE,grid:{color:GRID_COLOR}},
+  y:{ticks:{...TICK_STYLE,font:{size:10}},grid:{display:false}}
+};
+
+// 年度推移（複合グラフ）
 new Chart(document.getElementById('yearChart'),{
-  type:'bar',
   data:{
     labels:["2021", "2022", "2023", "2024", "2025"],
     datasets:[
-      {label:'請求件数',data:[262, 249, 260, 181, 136],backgroundColor:'rgba(52,211,153,0.25)',borderColor:'#34d399',borderWidth:1.5,yAxisID:'y'},
-      {label:'ホット顧客数',data:[136, 122, 149, 83, 69],backgroundColor:'rgba(251,191,36,0.25)',borderColor:'#fbbf24',borderWidth:1.5,yAxisID:'y'},
-      {label:'ホット発注率(%)',data:[2.2, 0.8, 3.4, 0.0, 2.9],type:'line',borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,0.1)',borderWidth:2,pointRadius:5,yAxisID:'y2',tension:0.3},
+      {type:'bar',label:'請求件数',data:[262, 249, 260, 181, 136],backgroundColor:'rgba(99,102,241,0.5)',yAxisID:'y',order:2},
+      {type:'bar',label:'発注件数',data:[5, 2, 6, 1, 3],backgroundColor:C1,yAxisID:'y',order:1},
+      {type:'line',label:'発注率(%)',data:[1.91, 0.8, 2.31, 0.55, 2.21],borderColor:C2,backgroundColor:'transparent',pointBackgroundColor:C2,pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:0}
     ]
   },
-  options:{...cd,plugins:{...cd.plugins,tooltip:{mode:'index'}},scales:{
-    x:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}},
-    y:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'},position:'left'},
-    y2:{ticks:{color:'#38bdf8',callback:v=>v+'%'},grid:{display:false},position:'right'}
-  }}
-});
-new Chart(document.getElementById('prefChart'),{
-  type:'bar',
-  data:{
-    labels:["千葉県", "東京都", "神奈川県", "埼玉県", "その他", "茨城県", "静岡県", "群馬県"],
-    datasets:[{label:'現住所',data:[695, 228, 100, 34, 10, 4, 4, 2],backgroundColor:'rgba(52,211,153,0.4)',borderColor:'#34d399',borderWidth:1.5}]
-  },
-  options:{...cd,indexAxis:'y',
-    plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}},subtitle:{display:true,text:'建設地：千葉1048件 / 東京16件（計1092件）',color:'#fbbf24',font:{size:11},padding:{bottom:8}}},
-    scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}},y:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}}}
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:true,labels:{color:'#94a3b8',font:{size:11},boxWidth:12}}},
+    scales:{
+      x:{ticks:TICK_STYLE,grid:{color:GRID_COLOR}},
+      y:{ticks:TICK_STYLE,grid:{color:GRID_COLOR},title:{display:true,text:'件数',color:'#64748b',font:{size:10}}},
+      y2:{position:'right',ticks:{...TICK_STYLE,callback:v=>v+'%'},grid:{display:false},title:{display:true,text:'発注率',color:'#64748b',font:{size:10}}}
+    }
   }
 });
-const colors=['#34d399','#64748b','#a78bfa','#fb923c','#fbbf24','#38bdf8','#f87171'];
-new Chart(document.getElementById('srcCountChart'),{
+
+// 建設予定地
+new Chart(document.getElementById('buildPrefChart'),{
   type:'bar',
-  data:{labels:["Google", "その他", "代理店経由", "Yahoo!Japan", "Instagram", "田舎暮らし/日経", "Facebook"],datasets:[{label:'件数',data:[359, 218, 161, 154, 139, 40, 21],backgroundColor:colors.map(c=>c+'80'),borderColor:colors,borderWidth:1.5}]},
-  options:{...cd,plugins:{legend:{display:false}}}
+  data:{labels:["\u5343\u8449\u770c", "\u6771\u4eac\u90fd", "\u795e\u5948\u5ddd\u770c", "\u5c71\u68a8\u770c", "\u305d\u306e\u4ed6", "\u8328\u57ce\u770c", "\u7fa4\u99ac\u770c", "\u57fc\u7389\u770c"],datasets:[{data:[1048, 16, 10, 6, 4, 2, 2, 1],backgroundColor:C1+'bb',borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:hBarScales}
 });
-new Chart(document.getElementById('srcRateChart'),{
+
+// 住所
+new Chart(document.getElementById('homePrefChart'),{
   type:'bar',
-  data:{labels:["Google", "その他", "代理店経由", "Yahoo!Japan", "Instagram", "田舎暮らし/日経", "Facebook"],datasets:[{label:'発注率(%)',data:[1.1, 0.9, 6.2, 0.6, 0.0, 0.0, 0.0],backgroundColor:colors.map(c=>c+'80'),borderColor:colors,borderWidth:1.5}]},
-  options:{...cd,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}},y:{ticks:{color:'#94a3b8',callback:v=>v+'%'},grid:{color:'#1e293b'}}}}
+  data:{labels:["\u5343\u8449\u770c", "\u6771\u4eac\u90fd", "\u795e\u5948\u5ddd\u770c", "\u57fc\u7389\u770c", "\u305d\u306e\u4ed6", "\u8328\u57ce\u770c", "\u9759\u5ca1\u770c", "\u7fa4\u99ac\u770c"],datasets:[{data:[695, 228, 100, 34, 10, 4, 4, 2],backgroundColor:'rgba(99,102,241,0.65)',borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:hBarScales}
+});
+
+// ホット vs 非ホット
+new Chart(document.getElementById('hotChart'),{
+  type:'bar',
+  data:{
+    labels:['ホット顧客','非ホット顧客'],
+    datasets:[{data:[1.96,1.13],backgroundColor:[C1,'rgba(100,116,139,0.5)'],borderRadius:6}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.y+'%'}}},
+    scales:{x:{ticks:TICK_STYLE,grid:{display:false}},y:{ticks:{...TICK_STYLE,callback:v=>v+'%'},grid:{color:GRID_COLOR}}}
+  }
+});
+
+// 情報源分布（ドーナツ）
+new Chart(document.getElementById('srcDistChart'),{
+  type:'doughnut',
+  data:{labels:["Google", "\u305d\u306e\u4ed6", "\u4ee3\u7406\u5e97\u7d4c\u7531", "Yahoo!Japan", "Instagram", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[359, 218, 161, 154, 139, 40, 21],backgroundColor:PIE_COLORS,hoverOffset:8,borderWidth:2,borderColor:'#0f172a'}]},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:11},boxWidth:12,padding:10}}}
+  }
+});
+
+// 建設方法
+new Chart(document.getElementById('methodChart'),{
+  type:'doughnut',
+  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "\u5de5\u52d9\u5e97", "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "\u30bb\u30df\u30bb\u30eb\u30d5"],datasets:[{data:[578, 251, 192, 59, 12],backgroundColor:PIE_COLORS,hoverOffset:6,borderWidth:2,borderColor:'#0f172a'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{size:10},boxWidth:10,padding:8}}}}
+});
+
+// 建設時期
+new Chart(document.getElementById('timingChart'),{
+  type:'bar',
+  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "1\u5e74\u4ee5\u5185", "\u534a\u5e74\u4ee5\u5185"],datasets:[{data:[453, 330, 215, 94],backgroundColor:C2+'bb',borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:hBarScales}
+});
+
+// 用途
+new Chart(document.getElementById('usageChart'),{
+  type:'doughnut',
+  data:{labels:["\u4f4f\u5b85", "\u5225\u8358", "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u5546\u696d", "\u96e2\u308c"],datasets:[{data:[542, 315, 190, 42, 3],backgroundColor:PIE_COLORS,hoverOffset:6,borderWidth:2,borderColor:'#0f172a'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{size:10},boxWidth:10,padding:8}}}}
 });
 </script>
 </body>

@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HIDE代理店 分析レポート | TALOログハウス</title>
+<title>CND代理店 分析レポート | TALOログハウス</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
 
 /* ── ヘッダー ── */
-.page-header{background:linear-gradient(135deg,#059669 0%,#6ee7b7 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.page-header{background:linear-gradient(135deg,#be185d 0%,#f9a8d4 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
 .page-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M20 20.5V18H0v5h5v5H0v5h20v-5h15v-4.5zm0 2v1.5H15V22h5zm-5 4h5v1H15v-1z'/%3E%3C/g%3E%3C/svg%3E")}
 .page-header .badge{display:inline-block;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;position:relative}
 .page-header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:700;color:#fff;position:relative}
@@ -23,19 +23,19 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#0f1
 
 /* ── KPI ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.75rem}
-.kpi{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;border-left:4px solid #059669;transition:transform .15s}
+.kpi{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;border-left:4px solid #be185d;transition:transform .15s}
 .kpi:hover{transform:translateY(-2px)}
-.kpi-val{font-size:1.9rem;font-weight:700;color:#6ee7b7;line-height:1}
+.kpi-val{font-size:1.9rem;font-weight:700;color:#f9a8d4;line-height:1}
 .kpi-label{font-size:.78rem;color:#94a3b8;margin-top:.4rem;line-height:1.4}
 .kpi-sub{font-size:.72rem;color:#64748b;margin-top:.2rem}
 
 /* ── インサイトボックス ── */
-.insight{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.75rem;border-left:4px solid #059669}
+.insight{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.75rem;border-left:4px solid #be185d}
 .insight p{font-size:.88rem;line-height:1.8;color:#cbd5e1}
-.insight strong{color:#6ee7b7}
+.insight strong{color:#f9a8d4}
 
 /* ── セクション ── */
-.section-title{font-size:1.05rem;font-weight:700;color:#e2e8f0;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #059669;display:flex;align-items:center;gap:.5rem}
+.section-title{font-size:1.05rem;font-weight:700;color:#e2e8f0;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #be185d;display:flex;align-items:center;gap:.5rem}
 
 /* ── グリッド ── */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
@@ -64,7 +64,7 @@ tbody tr:hover td{background:#243447}
 
 /* ── フッター ── */
 .page-footer{text-align:center;padding:2rem;font-size:.78rem;color:#475569;border-top:1px solid #1e293b;margin-top:2rem}
-.page-footer a{color:#059669;text-decoration:none}
+.page-footer a{color:#be185d;text-decoration:none}
 
 @media(max-width:768px){
   .grid-2,.grid-3{grid-template-columns:1fr}
@@ -77,8 +77,8 @@ tbody tr:hover td{background:#243447}
 <div class="page-header">
   <a class="back-link" href="index.html">← 目次へ戻る</a>
   <div class="badge">代理店分析レポート</div>
-  <h1>🗻 HIDE 代理店</h1>
-  <p>静岡県専門代理店 ／ カタログ請求データ 2021–2025年</p>
+  <h1>🌋 CND 代理店</h1>
+  <p>鹿児島県専門代理店 ／ カタログ請求データ 2021–2025年</p>
 </div>
 
 <div class="container">
@@ -86,39 +86,39 @@ tbody tr:hover td{background:#243447}
   <!-- KPI -->
   <div class="kpi-grid">
     <div class="kpi">
-      <div class="kpi-val">376</div>
+      <div class="kpi-val">252</div>
       <div class="kpi-label">総カタログ請求件数</div>
-      <div class="kpi-sub">全体の 2.6%</div>
+      <div class="kpi-sub">全体の 1.7%</div>
     </div>
     <div class="kpi">
-      <div class="kpi-val">7</div>
+      <div class="kpi-val">6</div>
       <div class="kpi-label">発注件数</div>
     </div>
     <div class="kpi">
-      <div class="kpi-val">1.86%</div>
+      <div class="kpi-val">2.38%</div>
       <div class="kpi-label">発注率</div>
-      <div class="kpi-sub">全体平均比 +0.57pt</div>
+      <div class="kpi-sub">全体平均比 +1.09pt</div>
     </div>
     <div class="kpi">
-      <div class="kpi-val">48.1%</div>
+      <div class="kpi-val">41.7%</div>
       <div class="kpi-label">ホット顧客率</div>
-      <div class="kpi-sub">181件</div>
+      <div class="kpi-sub">105件</div>
     </div>
     <div class="kpi">
-      <div class="kpi-val">87.0%</div>
+      <div class="kpi-val">75.4%</div>
       <div class="kpi-label">主要建設地集中度</div>
-      <div class="kpi-sub">静岡県 327件</div>
+      <div class="kpi-sub">鹿児島県 190件</div>
     </div>
   </div>
 
   <!-- インサイト -->
   <div class="insight">
     <p>
-      <strong>HIDE代理店</strong>はカタログ請求 <strong>376件</strong>（全体の2.6%）、
-      発注率 <strong>1.86%</strong>（全体平均1.29%比 +0.57pt）。
-      ホット顧客は <strong>181件</strong>（48.1%）で発注率 <strong>3.31%</strong>、
-      非ホット発注率 0.51%。
-      建設予定地の <strong>87.0%</strong> が静岡県に集中している。
+      <strong>CND代理店</strong>はカタログ請求 <strong>252件</strong>（全体の1.7%）、
+      発注率 <strong>2.38%</strong>（全体平均1.29%比 +1.09pt）。
+      ホット顧客は <strong>105件</strong>（41.7%）で発注率 <strong>2.86%</strong>、
+      非ホット発注率 2.04%。
+      建設予定地の <strong>75.4%</strong> が鹿児島県に集中している。
     </p>
   </div>
 
@@ -152,13 +152,13 @@ tbody tr:hover td{background:#243447}
         <tbody>
           <tr>
             <td><span class="badge-hot">🔥 ホット</span></td>
-            <td>181</td><td>48.1%</td>
-            <td>6</td><td>3.31%</td>
+            <td>105</td><td>41.7%</td>
+            <td>3</td><td>2.86%</td>
           </tr>
           <tr>
             <td><span class="badge-normal">非ホット</span></td>
-            <td>195</td><td>51.9%</td>
-            <td>1</td><td>0.51%</td>
+            <td>147</td><td>58.3%</td>
+            <td>3</td><td>2.04%</td>
           </tr>
         </tbody>
       </table>
@@ -181,53 +181,53 @@ tbody tr:hover td{background:#243447}
       <table>
         <thead><tr><th>情報源</th><th>件数</th><th>発注数</th><th>発注率</th></tr></thead>
         <tbody><tr>
-          <td>Google</td><td style="text-align:right">114</td>
-          <td style="text-align:right">2</td>
-          <td style="text-align:right">1.75%
+          <td>Google</td><td style="text-align:right">97</td>
+          <td style="text-align:right">3</td>
+          <td style="text-align:right">3.09%
             <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:44%"></div>
+              <div style="background:#be185d;height:4px;border-radius:3px;width:16%"></div>
             </div>
           </td></tr><tr>
-          <td>その他</td><td style="text-align:right">84</td>
-          <td style="text-align:right">2</td>
-          <td style="text-align:right">2.38%
-            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:60%"></div>
-            </div>
-          </td></tr><tr>
-          <td>Instagram</td><td style="text-align:right">65</td>
+          <td>Instagram</td><td style="text-align:right">50</td>
           <td style="text-align:right">0</td>
           <td style="text-align:right">0.0%
             <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:0%"></div>
+              <div style="background:#be185d;height:4px;border-radius:3px;width:0%"></div>
             </div>
           </td></tr><tr>
-          <td>代理店経由</td><td style="text-align:right">51</td>
-          <td style="text-align:right">2</td>
-          <td style="text-align:right">3.92%
-            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:100%"></div>
-            </div>
-          </td></tr><tr>
-          <td>Yahoo!Japan</td><td style="text-align:right">43</td>
-          <td style="text-align:right">1</td>
-          <td style="text-align:right">2.33%
-            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:59%"></div>
-            </div>
-          </td></tr><tr>
-          <td>田舎暮らし/日経</td><td style="text-align:right">13</td>
+          <td>その他</td><td style="text-align:right">41</td>
           <td style="text-align:right">0</td>
           <td style="text-align:right">0.0%
             <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:0%"></div>
+              <div style="background:#be185d;height:4px;border-radius:3px;width:0%"></div>
+            </div>
+          </td></tr><tr>
+          <td>Yahoo!Japan</td><td style="text-align:right">31</td>
+          <td style="text-align:right">0</td>
+          <td style="text-align:right">0.0%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#be185d;height:4px;border-radius:3px;width:0%"></div>
+            </div>
+          </td></tr><tr>
+          <td>代理店経由</td><td style="text-align:right">16</td>
+          <td style="text-align:right">3</td>
+          <td style="text-align:right">18.75%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#be185d;height:4px;border-radius:3px;width:100%"></div>
+            </div>
+          </td></tr><tr>
+          <td>田舎暮らし/日経</td><td style="text-align:right">11</td>
+          <td style="text-align:right">0</td>
+          <td style="text-align:right">0.0%
+            <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
+              <div style="background:#be185d;height:4px;border-radius:3px;width:0%"></div>
             </div>
           </td></tr><tr>
           <td>Facebook</td><td style="text-align:right">6</td>
           <td style="text-align:right">0</td>
           <td style="text-align:right">0.0%
             <div style="background:#1e293b;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#059669;height:4px;border-radius:3px;width:0%"></div>
+              <div style="background:#be185d;height:4px;border-radius:3px;width:0%"></div>
             </div>
           </td></tr></tbody>
       </table>
@@ -260,7 +260,7 @@ tbody tr:hover td{background:#243447}
 </div>
 
 <script>
-const C1='#059669', C2='#6ee7b7';
+const C1='#be185d', C2='#f9a8d4';
 const PIE_COLORS=['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
 const GRID_COLOR='rgba(148,163,184,0.1)';
 const TICK_STYLE={color:'#94a3b8',font:{size:11}};
@@ -278,9 +278,9 @@ new Chart(document.getElementById('yearChart'),{
   data:{
     labels:["2021", "2022", "2023", "2024", "2025"],
     datasets:[
-      {type:'bar',label:'請求件数',data:[61, 105, 66, 71, 68],backgroundColor:'rgba(99,102,241,0.5)',yAxisID:'y',order:2},
-      {type:'bar',label:'発注件数',data:[2, 3, 0, 1, 1],backgroundColor:C1,yAxisID:'y',order:1},
-      {type:'line',label:'発注率(%)',data:[3.28, 2.86, 0.0, 1.41, 1.47],borderColor:C2,backgroundColor:'transparent',pointBackgroundColor:C2,pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:0}
+      {type:'bar',label:'請求件数',data:[64, 68, 42, 43, 34],backgroundColor:'rgba(99,102,241,0.5)',yAxisID:'y',order:2},
+      {type:'bar',label:'発注件数',data:[0, 0, 0, 1, 4],backgroundColor:C1,yAxisID:'y',order:1},
+      {type:'line',label:'発注率(%)',data:[0.0, 0.0, 0.0, 2.33, 11.76],borderColor:C2,backgroundColor:'transparent',pointBackgroundColor:C2,pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:0}
     ]
   },
   options:{
@@ -298,14 +298,14 @@ new Chart(document.getElementById('yearChart'),{
 // 建設予定地
 new Chart(document.getElementById('buildPrefChart'),{
   type:'bar',
-  data:{labels:["\u9759\u5ca1\u770c", "\u795e\u5948\u5ddd\u770c", "\u305d\u306e\u4ed6", "\u6771\u4eac\u90fd", "\u5c71\u68a8\u770c", "\u9577\u91ce\u770c"],datasets:[{data:[327, 37, 6, 2, 2, 2],backgroundColor:C1+'bb',borderRadius:4}]},
+  data:{labels:["\u9e7f\u5150\u5cf6\u770c", "\u5bae\u5d0e\u770c", "\u718a\u672c\u770c", "\u795e\u5948\u5ddd\u770c", "\u5927\u5206\u770c"],datasets:[{data:[190, 41, 19, 1, 1],backgroundColor:C1+'bb',borderRadius:4}]},
   options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:hBarScales}
 });
 
 // 住所
 new Chart(document.getElementById('homePrefChart'),{
   type:'bar',
-  data:{labels:["\u9759\u5ca1\u770c", "\u795e\u5948\u5ddd\u770c", "\u6771\u4eac\u90fd", "\u305d\u306e\u4ed6", "\u611b\u77e5\u770c", "\u5343\u8449\u770c", "\u57fc\u7389\u770c", "\u5927\u962a\u5e9c"],datasets:[{data:[253, 59, 33, 11, 6, 4, 3, 2],backgroundColor:'rgba(99,102,241,0.65)',borderRadius:4}]},
+  data:{labels:["\u9e7f\u5150\u5cf6\u770c", "\u5bae\u5d0e\u770c", "\u718a\u672c\u770c", "\u5927\u962a\u5e9c", "\u798f\u5ca1\u770c", "\u5175\u5eab\u770c", "\u795e\u5948\u5ddd\u770c", "\u4e09\u91cd\u770c"],datasets:[{data:[164, 38, 19, 7, 6, 4, 2, 1],backgroundColor:'rgba(99,102,241,0.65)',borderRadius:4}]},
   options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:hBarScales}
 });
 
@@ -314,7 +314,7 @@ new Chart(document.getElementById('hotChart'),{
   type:'bar',
   data:{
     labels:['ホット顧客','非ホット顧客'],
-    datasets:[{data:[3.31,0.51],backgroundColor:[C1,'rgba(100,116,139,0.5)'],borderRadius:6}]
+    datasets:[{data:[2.86,2.04],backgroundColor:[C1,'rgba(100,116,139,0.5)'],borderRadius:6}]
   },
   options:{
     responsive:true,maintainAspectRatio:false,
@@ -326,7 +326,7 @@ new Chart(document.getElementById('hotChart'),{
 // 情報源分布（ドーナツ）
 new Chart(document.getElementById('srcDistChart'),{
   type:'doughnut',
-  data:{labels:["Google", "\u305d\u306e\u4ed6", "Instagram", "\u4ee3\u7406\u5e97\u7d4c\u7531", "Yahoo!Japan", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[114, 84, 65, 51, 43, 13, 6],backgroundColor:PIE_COLORS,hoverOffset:8,borderWidth:2,borderColor:'#0f172a'}]},
+  data:{labels:["Google", "Instagram", "\u305d\u306e\u4ed6", "Yahoo!Japan", "\u4ee3\u7406\u5e97\u7d4c\u7531", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Facebook"],datasets:[{data:[97, 50, 41, 31, 16, 11, 6],backgroundColor:PIE_COLORS,hoverOffset:8,borderWidth:2,borderColor:'#0f172a'}]},
   options:{
     responsive:true,maintainAspectRatio:false,
     plugins:{legend:{position:'right',labels:{color:'#94a3b8',font:{size:11},boxWidth:12,padding:10}}}
@@ -336,21 +336,21 @@ new Chart(document.getElementById('srcDistChart'),{
 // 建設方法
 new Chart(document.getElementById('methodChart'),{
   type:'doughnut',
-  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "\u5de5\u52d9\u5e97", "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "\u30bb\u30df\u30bb\u30eb\u30d5"],datasets:[{data:[230, 76, 48, 20, 2],backgroundColor:PIE_COLORS,hoverOffset:6,borderWidth:2,borderColor:'#0f172a'}]},
+  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "\u5de5\u52d9\u5e97"],datasets:[{data:[131, 64, 29, 28],backgroundColor:PIE_COLORS,hoverOffset:6,borderWidth:2,borderColor:'#0f172a'}]},
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{size:10},boxWidth:10,padding:8}}}}
 });
 
 // 建設時期
 new Chart(document.getElementById('timingChart'),{
   type:'bar',
-  data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u672a\u5b9a", "1\u5e74\u4ee5\u5185", "\u534a\u5e74\u4ee5\u5185"],datasets:[{data:[161, 115, 73, 27],backgroundColor:C2+'bb',borderRadius:4}]},
+  data:{labels:["\u672a\u5b9a", "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "1\u5e74\u4ee5\u5185", "\u534a\u5e74\u4ee5\u5185"],datasets:[{data:[107, 89, 43, 13],backgroundColor:C2+'bb',borderRadius:4}]},
   options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:hBarScales}
 });
 
 // 用途
 new Chart(document.getElementById('usageChart'),{
   type:'doughnut',
-  data:{labels:["\u4f4f\u5b85", "\u5225\u8358", "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u5546\u696d", "\u96e2\u308c"],datasets:[{data:[198, 93, 72, 12, 1],backgroundColor:PIE_COLORS,hoverOffset:6,borderWidth:2,borderColor:'#0f172a'}]},
+  data:{labels:["\u4f4f\u5b85", "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u5225\u8358", "\u5546\u696d", "\u516c\u5171"],datasets:[{data:[137, 55, 42, 16, 2],backgroundColor:PIE_COLORS,hoverOffset:6,borderWidth:2,borderColor:'#0f172a'}]},
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{size:10},boxWidth:10,padding:8}}}}
 });
 </script>
