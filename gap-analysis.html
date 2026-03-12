@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>カタログ請求 vs 実態 乖離分析 | TALOログハウス</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f2f5;color:#2c3e50;min-height:100vh}
+.page-header{background:linear-gradient(135deg,#0f766e 0%,#5eead4 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-header .badge{display:inline-block;background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);border-radius:20px;padding:3px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;position:relative;color:#fff}
+.page-header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:700;color:#fff;position:relative}
+.page-header p{font-size:.9rem;color:rgba(255,255,255,.85);margin-top:.5rem;position:relative}
+.back-link{position:absolute;top:1rem;left:1.25rem;color:rgba(255,255,255,.8);text-decoration:none;font-size:.82rem;display:flex;align-items:center;gap:.3rem}
+.back-link:hover{color:#fff}
+.container{max-width:1200px;margin:0 auto;padding:2rem 1.25rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.75rem}
+.kpi{background:#fff;border-radius:12px;padding:1.25rem 1.5rem;border-left:4px solid #0f766e;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05);transition:transform .15s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi-val{font-size:1.9rem;font-weight:700;color:#0f766e;line-height:1}
+.kpi-label{font-size:.78rem;color:#64748b;margin-top:.4rem;line-height:1.4}
+.kpi-sub{font-size:.72rem;color:#94a3b8;margin-top:.2rem}
+.insight{background:#fff;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.75rem;border-left:4px solid #0f766e;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.insight p{font-size:.88rem;line-height:1.8;color:#475569}
+.insight strong{color:#0f766e}
+.section-title{font-size:1.05rem;font-weight:700;color:#1e293b;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #0f766e;display:flex;align-items:center;gap:.5rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.card{background:#fff;border-radius:12px;padding:1.4rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.card-full{background:#fff;border-radius:12px;padding:1.4rem;margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.card h3,.card-full h3{font-size:.82rem;font-weight:600;color:#94a3b8;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f1f5f9;padding-bottom:.6rem}
+.chart-sm{position:relative;height:220px}
+.chart-md{position:relative;height:260px}
+.chart-lg{position:relative;height:300px}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead th{background:#f8fafc;color:#64748b;padding:.6rem .8rem;text-align:left;font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0}
+tbody td{padding:.6rem .8rem;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+.up{color:#dc2626;font-weight:600}
+.down{color:#059669;font-weight:600}
+.match{color:#059669}.mismatch{color:#dc2626}
+footer{text-align:center;padding:2rem 1rem;font-size:.78rem;color:#94a3b8;border-top:1px solid #e2e8f0;background:#fff;margin-top:2rem}
+footer a{color:#0f766e;text-decoration:none}
+footer a:hover{text-decoration:underline}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.kpi-val{font-size:1.5rem}}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a class="back-link" href="index.html">← 目次へ戻る</a>
+  <div class="badge">クロス分析レポート</div>
+  <h1>🔍 カタログ請求 vs 実態 乖離分析</h1>
+  <p>カタログ請求アンケート回答と実際の建築データを突合（184件） ／ 2021–2025年</p>
+</div>
+
+<div class="container">
+
+  <!-- サマリー -->
+  <div style="background:linear-gradient(135deg,#1e293b,#334155);border-radius:12px;padding:28px 32px;margin-bottom:24px;color:#fff">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <span style="font-size:1.3rem">📋</span>
+      <h2 style="font-size:1.1rem;font-weight:700;margin:0">サマリー</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:.9rem;line-height:1.8">
+      <div>
+        <div style="color:#fbbf24;font-weight:600;margin-bottom:4px">現状認識</div>
+        <ul style="margin:0;padding-left:18px;color:#e2e8f0">
+          <li>予算は平均 <strong style="color:#fbbf24">+76%（+1,760万円）</strong> オーバー。89%の顧客が予算超過</li>
+          <li>カタログ請求から契約まで平均 <strong style="color:#fbbf24">55日（中央値47日）</strong>。3ヶ月以内が79%</li>
+          <li>用途の一致率は <strong style="color:#fbbf24">83%</strong>。住宅→別荘への変更が最多パターン</li>
+          <li>購入者の中心は <strong style="color:#fbbf24">40〜60代</strong>（81%）。会社員・経営者・医療関係が上位</li>
+        </ul>
+      </div>
+      <div>
+        <div style="color:#34d399;font-weight:600;margin-bottom:4px">課題と提案</div>
+        <ul style="margin:0;padding-left:18px;color:#e2e8f0">
+          <li>予算2000〜2500万の顧客が実際は3000〜6000万使う。<strong style="color:#34d399">初期提案で適正予算を伝える仕組み</strong>が必要</li>
+          <li>47日で契約→<strong style="color:#34d399">最初の1ヶ月の接触頻度</strong>が勝敗を分ける</li>
+          <li>住宅→別荘のシフトは「建設地が地方」が要因。営業時に別荘プランも併せて提案すべき</li>
+          <li>決定理由の上位は「価格」「営業対応」「品質」。この3点のアピール強化を</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-val">184</div>
+      <div class="kpi-label">突合成功件数</div>
+      <div class="kpi-sub">カタログ請求187件中</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#dc2626">+76%</div>
+      <div class="kpi-label">予算オーバー率</div>
+      <div class="kpi-sub">平均+1,760万円</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">47日</div>
+      <div class="kpi-label">請求→契約 中央値</div>
+      <div class="kpi-sub">3ヶ月以内79%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">83%</div>
+      <div class="kpi-label">用途の一致率</div>
+      <div class="kpi-sub">住宅→別荘シフトが最多</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">50代</div>
+      <div class="kpi-label">最多年代</div>
+      <div class="kpi-sub">40-60代で81%</div>
+    </div>
+  </div>
+
+  <!-- 予算乖離 -->
+  <div class="section-title">💰 予算の乖離（アンケート回答 vs 実際の総工費）</div>
+  
+  <div class="insight">
+    <p>カタログ請求時に回答した予算と、実際の総工費を比較（54件）。<strong>89%の顧客が予算を超過</strong>しており、平均で<strong>+1,760万円（+76%）</strong>の乖離。特に予算2500万と回答した層の実際の総工費は平均<strong>6,225万円</strong>と2.5倍に膨らんでいる。</p>
+  </div>
+  
+  <div class="grid-2">
+    <div class="card">
+      <h3>予算帯別 実際の総工費</h3>
+      <div class="chart-md"><canvas id="budgetGapChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>予算オーバー vs アンダー</h3>
+      <div class="chart-md"><canvas id="overUnderChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <h3>予算帯別 乖離詳細</h3>
+    <table>
+      <thead><tr><th>アンケート予算</th><th>件数</th><th>実際の総工費(平均)</th><th>差額</th><th>乖離率</th></tr></thead>
+      <tbody>
+        <tr><td>1000万</td><td>3</td><td>1,233万</td><td class="up">+233万</td><td class="up">+23%</td></tr>
+        <tr><td>1500万</td><td>6</td><td>2,865万</td><td class="up">+1,365万</td><td class="up">+91%</td></tr>
+        <tr><td>2000万</td><td>16</td><td>2,989万</td><td class="up">+989万</td><td class="up">+49%</td></tr>
+        <tr><td>2500万</td><td>15</td><td>6,225万</td><td class="up">+3,725万</td><td class="up">+149%</td></tr>
+        <tr><td>3000万</td><td>10</td><td>4,323万</td><td class="up">+1,323万</td><td class="up">+44%</td></tr>
+        <tr><td>4000万</td><td>2</td><td>3,166万</td><td class="down">-834万</td><td class="down">-21%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 請求→契約日数 -->
+  <div class="section-title">📅 カタログ請求→契約までの日数</div>
+
+  <div class="insight">
+    <p>カタログ発送日からEUDS（顧客データシート）記入日までの期間を算出（80件）。平均<strong>55日</strong>（中央値<strong>47日</strong>）で契約に至っており、<strong>79%が3ヶ月以内</strong>に決定している。最初の1ヶ月半の接触が極めて重要。</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>契約までの期間分布</h3>
+      <div class="chart-md"><canvas id="daysChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>統計情報</h3>
+      <table>
+        <thead><tr><th>指標</th><th>値</th></tr></thead>
+        <tbody>
+          <tr><td>平均</td><td><strong>55日</strong>（1.8ヶ月）</td></tr>
+          <tr><td>中央値</td><td><strong>47日</strong>（1.6ヶ月）</td></tr>
+          <tr><td>最短</td><td>0日（即日）</td></tr>
+          <tr><td>最長</td><td>300日（10ヶ月）</td></tr>
+          <tr><td>3ヶ月以内</td><td><strong>53件（79%）</strong></td></tr>
+          <tr><td>3〜6ヶ月</td><td>11件（16%）</td></tr>
+          <tr><td>6ヶ月以上</td><td>3件（4%）</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.82rem;color:#64748b;margin-top:1rem;line-height:1.6">
+        ※ EUDS記入日は契約プロセスの開始時期を示す代理指標。実際の契約日とは数週間のずれがある可能性あり。
+      </p>
+    </div>
+  </div>
+
+  <!-- 用途の乖離 -->
+  <div class="section-title">🏠 用途の乖離（希望 vs 実際）</div>
+
+  <div class="insight">
+    <p>カタログ請求時の用途と実際の建築用途を比較（132件）。一致率は<strong>83%</strong>と高いが、<strong>住宅→別荘へのシフトが最多</strong>（10件）。「住宅として検討開始→建設地が地方→別荘に変更」というパターンが見える。逆に別荘→住宅は4件で、定住ニーズへの転換。</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>用途クロス集計（行=請求時, 列=実際）</h3>
+      <div class="chart-md"><canvas id="useHeatChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>乖離パターン（23件）</h3>
+      <table>
+        <thead><tr><th>請求時 → 実際</th><th>件数</th><th>傾向</th></tr></thead>
+        <tbody>
+          <tr><td>住宅 → 別荘</td><td><strong>10件</strong></td><td>地方建設地で別荘利用に転換</td></tr>
+          <tr><td>別荘 → 住宅</td><td>4件</td><td>定住ニーズへの転換</td></tr>
+          <tr><td>別荘 → 宿泊施設</td><td>2件</td><td>事業利用への転換</td></tr>
+          <tr><td>住宅 → 店舗</td><td>1件</td><td>事業併用</td></tr>
+          <tr><td>商業 → 住宅/別荘</td><td>2件</td><td>個人利用に転換</td></tr>
+          <tr><td>離れ → 別荘</td><td>1件</td><td>規模拡大</td></tr>
+          <tr><td>その他</td><td>3件</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 年代・職業 -->
+  <div class="section-title">👤 購入者プロファイル（年代・職業）</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>年代分布（125件）</h3>
+      <div class="chart-md"><canvas id="ageChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>職業分布（111件）</h3>
+      <div class="chart-md"><canvas id="occupChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card-full">
+    <h3>購入者像まとめ</h3>
+    <table>
+      <thead><tr><th>属性</th><th>最多層</th><th>全体に占める比率</th><th>特記事項</th></tr></thead>
+      <tbody>
+        <tr><td>年代</td><td><strong>50代</strong></td><td>30%（37件/125件）</td><td>40-60代で81%。30代以下は14%</td></tr>
+        <tr><td>職業</td><td><strong>会社員</strong></td><td>24%（27件/111件）</td><td>経営者13件、医療関係8件で高所得層が目立つ</td></tr>
+        <tr><td>ライフスタイル</td><td><strong>自然素材志向/アウトドア</strong></td><td>各5件（記入少）</td><td>健康住宅・DIY志向も</td></tr>
+        <tr><td>決定理由</td><td><strong>価格・営業対応・品質</strong></td><td>—</td><td>「安くて品質がいい」「自由設計」「営業マン」が頻出</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  <p>TALOログハウス カタログ請求 vs 実態 乖離分析 ／ 生成日: 2026年3月 ／ <a href="index.html">目次へ戻る</a></p>
+</footer>
+
+<script>
+const TICK={color:'#64748b',font:{size:10}};
+const GRID={color:'rgba(0,0,0,0.06)'};
+const C='#0f766e',C2='#dc2626',C3='#f59e0b',C4='#6366f1';
+
+// 予算帯別グラフ
+new Chart(document.getElementById('budgetGapChart'),{
+  type:'bar',
+  data:{
+    labels:['1000万','1500万','2000万','2500万','3000万','4000万'],
+    datasets:[
+      {label:'アンケート予算',data:[1000,1500,2000,2500,3000,4000],backgroundColor:'#0f766e44',borderColor:C,borderWidth:1.5,borderRadius:4},
+      {label:'実際の総工費',data:[1233,2865,2989,6225,4323,3166],backgroundColor:'#dc262644',borderColor:C2,borderWidth:1.5,borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{x:{ticks:TICK,grid:{display:false}},y:{ticks:{...TICK,callback:v=>v+'万'},grid:GRID}},
+    plugins:{legend:{labels:{font:{size:11}}}}
+  }
+});
+
+// オーバーvsアンダー
+new Chart(document.getElementById('overUnderChart'),{
+  type:'doughnut',
+  data:{
+    labels:['予算オーバー (89%)','予算以下 (11%)'],
+    datasets:[{data:[48,6],backgroundColor:[C2+'cc',C+'cc'],borderWidth:0}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
+});
+
+// 日数分布
+new Chart(document.getElementById('daysChart'),{
+  type:'bar',
+  data:{
+    labels:['3ヶ月以内','3-6ヶ月','6-12ヶ月'],
+    datasets:[{label:'件数',data:[53,11,3],backgroundColor:[C+'cc',C3+'cc',C2+'cc'],borderRadius:6}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{ticks:TICK,grid:GRID},y:{ticks:TICK,grid:{display:false}}},
+    plugins:{legend:{display:false}}}
+});
+
+// 年代
+new Chart(document.getElementById('ageChart'),{
+  type:'bar',
+  data:{
+    labels:['20代','30代','40代','50代','60代','70代'],
+    datasets:[{label:'人数',data:[2,15,34,37,30,7],backgroundColor:C+'cc',borderRadius:6}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{x:{ticks:TICK,grid:{display:false}},y:{ticks:TICK,grid:GRID}},
+    plugins:{legend:{display:false}}}
+});
+
+// 職業
+new Chart(document.getElementById('occupChart'),{
+  type:'bar',
+  data:{
+    labels:['会社員','経営者','医療','無職/退職','自営業','建設関係','農林業','公務員/教員','士業','その他'],
+    datasets:[{label:'人数',data:[27,13,8,6,6,5,3,3,1,39],backgroundColor:C+'cc',borderRadius:6}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    scales:{x:{ticks:TICK,grid:GRID},y:{ticks:TICK,grid:{display:false}}},
+    plugins:{legend:{display:false}}}
+});
+
+// 用途ヒートマップ（散布図で代用）
+new Chart(document.getElementById('useHeatChart'),{
+  type:'bar',
+  data:{
+    labels:['住宅','別荘','店舗','商業','離れ','その他'],
+    datasets:[
+      {label:'→住宅',data:[74,4,0,1,0,20],backgroundColor:'#0f766ecc',borderRadius:2},
+      {label:'→別荘',data:[12,34,0,1,1,6],backgroundColor:'#f59e0bcc',borderRadius:2},
+      {label:'→店舗',data:[1,0,0,0,0,2],backgroundColor:'#dc2626cc',borderRadius:2},
+      {label:'→その他',data:[4,4,0,0,1,19],backgroundColor:'#94a3b8cc',borderRadius:2}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{x:{stacked:true,ticks:TICK,grid:{display:false}},y:{stacked:true,ticks:TICK,grid:GRID}},
+    plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}
+});
+</script>
+</body>
+</html>
