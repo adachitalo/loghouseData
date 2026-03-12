@@ -165,6 +165,14 @@ footer a{color:#2e5077;text-decoration:none}
 
   <!-- TALO本部 vs 代理店 -->
   <div class="section-title">🏢 TALO本部 vs 代理店</div>
+  <div class="insight" style="background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde68a">
+    <p style="color:#92400e">
+      TALO本部・代理店ともにカタログ請求数は減少傾向。本部は <strong>-30%</strong>（1,827→1,272件）、
+      代理店は <strong>-48%</strong>（1,705→888件）で代理店の減少が顕著。
+      一方、発注率は両者とも緩やかに改善しており、「数は減ったが質は上がっている」構造。
+      代理店の発注率（2%台）は本部（0.7〜0.9%）の約2.5倍を維持。
+    </p>
+  </div>
   <div class="grid-2">
     <div class="card">
       <h3>区分別 件数・発注率</h3>
@@ -184,6 +192,42 @@ footer a{color:#2e5077;text-decoration:none}
       <h3>年度別 発注率推移（TALO本部 vs 代理店）</h3>
       <div class="chart-sm"><canvas id="orgChart"></canvas></div>
     </div>
+  </div>
+  <div class="card-full">
+    <h3>カタログ請求数の推移比較（TALO本部 vs 代理店）</h3>
+    <div class="chart-lg"><canvas id="orgCountChart"></canvas></div>
+  </div>
+  <div class="card-full">
+    <h3>年度別 本部 vs 代理店 詳細</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>年度</th>
+          <th class="r">本部 請求数</th><th class="r">本部 発注数</th><th class="r">本部 発注率</th>
+          <th class="r">代理店 請求数</th><th class="r">代理店 発注数</th><th class="r">代理店 発注率</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>2021</strong></td>
+          <td class="r">1,827</td><td class="r">8</td><td class="r"><span class="pct-low">0.44%</span></td>
+          <td class="r">1,705</td><td class="r">30</td><td class="r"><span class="pct-mid">1.76%</span></td></tr>
+        <tr><td><strong>2022</strong></td>
+          <td class="r">1,731</td><td class="r">10</td><td class="r"><span class="pct-low">0.58%</span></td>
+          <td class="r">1,499</td><td class="r">27</td><td class="r"><span class="pct-mid">1.80%</span></td></tr>
+        <tr><td><strong>2023</strong></td>
+          <td class="r">1,651</td><td class="r">15</td><td class="r"><span class="pct-low">0.91%</span></td>
+          <td class="r">1,380</td><td class="r">29</td><td class="r"><span class="pct-mid">2.10%</span></td></tr>
+        <tr><td><strong>2024</strong></td>
+          <td class="r">1,571</td><td class="r">13</td><td class="r"><span class="pct-low">0.83%</span></td>
+          <td class="r">1,119</td><td class="r">23</td><td class="r"><span class="pct-mid">2.06%</span></td></tr>
+        <tr><td><strong>2025</strong></td>
+          <td class="r">1,272</td><td class="r">11</td><td class="r"><span class="pct-low">0.86%</span></td>
+          <td class="r">888</td><td class="r">19</td><td class="r"><span class="pct-mid">2.14%</span></td></tr>
+        <tr style="background:#f8fafc;font-weight:600"><td>増減率</td>
+          <td class="r" colspan="3" style="color:#dc2626">-30.4%（請求数）</td>
+          <td class="r" colspan="3" style="color:#dc2626">-47.9%（請求数）</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- 建設予定地 -->
@@ -470,6 +514,29 @@ new Chart(document.getElementById('orgChart'),{
     scales:{
       x:{ticks:TICK,grid:{color:GRID}},
       y:{ticks:{...TICK,callback:v=>v+'%'},grid:{color:GRID}}
+    }
+  }
+});
+
+// 本部 vs 代理店 請求数推移
+new Chart(document.getElementById('orgCountChart'),{
+  data:{
+    labels:["2021","2022","2023","2024","2025"],
+    datasets:[
+      {type:'bar',label:'TALO本部 請求数',data:[1827,1731,1651,1571,1272],backgroundColor:'#2e507733',borderColor:'#2e5077',borderWidth:1,borderRadius:4,yAxisID:'y',order:3},
+      {type:'bar',label:'代理店 請求数',data:[1705,1499,1380,1119,888],backgroundColor:'#e9456033',borderColor:'#e94560',borderWidth:1,borderRadius:4,yAxisID:'y',order:2},
+      {type:'line',label:'TALO本部 発注率',data:[0.44,0.58,0.91,0.83,0.86],borderColor:'#2e5077',pointBackgroundColor:'#2e5077',pointRadius:5,borderWidth:2.5,borderDash:[],yAxisID:'y2',order:0},
+      {type:'line',label:'代理店 発注率',data:[1.76,1.80,2.10,2.06,2.14],borderColor:'#e94560',pointBackgroundColor:'#e94560',pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:1}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:true,labels:{color:'#475569',font:{size:11},boxWidth:12}}},
+    scales:{
+      x:{ticks:TICK,grid:{color:GRID}},
+      y:{ticks:TICK,grid:{color:GRID},title:{display:true,text:'請求数',color:'#94a3b8',font:{size:10}}},
+      y2:{position:'right',ticks:{...TICK,callback:v=>v+'%'},grid:{display:false},title:{display:true,text:'発注率',color:'#94a3b8',font:{size:10}}}
     }
   }
 });
