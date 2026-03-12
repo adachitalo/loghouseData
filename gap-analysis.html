@@ -69,7 +69,7 @@ footer a:hover{text-decoration:underline}
       <div>
         <div style="color:#fbbf24;font-weight:600;margin-bottom:4px">現状認識</div>
         <ul style="margin:0;padding-left:18px;color:#e2e8f0">
-          <li>予算は平均 <strong style="color:#fbbf24">+76%（+1,760万円）</strong> オーバー。89%の顧客が予算超過</li>
+          <li>予算は平均 <strong style="color:#fbbf24">+36%（+795万円）</strong> オーバー。86%の顧客が予算超過</li>
           <li>カタログ請求から契約まで平均 <strong style="color:#fbbf24">55日（中央値47日）</strong>。3ヶ月以内が79%</li>
           <li>用途の一致率は <strong style="color:#fbbf24">83%</strong>。住宅→別荘への変更が最多パターン</li>
           <li>購入者の中心は <strong style="color:#fbbf24">40〜60代</strong>（81%）。会社員・経営者・医療関係が上位</li>
@@ -78,7 +78,7 @@ footer a:hover{text-decoration:underline}
       <div>
         <div style="color:#34d399;font-weight:600;margin-bottom:4px">課題と提案</div>
         <ul style="margin:0;padding-left:18px;color:#e2e8f0">
-          <li>予算2000〜2500万の顧客が実際は3000〜6000万使う。<strong style="color:#34d399">初期提案で適正予算を伝える仕組み</strong>が必要</li>
+          <li>予算2000〜2500万の顧客が実際は3000〜3500万使う。<strong style="color:#34d399">初期提案で適正予算を伝える仕組み</strong>が必要</li>
           <li>47日で契約→<strong style="color:#34d399">最初の1ヶ月の接触頻度</strong>が勝敗を分ける</li>
           <li>住宅→別荘のシフトは「建設地が地方」が要因。営業時に別荘プランも併せて提案すべき</li>
           <li>決定理由の上位は「価格」「営業対応」「品質」。この3点のアピール強化を</li>
@@ -95,9 +95,9 @@ footer a:hover{text-decoration:underline}
       <div class="kpi-sub">カタログ請求187件中</div>
     </div>
     <div class="kpi">
-      <div class="kpi-val" style="color:#dc2626">+76%</div>
+      <div class="kpi-val" style="color:#dc2626">+36%</div>
       <div class="kpi-label">予算オーバー率</div>
-      <div class="kpi-sub">平均+1,760万円</div>
+      <div class="kpi-sub">平均+795万円</div>
     </div>
     <div class="kpi">
       <div class="kpi-val">47日</div>
@@ -120,7 +120,7 @@ footer a:hover{text-decoration:underline}
   <div class="section-title">💰 予算の乖離（アンケート回答 vs 実際の総工費）</div>
   
   <div class="insight">
-    <p>カタログ請求時に回答した予算と、実際の総工費を比較（54件）。<strong>89%の顧客が予算を超過</strong>しており、平均で<strong>+1,760万円（+76%）</strong>の乖離。特に予算2500万と回答した層の実際の総工費は平均<strong>6,225万円</strong>と2.5倍に膨らんでいる。</p>
+    <p>カタログ請求時に回答した予算と、実際の総工費を比較（73件、外れ値3件除外）。<strong>86%の顧客が予算を超過</strong>しており、平均で<strong>+795万円（+36%）</strong>の乖離。予算1500万帯の乖離率が最大（+91%）。2000〜3000万帯は+38〜49%で安定的に超過。</p>
   </div>
   
   <div class="grid-2">
@@ -142,7 +142,7 @@ footer a:hover{text-decoration:underline}
         <tr><td>1000万</td><td>3</td><td>1,233万</td><td class="up">+233万</td><td class="up">+23%</td></tr>
         <tr><td>1500万</td><td>6</td><td>2,865万</td><td class="up">+1,365万</td><td class="up">+91%</td></tr>
         <tr><td>2000万</td><td>16</td><td>2,989万</td><td class="up">+989万</td><td class="up">+49%</td></tr>
-        <tr><td>2500万</td><td>15</td><td>6,225万</td><td class="up">+3,725万</td><td class="up">+149%</td></tr>
+        <tr><td>2500万</td><td>12</td><td>3,447万</td><td class="up">+947万</td><td class="up">+38%</td></tr>
         <tr><td>3000万</td><td>10</td><td>4,323万</td><td class="up">+1,323万</td><td class="up">+44%</td></tr>
         <tr><td>4000万</td><td>2</td><td>3,166万</td><td class="down">-834万</td><td class="down">-21%</td></tr>
       </tbody>
@@ -255,7 +255,7 @@ new Chart(document.getElementById('budgetGapChart'),{
     labels:['1000万','1500万','2000万','2500万','3000万','4000万'],
     datasets:[
       {label:'アンケート予算',data:[1000,1500,2000,2500,3000,4000],backgroundColor:'#0f766e44',borderColor:C,borderWidth:1.5,borderRadius:4},
-      {label:'実際の総工費',data:[1233,2865,2989,6225,4323,3166],backgroundColor:'#dc262644',borderColor:C2,borderWidth:1.5,borderRadius:4}
+      {label:'実際の総工費',data:[1233,2865,2989,3447,4323,3166],backgroundColor:'#dc262644',borderColor:C2,borderWidth:1.5,borderRadius:4}
     ]
   },
   options:{responsive:true,maintainAspectRatio:false,
@@ -268,8 +268,8 @@ new Chart(document.getElementById('budgetGapChart'),{
 new Chart(document.getElementById('overUnderChart'),{
   type:'doughnut',
   data:{
-    labels:['予算オーバー (89%)','予算以下 (11%)'],
-    datasets:[{data:[48,6],backgroundColor:[C2+'cc',C+'cc'],borderWidth:0}]
+    labels:['予算オーバー (86%)','予算以下 (14%)'],
+    datasets:[{data:[63,10],backgroundColor:[C2+'cc',C+'cc'],borderWidth:0}]
   },
   options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
