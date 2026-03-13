@@ -49,10 +49,10 @@ tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:h
   <div class="badge">v3 パース修正版</div>
   <h1>💰 価格障壁分析</h1>
   <p>建築コスト高騰による購買層の構造的変化を検証</p>
-</div><div class="stats-bar"><div class="stat"><div class="stat-val">+54%</div><div class="stat-lbl">契約単価変化率</div></div><div class="stat"><div class="stat-val">¥4,926万</div><div class="stat-lbl">直近平均契約単価</div></div><div class="stat"><div class="stat-val">12.7%</div><div class="stat-lbl">低予算層比率(直近)</div></div><div class="stat"><div class="stat-val">7.0%</div><div class="stat-lbl">セルフビルド比率(直近)</div></div></div><div class="container"><div class="insight"><ul>
-<li>契約平均単価は5年で<b>+54%</b>上昇（¥3,198万→¥4,926万）</li>
-<li>低予算層（〜1,500万）の比率は58.3%→12.7%に変化</li>
-<li>セルフビルド希望は12.9%→7.0%に推移</li>
+</div><div class="stats-bar"><div class="stat"><div class="stat-val">+32%</div><div class="stat-lbl">契約単価変化率</div></div><div class="stat"><div class="stat-val">¥4,216万</div><div class="stat-lbl">直近平均契約単価</div></div><div class="stat"><div class="stat-val">25.4%</div><div class="stat-lbl">低予算層比率(直近)</div></div><div class="stat"><div class="stat-val">2.0%</div><div class="stat-lbl">セルフビルド比率(直近)</div></div></div><div class="container"><div class="insight"><ul>
+<li>契約平均単価は5年で<b>+32%</b>上昇（¥3,198万→¥4,216万）</li>
+<li>低予算層（〜1,500万）の比率は58.3%→25.4%に変化</li>
+<li>セルフビルド希望は12.9%→2.0%に推移</li>
 <li>コスト高騰により購買可能層が構造的に変化している</li>
 </ul></div><div class="section-title">📈 エビデンス1: 契約単価の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartContractCost"></canvas></div></div><div class="section-title">📉 エビデンス2: 低予算層（〜1,500万）の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartLowBudget"></canvas></div></div><div class="section-title">🔨 エビデンス3: セルフビルド希望の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartSelfBuild"></canvas></div></div><div class="section-title">💰 エビデンス4: 予算帯分布の年度変化</div><div class="card-full"><div class="chart-lg"><canvas id="chartBudgetDist"></canvas></div></div><div class="section-title">🔨 エビデンス5: 建設方法の推移</div><div class="card-full"><div class="chart-lg"><canvas id="chartMethodDist"></canvas></div></div><div class="section-title">🔍 エビデンス6: 予算乖離の実態</div><div class="card-full">
 <p style="font-size:.9rem;line-height:1.8;color:#334155">
@@ -61,26 +61,26 @@ tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:h
 予算乖離の詳細は<a href="gap-analysis.html" style="color:#0f766e">乖離分析レポート</a>をご覧ください。
 </p></div></div><script>
 new Chart(document.getElementById('chartContractCost'),{type:'bar',
-  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[
-    {label:'平均契約単価(万)',data:[3198.0, 3011.0, 3060.0, 3753.0, 4216.0, 4926.0],backgroundColor:'rgba(194,65,12,0.6)'}
+  data:{labels:["2021", "2022", "2023", "2024", "2025"],datasets:[
+    {label:'平均契約単価(万)',data:[3198.0, 3011.0, 3060.0, 3753.0, 4216.0],backgroundColor:'rgba(194,65,12,0.6)'}
   ]},options:{responsive:true,maintainAspectRatio:false}
 });
 new Chart(document.getElementById('chartLowBudget'),{type:'line',
-  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[
-    {label:'低予算層比率(%)',data:[58.3, 57.3, 49.4, 48.5, 25.4, 12.7],borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,0.1)',fill:true,tension:0.3}
+  data:{labels:["2021", "2022", "2023", "2024", "2025"],datasets:[
+    {label:'低予算層比率(%)',data:[58.3, 57.3, 49.4, 48.5, 25.4],borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,0.1)',fill:true,tension:0.3}
   ]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}
 });
 new Chart(document.getElementById('chartSelfBuild'),{type:'line',
-  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[
-    {label:'セルフビルド比率(%)',data:[12.9, 11.3, 2.9, 1.7, 2.0, 7.0],borderColor:'#d97706',backgroundColor:'rgba(217,119,6,0.1)',fill:true,tension:0.3}
+  data:{labels:["2021", "2022", "2023", "2024", "2025"],datasets:[
+    {label:'セルフビルド比率(%)',data:[12.9, 11.3, 2.9, 1.7, 2.0],borderColor:'#d97706',backgroundColor:'rgba(217,119,6,0.1)',fill:true,tension:0.3}
   ]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}
 });
 new Chart(document.getElementById('chartBudgetDist'),{type:'bar',
-  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[{label:"1000万未満",data:[0, 0, 0, 0, 0, 0],backgroundColor:"#fecaca"},{label:"1000万",data:[1337, 1162, 922, 610, 35, 3],backgroundColor:"#fca5a5"},{label:"1500万",data:[667, 636, 543, 678, 503, 6],backgroundColor:"#f87171"},{label:"2000万",data:[494, 422, 466, 427, 810, 21],backgroundColor:"#ef4444"},{label:"2500万",data:[257, 242, 236, 253, 298, 9],backgroundColor:"#dc2626"},{label:"3000万",data:[141, 146, 153, 159, 185, 10],backgroundColor:"#b91c1c"},{label:"3500万",data:[54, 57, 61, 70, 89, 2],backgroundColor:"#991b1b"},{label:"4000万",data:[24, 26, 40, 31, 37, 2],backgroundColor:"#7f1d1d"},{label:"4500万",data:[6, 12, 18, 13, 14, 0],backgroundColor:"#450a0a"},{label:"5000万",data:[28, 25, 33, 32, 35, 1],backgroundColor:"#1c1917"},{label:"5000万以上",data:[0, 0, 0, 0, 0, 0],backgroundColor:"#0c0a09"}]},
+  data:{labels:["2021", "2022", "2023", "2024", "2025"],datasets:[{label:"1000万未満",data:[0, 0, 0, 0, 0],backgroundColor:"#fecaca"},{label:"1000万",data:[1337, 1162, 922, 610, 35],backgroundColor:"#fca5a5"},{label:"1500万",data:[667, 636, 543, 678, 503],backgroundColor:"#f87171"},{label:"2000万",data:[494, 422, 466, 427, 810],backgroundColor:"#ef4444"},{label:"2500万",data:[257, 242, 236, 253, 298],backgroundColor:"#dc2626"},{label:"3000万",data:[141, 146, 153, 159, 185],backgroundColor:"#b91c1c"},{label:"3500万",data:[54, 57, 61, 70, 89],backgroundColor:"#991b1b"},{label:"4000万",data:[24, 26, 40, 31, 37],backgroundColor:"#7f1d1d"},{label:"4500万",data:[6, 12, 18, 13, 14],backgroundColor:"#450a0a"},{label:"5000万",data:[28, 25, 33, 32, 35],backgroundColor:"#1c1917"},{label:"5000万以上",data:[0, 0, 0, 0, 0],backgroundColor:"#0c0a09"}]},
   options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true}}}
 });
 new Chart(document.getElementById('chartMethodDist'),{type:'bar',
-  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[{label:"工務店",data:[837, 792, 294, 185, 109, 11],backgroundColor:"#059669"},{label:"セミセルフ",data:[11, 15, 24, 6, 2, 0],backgroundColor:"#d97706"},{label:"セルフビルド",data:[457, 364, 89, 47, 43, 5],backgroundColor:"#dc2626"},{label:"未定",data:[1646, 1387, 260, 127, 83, 3],backgroundColor:"#94a3b8"},{label:"その他/未記入",data:[581, 672, 2364, 2325, 1923, 52],backgroundColor:"#cbd5e1"}]},
+  data:{labels:["2021", "2022", "2023", "2024", "2025"],datasets:[{label:"工務店",data:[837, 792, 294, 185, 109],backgroundColor:"#059669"},{label:"セミセルフ",data:[11, 15, 24, 6, 2],backgroundColor:"#d97706"},{label:"セルフビルド",data:[457, 364, 89, 47, 43],backgroundColor:"#dc2626"},{label:"未定",data:[1646, 1387, 260, 127, 83],backgroundColor:"#94a3b8"},{label:"その他/未記入",data:[581, 672, 2364, 2325, 1923],backgroundColor:"#cbd5e1"}]},
   options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true}}}
 });
 </script>

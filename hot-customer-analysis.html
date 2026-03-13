@@ -2,292 +2,124 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TALO ホット顧客分析 v3</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TALO ホット顧客分析 v3 | TALOログハウス</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:#f0f2f5;color:#2c3e50;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:24px;line-height:1.6}
-  .container{max-width:1200px;margin:0 auto}
-  h1{font-size:26px;margin-bottom:4px}
-  .subtitle{color:#64748b;font-size:14px;margin-bottom:24px}
-  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
-  .kpi{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-  .kpi-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px}
-  .kpi-value{font-size:30px;font-weight:700;margin-top:2px}
-  .kpi-sub{font-size:11px;color:#94a3b8;margin-top:2px}
-  .kpi.red{border-left:4px solid #E94560}
-  .kpi.blue{border-left:4px solid #2563EB}
-  .kpi.green{border-left:4px solid #0F9B58}
-  .kpi.gold{border-left:4px solid #D4A853}
-  .kpi.purple{border-left:4px solid #7c3aed}
-  .kpi.navy{border-left:4px solid #16213E}
-  .card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:20px}
-  .card h2{font-size:17px;margin-bottom:14px;color:#1a1a2e}
-  .card h3{font-size:14px;margin:14px 0 8px;color:#334155}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-  .insight{background:#FFF3E0;border-left:4px solid #D4A853;border-radius:8px;padding:16px;margin-bottom:20px}
-  .insight h3{margin:0 0 8px;font-size:14px;color:#B8860B}
-  .insight p,.insight li{font-size:13px;line-height:1.7}
-  .insight ul{margin:0;padding-left:20px}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{background:#f8fafc;padding:8px 10px;text-align:left;font-weight:600;border-bottom:2px solid #e2e8f0;font-size:12px}
-  td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
-  tr:hover{background:#f8fafc}
-  .rank-a{color:#E94560;font-weight:700}
-  .rank-b{color:#2563EB;font-weight:700}
-  .rank-c{color:#64748b}
-  .rank-d{color:#94a3b8}
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-  .badge-a{background:#FDE8EB;color:#E94560}
-  .badge-b{background:#EBF2FF;color:#2563EB}
-  .badge-hot{background:#FEF3C7;color:#92400E}
-  canvas{max-height:280px}
-  .tab-container{margin-bottom:20px}
-  .tab-buttons{display:flex;gap:4px;margin-bottom:16px}
-  .tab-btn{padding:8px 16px;border:none;background:#e2e8f0;border-radius:8px 8px 0 0;cursor:pointer;font-size:13px;font-weight:500}
-  .tab-btn.active{background:#fff;color:#E94560;font-weight:700}
-  .tab-panel{display:none}
-  .tab-panel.active{display:block}
-  .score-bar{display:flex;height:20px;border-radius:4px;overflow:hidden;margin:4px 0}
-  .score-bar span{display:inline-block;height:100%;font-size:10px;color:#fff;text-align:center;line-height:20px}
-  @media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr 1fr}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f2f5;color:#2c3e50;min-height:100vh}
+.page-header{background:linear-gradient(135deg,#1a2e45 0%,#2e5077 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-header .badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:3px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;position:relative;color:#fff}
+.page-header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:700;color:#fff;position:relative}
+.page-header p{font-size:.85rem;color:rgba(255,255,255,.75);margin-top:.5rem;position:relative}
+.back-link{position:absolute;top:1rem;left:1.25rem;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem}
+.back-link:hover{color:#fff}
+.stats-bar{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;justify-content:center;gap:2.5rem;padding:1.1rem 2rem;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.stat{text-align:center}.stat-val{font-size:1.5rem;font-weight:700;color:#1a2e45}.stat-lbl{font-size:.72rem;color:#94a3b8;margin-top:1px;letter-spacing:.5px}
+.container{max-width:1280px;margin:0 auto;padding:2rem 1.25rem}
+.section-title{font-size:1.05rem;font-weight:700;color:#1e293b;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #E94560;display:flex;align-items:center;gap:.5rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.card{background:#fff;border-radius:12px;padding:1.4rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.card-full{background:#fff;border-radius:12px;padding:1.4rem;margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.card h3,.card-full h3{font-size:.82rem;font-weight:600;color:#94a3b8;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f1f5f9;padding-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.data-note{font-size:.72rem;color:#94a3b8;font-weight:400;margin-left:.3rem;text-transform:none;letter-spacing:0;background:#f1f5f9;padding:1px 6px;border-radius:4px}
+.chart-sm{position:relative;height:220px}.chart-md{position:relative;height:280px}.chart-lg{position:relative;height:320px}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead th{background:#f8fafc;color:#64748b;padding:.6rem .8rem;text-align:left;font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0}
+thead th.r{text-align:right}
+tbody td{padding:.6rem .8rem;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle}
+tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:#f8fafc}
+.kpi{background:#fff;border-radius:12px;padding:1.2rem 1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid #E94560}
+.kpi-val{font-size:1.8rem;font-weight:700;color:#1e293b}.kpi-lbl{font-size:.75rem;color:#94a3b8;margin-top:2px}
+.kpi-sub{font-size:.7rem;color:#64748b;margin-top:4px}
+.insight{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.25rem;font-size:.85rem;line-height:1.7;color:#1e40af}
+.insight ul{margin:0;padding-left:1.2rem}.insight li{margin-bottom:.3rem}
+.footer{text-align:center;padding:2rem;font-size:.75rem;color:#94a3b8}
+.footer a{color:#3a7ca5;text-decoration:none}.footer a:hover{text-decoration:underline}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.stats-bar{gap:1.2rem}}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>TALO ホット顧客分析</h1>
-  <p class="subtitle">スコアリングモデル v3（4ランク・パース修正版） — 2026/03/13 生成</p>
 
-  <!-- KPIカード -->
-  <div class="kpi-row">
-    <div class="kpi red">
-      <div class="kpi-label">Aランク候補</div>
-      <div class="kpi-value">149<span style="font-size:14px;color:#64748b">件</span></div>
-      <div class="kpi-sub">発注率9.33% / 11CV=1発注</div>
-    </div>
-    <div class="kpi blue">
-      <div class="kpi-label">Bランク候補</div>
-      <div class="kpi-value">165<span style="font-size:14px;color:#64748b">件</span></div>
-      <div class="kpi-sub">発注率3.91% / 26CV=1発注</div>
-    </div>
-    <div class="kpi green">
-      <div class="kpi-label">A+B合計</div>
-      <div class="kpi-value">314<span style="font-size:14px;color:#64748b">件</span></div>
-      <div class="kpi-sub">2024-2025 未発注</div>
-    </div>
-    <div class="kpi gold">
-      <div class="kpi-label">期待発注数</div>
-      <div class="kpi-value">20.4<span style="font-size:14px;color:#64748b">件</span></div>
-      <div class="kpi-sub">A≈13.9 + B≈6.5</div>
-    </div>
-    <div class="kpi purple">
-      <div class="kpi-label">TALO本部比率</div>
-      <div class="kpi-value">46<span style="font-size:14px;color:#64748b">%</span></div>
-      <div class="kpi-sub">本部146 / 代理店168</div>
-    </div>
-    <div class="kpi navy">
-      <div class="kpi-label">発注占有率</div>
-      <div class="kpi-value">51<span style="font-size:14px;color:#64748b">%</span></div>
-      <div class="kpi-sub">A+B=96/190件</div>
-    </div>
-  </div>
-
-  <!-- インサイト -->
-  <div class="insight">
-    <h3>分析サマリー</h3>
-    <ul>
-      <li><strong>Aランク（60pt+）</strong>: 発注率9.33%、11CVで1発注。最優先フォロー対象</li>
-      <li><strong>Bランク（40-59pt）</strong>: 発注率3.91%、26CVで1発注。Aと合わせ全CVの9.8%で発注の51%を占有</li>
-      <li>2024-2025年の未発注A/B顧客 <strong>314件</strong> から期待発注 <strong>20.4件</strong></li>
-      <li>AとDの発注効率差: <strong>25倍</strong></li>
-      <li>v3ではパース関数を修正し「二年以内」「三年以内」等の漢数字パターンを正しく分類</li>
-    </ul>
-  </div>
-
-  <!-- スコアリングモデル検証 -->
-  <div class="card">
-    <h2>スコアリングモデル検証（全期間 14,714件）</h2>
-    <div class="grid-2">
-      <div>
-        <table>
-          <thead><tr><th>ランク</th><th>スコア</th><th>件数</th><th>発注数</th><th>発注率</th><th>CV→発注</th><th>効率倍率</th></tr></thead>
-          <tbody id="rankTable"></tbody>
-        </table>
-      </div>
-      <div><canvas id="chartRank"></canvas></div>
-    </div>
-  </div>
-
-  <!-- 年度×ランク推移 -->
-  <div class="card">
-    <h2>年度別ランク構成の推移</h2>
-    <canvas id="chartYearRank" style="max-height:320px"></canvas>
-  </div>
-
-  <!-- リフトテーブル（全属性値のスコア一覧） -->
-  <div class="card">
-    <h2>属性別リフト＆スコア一覧</h2>
-    <p style="font-size:12px;color:#64748b;margin-bottom:12px">リフト = 属性別発注率 ÷ 全体発注率(1.29%)。5件未満の属性値は省略。</p>
-    <div style="max-height:400px;overflow-y:auto">
-    <table>
-      <thead><tr><th>カテゴリ</th><th>属性値</th><th>件数</th><th>発注</th><th>発注率</th><th>リフト</th><th>スコア</th></tr></thead>
-      <tbody><tr><td>建設時期</td><td>その他/未記入</td><td>1,055</td><td>59</td><td>5.59%</td><td>4.33x</td><td class='rank-a'><strong>20pt</strong></td></tr>
-<tr><td>建設時期</td><td>1年以内</td><td>2,703</td><td>64</td><td>2.37%</td><td>1.83x</td><td class='rank-b'><strong>10pt</strong></td></tr>
-<tr><td>建設時期</td><td>半年以内</td><td>970</td><td>14</td><td>1.44%</td><td>1.12x</td><td class=''><strong>5pt</strong></td></tr>
-<tr><td>建設時期</td><td>1〜2年</td><td>2,110</td><td>30</td><td>1.42%</td><td>1.1x</td><td class=''><strong>5pt</strong></td></tr>
-<tr><td>建設時期</td><td>3年以上</td><td>845</td><td>5</td><td>0.59%</td><td>0.46x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>建設時期</td><td>2〜3年</td><td>1,384</td><td>7</td><td>0.51%</td><td>0.39x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>建設時期</td><td>未定</td><td>5,647</td><td>11</td><td>0.19%</td><td>0.15x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>建設方法</td><td>工務店</td><td>2,228</td><td>83</td><td>3.73%</td><td>2.88x</td><td class='rank-b'><strong>15pt</strong></td></tr>
-<tr><td>建設方法</td><td>セミセルフ</td><td>58</td><td>2</td><td>3.45%</td><td>2.67x</td><td class='rank-b'><strong>15pt</strong></td></tr>
-<tr><td>建設方法</td><td>セルフビルド</td><td>1,005</td><td>13</td><td>1.29%</td><td>1.0x</td><td class=''><strong>5pt</strong></td></tr>
-<tr><td>建設方法</td><td>その他/未記入</td><td>7,917</td><td>71</td><td>0.9%</td><td>0.69x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>建設方法</td><td>未定</td><td>3,506</td><td>21</td><td>0.6%</td><td>0.46x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>予算</td><td>3000万台</td><td>96</td><td>9</td><td>9.38%</td><td>7.26x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>予算</td><td>4000万以上</td><td>33</td><td>3</td><td>9.09%</td><td>7.04x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>予算</td><td>3500万台</td><td>41</td><td>3</td><td>7.32%</td><td>5.67x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>予算</td><td>その他/未記入</td><td>1,040</td><td>64</td><td>6.15%</td><td>4.77x</td><td class='rank-a'><strong>20pt</strong></td></tr>
-<tr><td>予算</td><td>2500万台</td><td>116</td><td>7</td><td>6.03%</td><td>4.67x</td><td class='rank-a'><strong>20pt</strong></td></tr>
-<tr><td>予算</td><td>2000万台</td><td>165</td><td>7</td><td>4.24%</td><td>3.29x</td><td class='rank-a'><strong>20pt</strong></td></tr>
-<tr><td>予算</td><td>4000万</td><td>160</td><td>4</td><td>2.5%</td><td>1.94x</td><td class='rank-b'><strong>10pt</strong></td></tr>
-<tr><td>予算</td><td>1500万台</td><td>165</td><td>4</td><td>2.42%</td><td>1.88x</td><td class='rank-b'><strong>10pt</strong></td></tr>
-<tr><td>予算</td><td>3000万</td><td>794</td><td>17</td><td>2.14%</td><td>1.66x</td><td class='rank-b'><strong>10pt</strong></td></tr>
-<tr><td>予算</td><td>5000万</td><td>154</td><td>3</td><td>1.95%</td><td>1.51x</td><td class='rank-b'><strong>10pt</strong></td></tr>
-<tr><td>予算</td><td>2500万</td><td>1,295</td><td>21</td><td>1.62%</td><td>1.26x</td><td class=''><strong>5pt</strong></td></tr>
-<tr><td>予算</td><td>3500万</td><td>333</td><td>5</td><td>1.5%</td><td>1.16x</td><td class=''><strong>5pt</strong></td></tr>
-<tr><td>予算</td><td>2000万</td><td>2,640</td><td>22</td><td>0.83%</td><td>0.65x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>予算</td><td>1500万</td><td>3,033</td><td>9</td><td>0.3%</td><td>0.23x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>予算</td><td>1000万</td><td>4,069</td><td>11</td><td>0.27%</td><td>0.21x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>予算</td><td>その他</td><td>501</td><td>1</td><td>0.2%</td><td>0.15x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>予算</td><td>4500万</td><td>63</td><td>0</td><td>0.0%</td><td>0.0x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>予算</td><td>未定</td><td>16</td><td>0</td><td>0.0%</td><td>0.0x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>情報源</td><td>代理店経由</td><td>669</td><td>64</td><td>9.57%</td><td>7.41x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>情報源</td><td>その他</td><td>3,035</td><td>45</td><td>1.48%</td><td>1.15x</td><td class=''><strong>5pt</strong></td></tr>
-<tr><td>情報源</td><td>Yahoo!Japan</td><td>2,092</td><td>24</td><td>1.15%</td><td>0.89x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>情報源</td><td>田舎暮らし/日経</td><td>643</td><td>6</td><td>0.93%</td><td>0.72x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>情報源</td><td>Google</td><td>5,296</td><td>41</td><td>0.77%</td><td>0.6x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>情報源</td><td>Instagram</td><td>2,497</td><td>9</td><td>0.36%</td><td>0.28x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>情報源</td><td>Facebook</td><td>482</td><td>1</td><td>0.21%</td><td>0.16x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>用途</td><td>事務所</td><td>8</td><td>1</td><td>12.5%</td><td>9.68x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>用途</td><td>離れ</td><td>23</td><td>2</td><td>8.7%</td><td>6.73x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>用途</td><td>店舗</td><td>27</td><td>2</td><td>7.41%</td><td>5.74x</td><td class='rank-a'><strong>30pt</strong></td></tr>
-<tr><td>用途</td><td>その他/未記入</td><td>2,411</td><td>48</td><td>1.99%</td><td>1.54x</td><td class='rank-b'><strong>10pt</strong></td></tr>
-<tr><td>用途</td><td>別荘</td><td>3,631</td><td>43</td><td>1.18%</td><td>0.92x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>用途</td><td>住居</td><td>7,887</td><td>93</td><td>1.18%</td><td>0.91x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>用途</td><td>商業施設</td><td>680</td><td>1</td><td>0.15%</td><td>0.11x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>用途</td><td>公共施設</td><td>29</td><td>0</td><td>0.0%</td><td>0.0x</td><td class=''><strong>0pt</strong></td></tr>
-<tr><td>用途</td><td>宿泊施設</td><td>18</td><td>0</td><td>0.0%</td><td>0.0x</td><td class=''><strong>0pt</strong></td></tr>
-</tbody>
-    </table>
-    </div>
-  </div>
-
-  <!-- ホット顧客の属性分布 -->
-  <div class="card">
-    <h2>ホット顧客の属性分布（A vs B, 2024-2025未発注）</h2>
-    <div class="grid-2">
-      <div><h3>建設時期</h3><canvas id="chartTiming"></canvas></div>
-      <div><h3>予算帯</h3><canvas id="chartBudget"></canvas></div>
-    </div>
-    <div class="grid-2" style="margin-top:16px">
-      <div><h3>建設方法</h3><canvas id="chartMethod"></canvas></div>
-      <div><h3>情報源</h3><canvas id="chartSource"></canvas></div>
-    </div>
-  </div>
-
-  <!-- 建設予定地 -->
-  <div class="card">
-    <h2>建設予定地（A+B, 2024-2025未発注）</h2>
-    <canvas id="chartPref" style="max-height:380px"></canvas>
-  </div>
-
-  <!-- 用途 -->
-  <div class="card">
-    <h2>用途分布（A+B）</h2>
-    <div class="grid-2">
-      <div><canvas id="chartUse"></canvas></div>
-      <div>
-        <h3>組織別内訳</h3>
-        <table>
-          <thead><tr><th>組織</th><th>Aランク</th><th>Bランク</th><th>合計</th></tr></thead>
-          <tbody>
-            <tr><td>TALO本部</td><td class="rank-a">39</td><td class="rank-b">107</td><td><strong>146</strong></td></tr>
-            <tr><td>代理店</td><td class="rank-a">110</td><td class="rank-b">58</td><td><strong>168</strong></td></tr>
-          </tbody>
-        </table>
-        <h3 style="margin-top:16px">担当者別TOP10</h3>
-        <table>
-          <thead><tr><th>担当者</th><th>A</th><th>B</th><th>合計</th></tr></thead>
-          <tbody><tr><td>nan</td><td class='rank-a'>93</td><td class='rank-b'>91</td><td><strong>184</strong></td></tr>
+<div class="page-header" style="background:linear-gradient(135deg,#7f1d1d,#E94560)">
+  <a href="index.html" class="back-link">← 一覧に戻る</a>
+  <div class="badge">v3 パース修正版</div>
+  <h1>🔥 ホット顧客分析</h1>
+  <p>スコアリングモデル v3（4ランク・パース修正版） — 2026/03/13 生成</p>
+</div><div class="stats-bar"><div class="stat"><div class="stat-val">149</div><div class="stat-lbl">Aランク候補<br>発注率9.08% / 11CV=1発注</div></div><div class="stat"><div class="stat-val">169</div><div class="stat-lbl">Bランク候補<br>発注率3.88% / 25CV=1発注</div></div><div class="stat"><div class="stat-val">318</div><div class="stat-lbl">A+B合計<br>2024-2025 未発注</div></div><div class="stat"><div class="stat-val">20.1</div><div class="stat-lbl">期待発注数<br>A≈13.5 + B≈6.6</div></div><div class="stat"><div class="stat-val">46%</div><div class="stat-lbl">TALO本部比率<br>本部148 / 代理店170</div></div><div class="stat"><div class="stat-val">50%</div><div class="stat-lbl">発注占有率<br>A+B=93/185件</div></div></div><div class="container"><div class="insight"><h3>分析サマリー</h3><ul>
+<li><strong>Aランク（60pt+）</strong>: 発注率9.08%、11CVで1発注。最優先フォロー対象</li>
+<li><strong>Bランク（40-59pt）</strong>: 発注率3.88%、25CVで1発注。Aと合わせ全CVの9.8%で発注の50%を占有</li>
+<li>2024-2025年の未発注A/B顧客 <strong>318件</strong> から期待発注 <strong>20.1件</strong></li>
+<li>AとDの発注効率差: <strong>25倍</strong></li>
+<li>v3ではパース関数修正 + 2026年データ除外（データ不十分のため）</li>
+</ul></div><div class="section-title">📊 スコアリングモデル検証（全期間 14,643件）</div><div class="grid-2"><div class="card"><table><thead><tr><th>ランク</th><th>スコア</th><th>件数</th><th>発注数</th><th>発注率</th><th>CV→発注</th><th>効率倍率</th></tr></thead><tbody id="rankTable"></tbody></table></div><div class="card"><div class="chart-md"><canvas id="chartRank"></canvas></div></div></div><div class="section-title">📅 年度別ランク構成の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartYearRank"></canvas></div></div><div class="section-title">🔬 属性別リフト＆スコア一覧</div><div class="card-full"><p style="font-size:12px;color:#64748b;margin-bottom:12px">リフト = 属性別発注率 ÷ 全体発注率(1.26%)。5件未満省略。</p><div style="max-height:400px;overflow-y:auto"><table><thead><tr><th>カテゴリ</th><th>属性値</th><th>件数</th><th>発注</th><th>発注率</th><th>リフト</th><th>スコア</th></tr></thead><tbody><tr><td>予算</td><td>3000万台</td><td>95</td><td>9</td><td>9.47%</td><td>7.50x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>予算</td><td>4000万以上</td><td>32</td><td>3</td><td>9.38%</td><td>7.42x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>予算</td><td>3500万台</td><td>41</td><td>3</td><td>7.32%</td><td>5.79x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>予算</td><td>2500万台</td><td>115</td><td>7</td><td>6.09%</td><td>4.82x</td><td class='rank-a'><strong>20pt</strong></td></tr>
+<tr><td>予算</td><td>その他/未記入</td><td>1,026</td><td>61</td><td>5.95%</td><td>4.71x</td><td class='rank-a'><strong>20pt</strong></td></tr>
+<tr><td>予算</td><td>2000万台</td><td>165</td><td>7</td><td>4.24%</td><td>3.36x</td><td class='rank-a'><strong>20pt</strong></td></tr>
+<tr><td>予算</td><td>4000万</td><td>158</td><td>4</td><td>2.53%</td><td>2.00x</td><td class='rank-b'><strong>15pt</strong></td></tr>
+<tr><td>予算</td><td>1500万台</td><td>165</td><td>4</td><td>2.42%</td><td>1.92x</td><td class='rank-b'><strong>10pt</strong></td></tr>
+<tr><td>予算</td><td>5000万</td><td>153</td><td>3</td><td>1.96%</td><td>1.55x</td><td class='rank-b'><strong>10pt</strong></td></tr>
+<tr><td>予算</td><td>3000万</td><td>784</td><td>15</td><td>1.91%</td><td>1.51x</td><td class='rank-b'><strong>10pt</strong></td></tr>
+<tr><td>予算</td><td>2500万</td><td>1,286</td><td>21</td><td>1.63%</td><td>1.29x</td><td class=''><strong>5pt</strong></td></tr>
+<tr><td>予算</td><td>3500万</td><td>331</td><td>5</td><td>1.51%</td><td>1.20x</td><td class=''><strong>5pt</strong></td></tr>
+<tr><td>予算</td><td>2000万</td><td>2,619</td><td>22</td><td>0.84%</td><td>0.66x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>予算</td><td>1500万</td><td>3,027</td><td>9</td><td>0.30%</td><td>0.24x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>予算</td><td>1000万</td><td>4,066</td><td>11</td><td>0.27%</td><td>0.21x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>予算</td><td>その他</td><td>501</td><td>1</td><td>0.20%</td><td>0.16x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>予算</td><td>4500万</td><td>63</td><td>0</td><td>0.00%</td><td>0.00x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>予算</td><td>未定</td><td>16</td><td>0</td><td>0.00%</td><td>0.00x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>建設方法</td><td>工務店</td><td>2,217</td><td>82</td><td>3.70%</td><td>2.93x</td><td class='rank-b'><strong>15pt</strong></td></tr>
+<tr><td>建設方法</td><td>セミセルフ</td><td>58</td><td>2</td><td>3.45%</td><td>2.73x</td><td class='rank-b'><strong>15pt</strong></td></tr>
+<tr><td>建設方法</td><td>セルフビルド</td><td>1,000</td><td>13</td><td>1.30%</td><td>1.03x</td><td class=''><strong>5pt</strong></td></tr>
+<tr><td>建設方法</td><td>その他/未記入</td><td>7,865</td><td>68</td><td>0.86%</td><td>0.68x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>建設方法</td><td>未定</td><td>3,503</td><td>20</td><td>0.57%</td><td>0.45x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>建設時期</td><td>その他/未記入</td><td>1,043</td><td>57</td><td>5.47%</td><td>4.33x</td><td class='rank-a'><strong>20pt</strong></td></tr>
+<tr><td>建設時期</td><td>1年以内</td><td>2,689</td><td>62</td><td>2.31%</td><td>1.82x</td><td class='rank-b'><strong>10pt</strong></td></tr>
+<tr><td>建設時期</td><td>1〜2年</td><td>2,102</td><td>30</td><td>1.43%</td><td>1.13x</td><td class=''><strong>5pt</strong></td></tr>
+<tr><td>建設時期</td><td>半年以内</td><td>964</td><td>13</td><td>1.35%</td><td>1.07x</td><td class=''><strong>5pt</strong></td></tr>
+<tr><td>建設時期</td><td>3年以上</td><td>840</td><td>5</td><td>0.60%</td><td>0.47x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>建設時期</td><td>2〜3年</td><td>1,375</td><td>7</td><td>0.51%</td><td>0.40x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>建設時期</td><td>未定</td><td>5,630</td><td>11</td><td>0.20%</td><td>0.15x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>情報源</td><td>代理店経由</td><td>658</td><td>61</td><td>9.27%</td><td>7.34x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>情報源</td><td>その他</td><td>3,018</td><td>45</td><td>1.49%</td><td>1.18x</td><td class=''><strong>5pt</strong></td></tr>
+<tr><td>情報源</td><td>Yahoo!Japan</td><td>2,087</td><td>23</td><td>1.10%</td><td>0.87x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>情報源</td><td>田舎暮らし/日経</td><td>638</td><td>6</td><td>0.94%</td><td>0.74x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>情報源</td><td>Google</td><td>5,270</td><td>40</td><td>0.76%</td><td>0.60x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>情報源</td><td>Instagram</td><td>2,492</td><td>9</td><td>0.36%</td><td>0.29x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>情報源</td><td>Facebook</td><td>480</td><td>1</td><td>0.21%</td><td>0.16x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>用途</td><td>事務所</td><td>8</td><td>1</td><td>12.50%</td><td>9.89x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>用途</td><td>離れ</td><td>23</td><td>2</td><td>8.70%</td><td>6.88x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>用途</td><td>店舗</td><td>27</td><td>2</td><td>7.41%</td><td>5.86x</td><td class='rank-a'><strong>30pt</strong></td></tr>
+<tr><td>用途</td><td>その他/未記入</td><td>2,399</td><td>46</td><td>1.92%</td><td>1.52x</td><td class='rank-b'><strong>10pt</strong></td></tr>
+<tr><td>用途</td><td>住居</td><td>7,848</td><td>93</td><td>1.19%</td><td>0.94x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>用途</td><td>別荘</td><td>3,613</td><td>40</td><td>1.11%</td><td>0.88x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>用途</td><td>商業施設</td><td>679</td><td>1</td><td>0.15%</td><td>0.12x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>用途</td><td>公共施設</td><td>29</td><td>0</td><td>0.00%</td><td>0.00x</td><td class=''><strong>0pt</strong></td></tr>
+<tr><td>用途</td><td>宿泊施設</td><td>17</td><td>0</td><td>0.00%</td><td>0.00x</td><td class=''><strong>0pt</strong></td></tr>
+</tbody></table></div></div><div class="section-title">🔥 ホット顧客の属性分布（A vs B, 2024-2025未発注）</div><div class="grid-2"><div class="card"><h3 style="font-size:14px;margin-bottom:8px">建設時期</h3><div class="chart-sm"><canvas id="chartTiming"></canvas></div></div><div class="card"><h3 style="font-size:14px;margin-bottom:8px">予算帯</h3><div class="chart-sm"><canvas id="chartBudget"></canvas></div></div></div><div class="grid-2"><div class="card"><h3 style="font-size:14px;margin-bottom:8px">建設方法</h3><div class="chart-sm"><canvas id="chartMethod"></canvas></div></div><div class="card"><h3 style="font-size:14px;margin-bottom:8px">情報源</h3><div class="chart-sm"><canvas id="chartSource"></canvas></div></div></div><div class="section-title">🗾 建設予定地（A+B, 2024-2025未発注）</div><div class="card-full"><div class="chart-lg"><canvas id="chartPref"></canvas></div></div><div class="section-title">🏠 用途・組織・担当者</div><div class="grid-2"><div class="card"><h3 style="font-size:14px;margin-bottom:8px">用途分布（A+B）</h3><div class="chart-sm"><canvas id="chartUse"></canvas></div></div><div class="card"><h3 style="font-size:14px;margin-bottom:8px">組織別内訳</h3><table><thead><tr><th>組織</th><th>Aランク</th><th>Bランク</th><th>合計</th></tr></thead><tbody><tr><td>TALO本部</td><td class="rank-a">39</td><td class="rank-b">109</td><td><strong>148</strong></td></tr><tr><td>代理店</td><td class="rank-a">110</td><td class="rank-b">60</td><td><strong>170</strong></td></tr></tbody></table><h3 style="font-size:14px;margin-top:16px;margin-bottom:8px">担当者別TOP10</h3><table><thead><tr><th>担当者</th><th>A</th><th>B</th><th>合計</th></tr></thead><tbody><tr><td>nan</td><td class='rank-a'>93</td><td class='rank-b'>93</td><td><strong>186</strong></td></tr>
 <tr><td>OH</td><td class='rank-a'>18</td><td class='rank-b'>31</td><td><strong>49</strong></td></tr>
-<tr><td>NT</td><td class='rank-a'>8</td><td class='rank-b'>16</td><td><strong>24</strong></td></tr>
-<tr><td>JO</td><td class='rank-a'>8</td><td class='rank-b'>14</td><td><strong>22</strong></td></tr>
+<tr><td>NT</td><td class='rank-a'>8</td><td class='rank-b'>17</td><td><strong>25</strong></td></tr>
+<tr><td>JO</td><td class='rank-a'>8</td><td class='rank-b'>15</td><td><strong>23</strong></td></tr>
 <tr><td>EB</td><td class='rank-a'>2</td><td class='rank-b'>5</td><td><strong>7</strong></td></tr>
 <tr><td>日野</td><td class='rank-a'>6</td><td class='rank-b'>0</td><td><strong>6</strong></td></tr>
 <tr><td>AD</td><td class='rank-a'>2</td><td class='rank-b'>3</td><td><strong>5</strong></td></tr>
 <tr><td>MJ</td><td class='rank-a'>1</td><td class='rank-b'>3</td><td><strong>4</strong></td></tr>
 <tr><td>大井</td><td class='rank-a'>3</td><td class='rank-b'>1</td><td><strong>4</strong></td></tr>
 <tr><td>川部</td><td class='rank-a'>1</td><td class='rank-b'>1</td><td><strong>2</strong></td></tr>
-</tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEB広告CV品質指標 -->
-  <div class="card">
-    <h2>WEB広告 CV品質指標</h2>
-    <p style="font-size:12px;color:#64748b;margin-bottom:12px">CPAではなく「発注1件あたりコスト」で広告効果を測定。広告費¥1,200万/年（フィー込: 広告費¥1,000万＋代理店フィー20%＝¥200万）。</p>
-    <div class="grid-2">
-      <div>
-        <table>
-          <thead><tr><th>指標</th><th>現状（全CV均等）</th><th>改善後（A/Bターゲット）</th></tr></thead>
-          <tbody>
-            <tr><td>CPA（CV単価）</td><td>約¥10,000</td><td>約¥25,000（↑2.5倍）</td></tr>
-            <tr><td>CV→発注変換率</td><td>1.29%（77CV=1発注）</td><td>6.64%（15CV=1発注）</td></tr>
-            <tr><td>発注1件あたりコスト</td><td>約¥77万</td><td>約¥38万</td></tr>
-            <tr><td>年間広告費¥1,200万での発注期待数</td><td>約15件</td><td>約32件</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <canvas id="chartCostCompare"></canvas>
-      </div>
-    </div>
-    <div class="insight" style="margin-top:16px;background:#EEF2FF;border-left-color:#2563EB">
-      <h3 style="color:#1e40af">CPAは上がるが発注コストは大幅に下がる逆説的構造</h3>
-      <ul>
-        <li>全CV均等に広告費を使った場合、77CV中1件しか発注に至らない（発注率1.29%）</li>
-        <li>A/Bランク属性にターゲットを絞ることで、15CV中1件が発注に至る（発注率6.64%）</li>
-        <li>CPAは2.5倍に上がるが、<strong>発注あたりコストは▲51%</strong>、<strong>発注数は約2.1倍</strong></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- アクションプラン -->
-  <div class="card">
-    <h2>推奨アクションプラン</h2>
-    <table>
-      <thead><tr><th>優先度</th><th>対象</th><th>件数</th><th>アクション</th><th>期待効果</th></tr></thead>
-      <tbody>
-        <tr><td><span class="badge badge-a">最優先</span></td><td>Aランク</td><td>149件</td><td>個別電話 → 見学会・個別相談誘導（1週間以内）</td><td>≈13.9件発注</td></tr>
-        <tr><td><span class="badge badge-b">優先</span></td><td>Bランク</td><td>165件</td><td>パーソナライズメール + モデルハウス見学案内</td><td>≈6.5件発注</td></tr>
-        <tr><td><span class="badge badge-a">最優先</span></td><td>代理店Aランク</td><td>110件</td><td>各代理店に個別リスト共有・合同フォロー</td><td>代理店経由は最高発注率</td></tr>
-        <tr><td><span class="badge badge-hot">検討</span></td><td>2024年A/B</td><td>197件</td><td>1年超経過 → 状況確認の再アプローチ</td><td>離脱防止・掘り起こし</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
-
+</tbody></table></div></div><div class="section-title">💡 WEB広告 CV品質指標</div><div class="card-full"><p style="font-size:12px;color:#64748b;margin-bottom:12px">CPAではなく「発注1件あたりコスト」で広告効果を測定。広告費¥1,200万/年。</p><div class="grid-2"><div><table><thead><tr><th>指標</th><th>現状（全CV均等）</th><th>改善後（A/Bターゲット）</th></tr></thead><tbody><tr><td>CPA（CV単価）</td><td>約¥819</td><td>約¥2,047（↑2.5倍）</td></tr><tr><td>CV→発注変換率</td><td>1.26%（79CV=1発注）</td><td>6.47%（15CV=1発注）</td></tr><tr><td>発注1件あたりコスト</td><td>約¥6万</td><td>約¥3万</td></tr><tr><td>年間発注期待数</td><td>約200件</td><td>約400件</td></tr></tbody></table></div><div><div class="chart-sm"><canvas id="chartCostCompare"></canvas></div></div></div><div class="insight" style="margin-top:16px;background:#EEF2FF;border-left-color:#2563EB"><h3 style="color:#1e40af">CPAは上がるが発注コストは大幅に下がる逆説的構造</h3><ul>
+<li>A/Bランク属性にターゲットを絞ると、<strong>発注コスト▲50%</strong>、<strong>発注数約2.0倍</strong></li>
+<li>広告代理店にはCPAではなく「発注1件あたりコスト」をKPIとして提案すべき</li>
+</ul></div></div><div class="section-title">📋 推奨アクションプラン</div><div class="card-full"><table><thead><tr><th>優先度</th><th>対象</th><th>件数</th><th>アクション</th><th>期待効果</th></tr></thead><tbody><tr><td><span style="background:#FDE8EB;color:#E94560;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">最優先</span></td><td>Aランク</td><td>149件</td><td>個別電話 → 見学会・個別相談誘導（1週間以内）</td><td>≈13.5件発注</td></tr><tr><td><span style="background:#EBF2FF;color:#2563EB;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">優先</span></td><td>Bランク</td><td>169件</td><td>パーソナライズメール + モデルハウス見学案内</td><td>≈6.6件発注</td></tr><tr><td><span style="background:#FDE8EB;color:#E94560;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">最優先</span></td><td>代理店Aランク</td><td>110件</td><td>各代理店に個別リスト共有・合同フォロー</td><td>代理店経由は最高発注率</td></tr><tr><td><span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">検討</span></td><td>2024年A/B</td><td>199件</td><td>1年超経過 → 状況確認の再アプローチ</td><td>離脱防止・掘り起こし</td></tr></tbody></table></div></div>
 <script>
 const C = {red:'#E94560',blue:'#2563EB',green:'#0F9B58',gold:'#D4A853',purple:'#7c3aed',gray:'#94a3b8'};
-const rankData = [{"rank": "A", "count": 729, "orders": 68, "rate": 9.33, "cv_per": 11}, {"rank": "B", "count": 716, "orders": 28, "rate": 3.91, "cv_per": 26}, {"rank": "C", "count": 2335, "orders": 54, "rate": 2.31, "cv_per": 43}, {"rank": "D", "count": 10934, "orders": 40, "rate": 0.37, "cv_per": 273}];
+const rankData = [{"rank": "A", "count": 716, "orders": 65, "rate": 9.08, "cv_per": 11}, {"rank": "B", "count": 722, "orders": 28, "rate": 3.88, "cv_per": 25}, {"rank": "C", "count": 2342, "orders": 53, "rate": 2.26, "cv_per": 44}, {"rank": "D", "count": 10863, "orders": 39, "rate": 0.36, "cv_per": 278}];
 const dRate = rankData.find(r=>r.rank==='D')?.rate||0.01;
 
-// ランクテーブル
 const tb=document.getElementById('rankTable');
 rankData.forEach(r=>{
   const mult=(r.rate/dRate).toFixed(0);
@@ -295,32 +127,28 @@ rankData.forEach(r=>{
   tb.innerHTML+=`<tr><td class="${cls}">${r.rank}</td><td>${r.rank==='A'?'60pt+':r.rank==='B'?'40-59pt':r.rank==='C'?'20-39pt':'0-19pt'}</td><td>${r.count.toLocaleString()}</td><td>${r.orders}</td><td>${r.rate}%</td><td>${r.cv_per}件</td><td>×${mult}</td></tr>`;
 });
 
-// ランク棒グラフ
 new Chart(document.getElementById('chartRank'),{
   type:'bar',
   data:{labels:rankData.map(r=>r.rank+'ランク'),datasets:[
     {label:'発注率(%)',data:rankData.map(r=>r.rate),backgroundColor:[C.red,C.blue,C.gray,'#cbd5e1'],yAxisID:'y'},
-    {label:'件数',data:rankData.map(r=>r.count),backgroundColor:['rgba(233,69,96,0.2)','rgba(37,99,235,0.2)','rgba(148,163,184,0.2)','rgba(203,213,225,0.2)'],yAxisID:'y1',type:'bar'}
+    {label:'件数',data:rankData.map(r=>r.count),backgroundColor:['rgba(233,69,96,0.2)','rgba(37,99,235,0.2)','rgba(148,163,184,0.2)','rgba(203,213,225,0.2)'],yAxisID:'y1'}
   ]},
-  options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},scales:{y:{position:'left',beginAtZero:true,title:{display:true,text:'発注率(%)'}},y1:{position:'right',beginAtZero:true,grid:{display:false},title:{display:true,text:'件数'}}}}
+  options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{position:'left',beginAtZero:true,title:{display:true,text:'発注率(%)'}},y1:{position:'right',beginAtZero:true,grid:{display:false},title:{display:true,text:'件数'}}}}
 });
 
-// 年度×ランク推移
-const yrData = [{"year": "2021", "rank": "A", "count": 188, "orders": 23, "rate": 12.23}, {"year": "2021", "rank": "B", "count": 189, "orders": 3, "rate": 1.59}, {"year": "2021", "rank": "C", "count": 706, "orders": 8, "rate": 1.13}, {"year": "2021", "rank": "D", "count": 2449, "orders": 4, "rate": 0.16}, {"year": "2022", "rank": "A", "count": 184, "orders": 9, "rate": 4.89}, {"year": "2022", "rank": "B", "count": 199, "orders": 11, "rate": 5.53}, {"year": "2022", "rank": "C", "count": 707, "orders": 10, "rate": 1.41}, {"year": "2022", "rank": "D", "count": 2140, "orders": 7, "rate": 0.33}, {"year": "2023", "rank": "A", "count": 176, "orders": 14, "rate": 7.95}, {"year": "2023", "rank": "B", "count": 152, "orders": 7, "rate": 4.61}, {"year": "2023", "rank": "C", "count": 369, "orders": 13, "rate": 3.52}, {"year": "2023", "rank": "D", "count": 2334, "orders": 10, "rate": 0.43}, {"year": "2024", "rank": "A", "count": 104, "orders": 11, "rate": 10.58}, {"year": "2024", "rank": "B", "count": 107, "orders": 3, "rate": 2.8}, {"year": "2024", "rank": "C", "count": 285, "orders": 11, "rate": 3.86}, {"year": "2024", "rank": "D", "count": 2194, "orders": 11, "rate": 0.5}, {"year": "2025", "rank": "A", "count": 64, "orders": 8, "rate": 12.5}, {"year": "2025", "rank": "B", "count": 65, "orders": 4, "rate": 6.15}, {"year": "2025", "rank": "C", "count": 255, "orders": 10, "rate": 3.92}, {"year": "2025", "rank": "D", "count": 1776, "orders": 8, "rate": 0.45}];
-const years = ['2021','2022','2023','2024','2025'];
+const yrData = [{"year": "2021", "rank": "A", "count": 188, "orders": 23, "rate": 12.23}, {"year": "2021", "rank": "B", "count": 190, "orders": 3, "rate": 1.58}, {"year": "2021", "rank": "C", "count": 708, "orders": 8, "rate": 1.13}, {"year": "2021", "rank": "D", "count": 2446, "orders": 4, "rate": 0.16}, {"year": "2022", "rank": "A", "count": 184, "orders": 9, "rate": 4.89}, {"year": "2022", "rank": "B", "count": 203, "orders": 11, "rate": 5.42}, {"year": "2022", "rank": "C", "count": 705, "orders": 10, "rate": 1.42}, {"year": "2022", "rank": "D", "count": 2138, "orders": 7, "rate": 0.33}, {"year": "2023", "rank": "A", "count": 176, "orders": 14, "rate": 7.95}, {"year": "2023", "rank": "B", "count": 153, "orders": 7, "rate": 4.58}, {"year": "2023", "rank": "C", "count": 377, "orders": 14, "rate": 3.71}, {"year": "2023", "rank": "D", "count": 2325, "orders": 9, "rate": 0.39}, {"year": "2024", "rank": "A", "count": 104, "orders": 11, "rate": 10.58}, {"year": "2024", "rank": "B", "count": 109, "orders": 3, "rate": 2.75}, {"year": "2024", "rank": "C", "count": 290, "orders": 11, "rate": 3.79}, {"year": "2024", "rank": "D", "count": 2187, "orders": 11, "rate": 0.5}, {"year": "2025", "rank": "A", "count": 64, "orders": 8, "rate": 12.5}, {"year": "2025", "rank": "B", "count": 67, "orders": 4, "rate": 5.97}, {"year": "2025", "rank": "C", "count": 262, "orders": 10, "rate": 3.82}, {"year": "2025", "rank": "D", "count": 1767, "orders": 8, "rate": 0.45}];
+const years = ["2021", "2022", "2023", "2024", "2025"];
 const rankColors = {A:C.red,B:C.blue,C:C.gray,D:'#cbd5e1'};
 new Chart(document.getElementById('chartYearRank'),{
   type:'bar',
   data:{labels:years,datasets:['A','B','C','D'].map(r=>({
-    label:r+'ランク',
-    data:years.map(y=>{const d=yrData.find(x=>x.year===y&&x.rank===r);return d?d.count:0}),
+    label:r+'ランク',data:years.map(y=>{const d=yrData.find(x=>x.year===y&&x.rank===r);return d?d.count:0}),
     backgroundColor:rankColors[r]
   }))
   },
   options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}
 });
 
-// A vs B比較チャート
 function dualBar(id,dataA,dataB){
   const labels=[...new Set([...dataA.map(d=>d.label),...dataB.map(d=>d.label)])];
   const mA=Object.fromEntries(dataA.map(d=>[d.label,d.count]));
@@ -329,43 +157,39 @@ function dualBar(id,dataA,dataB){
     type:'bar',data:{labels,datasets:[
       {label:'A',data:labels.map(l=>mA[l]||0),backgroundColor:'rgba(233,69,96,0.7)'},
       {label:'B',data:labels.map(l=>mB[l]||0),backgroundColor:'rgba(37,99,235,0.6)'}
-    ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'}}}}
+    ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{font:{size:11}}}},scales:{y:{beginAtZero:true}}}
   });
 }
-dualBar('chartTiming',[{"label": "その他/未記入", "count": 123, "pct": 82.6}, {"label": "1年以内", "count": 15, "pct": 10.1}, {"label": "1〜2年", "count": 5, "pct": 3.4}, {"label": "3年以上", "count": 2, "pct": 1.3}, {"label": "半年以内", "count": 2, "pct": 1.3}, {"label": "2〜3年", "count": 1, "pct": 0.7}, {"label": "未定", "count": 1, "pct": 0.7}],[{"label": "その他/未記入", "count": 102, "pct": 61.8}, {"label": "1年以内", "count": 26, "pct": 15.8}, {"label": "1〜2年", "count": 15, "pct": 9.1}, {"label": "未定", "count": 9, "pct": 5.5}, {"label": "3年以上", "count": 5, "pct": 3.0}, {"label": "半年以内", "count": 5, "pct": 3.0}, {"label": "2〜3年", "count": 3, "pct": 1.8}]);
-dualBar('chartBudget',[{"label": "その他/未記入", "count": 105, "pct": 70.5}, {"label": "2000万台", "count": 14, "pct": 9.4}, {"label": "3000万台", "count": 10, "pct": 6.7}, {"label": "4000万以上", "count": 7, "pct": 4.7}, {"label": "1500万台", "count": 4, "pct": 2.7}, {"label": "その他", "count": 4, "pct": 2.7}, {"label": "3500万台", "count": 2, "pct": 1.3}, {"label": "2500万台", "count": 2, "pct": 1.3}, {"label": "3000万", "count": 1, "pct": 0.7}],[{"label": "その他/未記入", "count": 111, "pct": 67.3}, {"label": "2000万", "count": 11, "pct": 6.7}, {"label": "2000万台", "count": 9, "pct": 5.5}, {"label": "2500万台", "count": 7, "pct": 4.2}, {"label": "3000万台", "count": 7, "pct": 4.2}, {"label": "1500万台", "count": 4, "pct": 2.4}, {"label": "3500万台", "count": 4, "pct": 2.4}, {"label": "3000万", "count": 3, "pct": 1.8}, {"label": "1000万", "count": 2, "pct": 1.2}, {"label": "2500万", "count": 2, "pct": 1.2}]);
-dualBar('chartMethod',[{"label": "工務店", "count": 71, "pct": 47.7}, {"label": "その他/未記入", "count": 70, "pct": 47.0}, {"label": "セルフビルド", "count": 7, "pct": 4.7}, {"label": "セミセルフ", "count": 1, "pct": 0.7}],[{"label": "その他/未記入", "count": 115, "pct": 69.7}, {"label": "工務店", "count": 42, "pct": 25.5}, {"label": "セルフビルド", "count": 5, "pct": 3.0}, {"label": "セミセルフ", "count": 3, "pct": 1.8}]);
+dualBar('chartTiming',[{"label": "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "count": 123, "pct": 82.6}, {"label": "1\u5e74\u4ee5\u5185", "count": 15, "pct": 10.1}, {"label": "1\u301c2\u5e74", "count": 5, "pct": 3.4}, {"label": "3\u5e74\u4ee5\u4e0a", "count": 2, "pct": 1.3}, {"label": "\u534a\u5e74\u4ee5\u5185", "count": 2, "pct": 1.3}, {"label": "2\u301c3\u5e74", "count": 1, "pct": 0.7}, {"label": "\u672a\u5b9a", "count": 1, "pct": 0.7}],[{"label": "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "count": 102, "pct": 60.4}, {"label": "1\u5e74\u4ee5\u5185", "count": 28, "pct": 16.6}, {"label": "1\u301c2\u5e74", "count": 15, "pct": 8.9}, {"label": "\u672a\u5b9a", "count": 9, "pct": 5.3}, {"label": "\u534a\u5e74\u4ee5\u5185", "count": 7, "pct": 4.1}, {"label": "3\u5e74\u4ee5\u4e0a", "count": 5, "pct": 3.0}, {"label": "2\u301c3\u5e74", "count": 3, "pct": 1.8}]);
+dualBar('chartBudget',[{"label": "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "count": 105, "pct": 70.5}, {"label": "2000\u4e07\u53f0", "count": 14, "pct": 9.4}, {"label": "3000\u4e07\u53f0", "count": 10, "pct": 6.7}, {"label": "4000\u4e07\u4ee5\u4e0a", "count": 7, "pct": 4.7}, {"label": "1500\u4e07\u53f0", "count": 4, "pct": 2.7}, {"label": "\u305d\u306e\u4ed6", "count": 4, "pct": 2.7}, {"label": "3500\u4e07\u53f0", "count": 2, "pct": 1.3}],[{"label": "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "count": 111, "pct": 65.7}, {"label": "2000\u4e07", "count": 11, "pct": 6.5}, {"label": "2000\u4e07\u53f0", "count": 9, "pct": 5.3}, {"label": "2500\u4e07\u53f0", "count": 7, "pct": 4.1}, {"label": "3000\u4e07\u53f0", "count": 7, "pct": 4.1}, {"label": "1500\u4e07\u53f0", "count": 4, "pct": 2.4}, {"label": "4000\u4e07", "count": 4, "pct": 2.4}, {"label": "3500\u4e07\u53f0", "count": 4, "pct": 2.4}, {"label": "3000\u4e07", "count": 3, "pct": 1.8}, {"label": "1000\u4e07", "count": 2, "pct": 1.2}]);
+dualBar('chartMethod',[{"label": "\u5de5\u52d9\u5e97", "count": 71, "pct": 47.7}, {"label": "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "count": 70, "pct": 47.0}, {"label": "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "count": 7, "pct": 4.7}, {"label": "\u30bb\u30df\u30bb\u30eb\u30d5", "count": 1, "pct": 0.7}],[{"label": "\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "count": 115, "pct": 68.0}, {"label": "\u5de5\u52d9\u5e97", "count": 45, "pct": 26.6}, {"label": "\u30bb\u30eb\u30d5\u30d3\u30eb\u30c9", "count": 5, "pct": 3.0}, {"label": "\u30bb\u30df\u30bb\u30eb\u30d5", "count": 4, "pct": 2.4}]);
 
-// Source(横棒)
 new Chart(document.getElementById('chartSource'),{
-  type:'bar',data:{labels:[{"label": "その他", "count": 162, "pct": 51.6}, {"label": "代理店経由", "count": 139, "pct": 44.3}, {"label": "Google", "count": 8, "pct": 2.5}, {"label": "田舎暮らし/日経", "count": 4, "pct": 1.3}, {"label": "Yahoo!Japan", "count": 1, "pct": 0.3}].map(d=>d.label),datasets:[{data:[{"label": "その他", "count": 162, "pct": 51.6}, {"label": "代理店経由", "count": 139, "pct": 44.3}, {"label": "Google", "count": 8, "pct": 2.5}, {"label": "田舎暮らし/日経", "count": 4, "pct": 1.3}, {"label": "Yahoo!Japan", "count": 1, "pct": 0.3}].map(d=>d.count),backgroundColor:C.purple+'99'}]},
-  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'}}}}
+  type:'bar',data:{labels:["\u305d\u306e\u4ed6", "\u4ee3\u7406\u5e97\u7d4c\u7531", "Google", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Yahoo!Japan"],datasets:[{data:[164, 139, 10, 4, 1],backgroundColor:C.purple+'99'}]},
+  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
 });
 
-// 建設予定地(横棒)
 new Chart(document.getElementById('chartPref'),{
-  type:'bar',data:{labels:[{"label": "長野県", "count": 54, "pct": 17.2}, {"label": "千葉県", "count": 40, "pct": 12.7}, {"label": "静岡県", "count": 27, "pct": 8.6}, {"label": "山梨県", "count": 26, "pct": 8.3}, {"label": "その他", "count": 24, "pct": 7.6}, {"label": "兵庫県", "count": 18, "pct": 5.7}, {"label": "東京都", "count": 16, "pct": 5.1}, {"label": "神奈川県", "count": 14, "pct": 4.5}, {"label": "北海道", "count": 11, "pct": 3.5}, {"label": "群馬県", "count": 10, "pct": 3.2}, {"label": "大阪府", "count": 7, "pct": 2.2}, {"label": "岐阜県", "count": 6, "pct": 1.9}, {"label": "愛知県", "count": 6, "pct": 1.9}, {"label": "栃木県", "count": 5, "pct": 1.6}, {"label": "埼玉県", "count": 5, "pct": 1.6}].map(d=>d.label),datasets:[{data:[{"label": "長野県", "count": 54, "pct": 17.2}, {"label": "千葉県", "count": 40, "pct": 12.7}, {"label": "静岡県", "count": 27, "pct": 8.6}, {"label": "山梨県", "count": 26, "pct": 8.3}, {"label": "その他", "count": 24, "pct": 7.6}, {"label": "兵庫県", "count": 18, "pct": 5.7}, {"label": "東京都", "count": 16, "pct": 5.1}, {"label": "神奈川県", "count": 14, "pct": 4.5}, {"label": "北海道", "count": 11, "pct": 3.5}, {"label": "群馬県", "count": 10, "pct": 3.2}, {"label": "大阪府", "count": 7, "pct": 2.2}, {"label": "岐阜県", "count": 6, "pct": 1.9}, {"label": "愛知県", "count": 6, "pct": 1.9}, {"label": "栃木県", "count": 5, "pct": 1.6}, {"label": "埼玉県", "count": 5, "pct": 1.6}].map(d=>d.count),backgroundColor:C.green+'99'}]},
-  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'}}}}
+  type:'bar',data:{labels:["\u9577\u91ce\u770c", "\u5343\u8449\u770c", "\u5c71\u68a8\u770c", "\u9759\u5ca1\u770c", "\u305d\u306e\u4ed6", "\u5175\u5eab\u770c", "\u6771\u4eac\u90fd", "\u795e\u5948\u5ddd\u770c", "\u5317\u6d77\u9053", "\u7fa4\u99ac\u770c", "\u5927\u962a\u5e9c", "\u5c90\u961c\u770c", "\u611b\u77e5\u770c", "\u6803\u6728\u770c", "\u57fc\u7389\u770c"],datasets:[{data:[54, 41, 28, 27, 24, 18, 16, 14, 12, 10, 7, 6, 6, 5, 5],backgroundColor:C.green+'99'}]},
+  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
 });
 
-// CV品質比較チャート
 new Chart(document.getElementById('chartCostCompare'),{
   type:'bar',
-  data:{
-    labels:['発注コスト(万円)','発注期待数(件/年)'],
-    datasets:[
-      {label:'現状（全CV均等）',data:[77,15],backgroundColor:'rgba(148,163,184,0.6)'},
-      {label:'改善後（A/B集中）',data:[38,32],backgroundColor:'rgba(37,99,235,0.7)'}
-    ]
-  },
-  options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'}}}}
+  data:{labels:['発注コスト(万円)','発注期待(件/年)'],datasets:[
+    {label:'現状',data:[6,200],backgroundColor:'rgba(148,163,184,0.6)'},
+    {label:'A/B集中',data:[3,400],backgroundColor:'rgba(37,99,235,0.7)'}
+  ]},
+  options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}
 });
 
-// 用途(ドーナツ)
 new Chart(document.getElementById('chartUse'),{
-  type:'doughnut',data:{labels:[{"label": "その他/未記入", "count": 140, "pct": 44.6}, {"label": "住居", "count": 106, "pct": 33.8}, {"label": "別荘", "count": 55, "pct": 17.5}, {"label": "離れ", "count": 7, "pct": 2.2}, {"label": "宿泊施設", "count": 4, "pct": 1.3}, {"label": "商業施設", "count": 1, "pct": 0.3}, {"label": "事務所", "count": 1, "pct": 0.3}].map(d=>d.label),datasets:[{data:[{"label": "その他/未記入", "count": 140, "pct": 44.6}, {"label": "住居", "count": 106, "pct": 33.8}, {"label": "別荘", "count": 55, "pct": 17.5}, {"label": "離れ", "count": 7, "pct": 2.2}, {"label": "宿泊施設", "count": 4, "pct": 1.3}, {"label": "商業施設", "count": 1, "pct": 0.3}, {"label": "事務所", "count": 1, "pct": 0.3}].map(d=>d.count),backgroundColor:[C.red,C.blue,C.green,C.gold,C.purple,C.gray,'#cbd5e1']}]},
+  type:'doughnut',data:{labels:["\u305d\u306e\u4ed6/\u672a\u8a18\u5165", "\u4f4f\u5c45", "\u5225\u8358", "\u96e2\u308c", "\u5bbf\u6cca\u65bd\u8a2d", "\u5546\u696d\u65bd\u8a2d", "\u4e8b\u52d9\u6240"],datasets:[{data:[140, 107, 58, 7, 4, 1, 1],backgroundColor:[C.red,C.blue,C.green,C.gold,C.purple,C.gray,'#cbd5e1']}]},
   options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:11}}}}}
 });
 </script>
-</body>
-</html>
+<div class="footer">
+  v3（パース修正版）— Generated with Claude (Cowork) ·
+  <a href="index.html">← レポート一覧に戻る</a>
+</div>
+</body></html>
