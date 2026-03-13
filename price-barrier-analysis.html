@@ -2,357 +2,90 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TALO 価格高騰と購買層変化の分析</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>価格障壁分析 v3 | TALOログハウス</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',sans-serif;background:#f0f2f5;color:#2c3e50;line-height:1.6}
-.container{max-width:1200px;margin:0 auto;padding:24px}
-h1{font-size:1.6rem;margin-bottom:4px}
-.subtitle{color:#64748b;font-size:0.95rem;margin-bottom:24px}
-.back-link{display:inline-block;margin-bottom:16px;color:#64748b;text-decoration:none;font-size:0.9rem}
-.back-link:hover{color:#e67e22}
-
-/* Thesis box */
-.thesis{background:linear-gradient(135deg,#e67e22 0%,#d35400 100%);color:#fff;border-radius:12px;padding:24px;margin-bottom:28px}
-.thesis h2{font-size:1.2rem;margin-bottom:8px}
-.thesis p{font-size:0.95rem;opacity:0.95;line-height:1.7}
-
-/* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
-.kpi{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-left:4px solid #e67e22}
-.kpi .label{font-size:0.8rem;color:#64748b;margin-bottom:4px}
-.kpi .value{font-size:1.6rem;font-weight:700;color:#2c3e50}
-.kpi .sub{font-size:0.8rem;color:#e67e22;margin-top:2px}
-
-/* Section */
-.section{background:#fff;border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.section h3{font-size:1.1rem;color:#2c3e50;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #f0f2f5}
-.chart-container{position:relative;height:320px;margin-bottom:16px}
-.chart-container.tall{height:380px}
-
-/* Insight */
-.insight{background:#fef3e2;border-radius:8px;padding:16px;margin-top:16px;border-left:4px solid #e67e22}
-.insight h4{font-size:0.9rem;color:#d35400;margin-bottom:6px}
-.insight p{font-size:0.88rem;color:#7c5a2c;line-height:1.7}
-
-/* Evidence list */
-.evidence{margin-top:16px}
-.evidence-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f0f2f5}
-.evidence-item:last-child{border-bottom:none}
-.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:600;white-space:nowrap}
-.badge.up{background:#fde8e8;color:#c0392b}
-.badge.down{background:#e8f8f0;color:#27ae60}
-.badge.shift{background:#fef3e2;color:#d35400}
-.evidence-text{font-size:0.9rem;line-height:1.5}
-.evidence-text strong{color:#2c3e50}
-
-/* Summary */
-.summary{background:linear-gradient(135deg,#2c3e50 0%,#34495e 100%);color:#fff;border-radius:12px;padding:24px;margin-top:28px}
-.summary h3{font-size:1.1rem;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:8px}
-.summary p{font-size:0.9rem;opacity:0.9;line-height:1.8}
-
-.footer{text-align:center;color:#94a3b8;font-size:0.8rem;padding:20px 0;margin-top:20px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f2f5;color:#2c3e50;min-height:100vh}
+.page-header{background:linear-gradient(135deg,#1a2e45 0%,#2e5077 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-header .badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:3px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;position:relative;color:#fff}
+.page-header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:700;color:#fff;position:relative}
+.page-header p{font-size:.85rem;color:rgba(255,255,255,.75);margin-top:.5rem;position:relative}
+.back-link{position:absolute;top:1rem;left:1.25rem;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem}
+.back-link:hover{color:#fff}
+.stats-bar{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;justify-content:center;gap:2.5rem;padding:1.1rem 2rem;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.stat{text-align:center}.stat-val{font-size:1.5rem;font-weight:700;color:#1a2e45}.stat-lbl{font-size:.72rem;color:#94a3b8;margin-top:1px;letter-spacing:.5px}
+.container{max-width:1280px;margin:0 auto;padding:2rem 1.25rem}
+.section-title{font-size:1.05rem;font-weight:700;color:#1e293b;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #c2410c;display:flex;align-items:center;gap:.5rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.card{background:#fff;border-radius:12px;padding:1.4rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.card-full{background:#fff;border-radius:12px;padding:1.4rem;margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
+.card h3,.card-full h3{font-size:.82rem;font-weight:600;color:#94a3b8;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f1f5f9;padding-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.data-note{font-size:.72rem;color:#94a3b8;font-weight:400;margin-left:.3rem;text-transform:none;letter-spacing:0;background:#f1f5f9;padding:1px 6px;border-radius:4px}
+.chart-sm{position:relative;height:220px}.chart-md{position:relative;height:280px}.chart-lg{position:relative;height:320px}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead th{background:#f8fafc;color:#64748b;padding:.6rem .8rem;text-align:left;font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0}
+thead th.r{text-align:right}
+tbody td{padding:.6rem .8rem;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle}
+tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:#f8fafc}
+.kpi{background:#fff;border-radius:12px;padding:1.2rem 1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid #c2410c}
+.kpi-val{font-size:1.8rem;font-weight:700;color:#1e293b}.kpi-lbl{font-size:.75rem;color:#94a3b8;margin-top:2px}
+.kpi-sub{font-size:.7rem;color:#64748b;margin-top:4px}
+.insight{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.25rem;font-size:.85rem;line-height:1.7;color:#1e40af}
+.insight ul{margin:0;padding-left:1.2rem}.insight li{margin-bottom:.3rem}
+.footer{text-align:center;padding:2rem;font-size:.75rem;color:#94a3b8}
+.footer a{color:#3a7ca5;text-decoration:none}.footer a:hover{text-decoration:underline}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.stats-bar{gap:1.2rem}}
 </style>
 </head>
 <body>
-<div class="container">
-<a href="index.html" class="back-link">← レポート一覧へ戻る</a>
-<h1>価格高騰と購買層変化の分析</h1>
-<p class="subtitle">建築コスト上昇がカタログ請求者・契約者に与えた構造的変化（2021–2025）</p>
 
-<div class="thesis">
-<h2>検証仮説</h2>
-<p>建築コストの高騰により、ログハウスの価格は5年前の約1.5倍に上昇。<br>
-その結果、かつての中心的な購買層（予算1,500万以下の「憧れ層」）がログハウスに手が届かなくなり、<br>
-購買層が高価格帯へシフトしている ── この仮説をカタログ請求データと契約者データの両面から検証する。</p>
-</div>
-
-<!-- KPIs -->
-<div class="kpi-grid">
-<div class="kpi">
-<div class="label">契約者 中央値（総工費）</div>
-<div class="value">2,800→4,600万</div>
-<div class="sub">2021→2025 +64%</div>
-</div>
-<div class="kpi">
-<div class="label">請求者 平均予算</div>
-<div class="value">1,185→1,714万</div>
-<div class="sub">2021→2025 +45%</div>
-</div>
-<div class="kpi">
-<div class="label">低予算帯（~1500万）シェア</div>
-<div class="value">64.3%→26.8%</div>
-<div class="sub">2021→2025 ▼37.5pt</div>
-</div>
-<div class="kpi">
-<div class="label">セルフビルド希望率</div>
-<div class="value">12.9%→2.0%</div>
-<div class="sub">2021→2025 ▼10.9pt</div>
-</div>
-<div class="kpi">
-<div class="label">請求件数</div>
-<div class="value">3,532→2,160件</div>
-<div class="sub">2021→2025 ▼39%</div>
-</div>
-</div>
-
-<!-- Evidence 1: Budget shift -->
-<div class="section">
-<h3>エビデンス① 予算帯の年次シフト（カタログ請求者）</h3>
-<div class="chart-container tall">
-<canvas id="budgetShiftChart"></canvas>
-</div>
-<div class="insight">
-<h4>読み取れること</h4>
-<p>2021年には請求者の64%が予算1,500万以下だったが、2025年には27%まで急減。
-代わりに2,000〜2,500万帯が26%→55%へ倍増した。
-価格上昇により「予算1,500万以下でログハウスを建てたい」という層が、
-現実の価格帯と合わなくなり請求自体を断念している可能性が高い。</p>
-</div>
-</div>
-
-<!-- Evidence 2: Cost trend -->
-<div class="section">
-<h3>エビデンス② 契約者の総工費推移（EUDS実績）</h3>
-<div class="chart-container tall">
-<canvas id="costTrendChart"></canvas>
-</div>
-<div class="insight">
-<h4>読み取れること</h4>
-<p>実際の契約者の総工費中央値は、2010年の1,900万→2025年の4,600万と約2.4倍に上昇。
-特に2021年以降の上昇が急激で、2021年2,800万→2025年4,600万（+64%）。
-25th percentileも2,408万→4,500万に跳ね上がっており、
-「安いログハウス」という選択肢が事実上なくなっている。</p>
-</div>
-</div>
-
-<!-- Evidence 3: Method change -->
-<div class="section">
-<h3>エビデンス③ 建設方法の変化（「憧れ層」の撤退シグナル）</h3>
-<div class="chart-container">
-<canvas id="methodChart"></canvas>
-</div>
-<div class="insight">
-<h4>読み取れること</h4>
-<p>セルフビルド希望者は2021年12.9%→2025年2.0%へ激減。
-セルフビルドは「予算を抑えてログハウスを手に入れたい」層の典型的な選択肢であり、
-この急減は低予算の「憧れ層」がログハウス市場から離脱していることを示す。
-工務店希望も23.7%→5.0%と減少しているが、これはフォーム変更の影響もある可能性がある。</p>
-</div>
-</div>
-
-<!-- Evidence 4: Order rate by budget -->
-<div class="section">
-<h3>エビデンス④ 予算帯別の発注率推移</h3>
-<div class="chart-container">
-<canvas id="orderRateChart"></canvas>
-</div>
-<div class="insight">
-<h4>読み取れること</h4>
-<p>低予算帯（~1,500万）の発注率は0.19〜0.54%と常に低く、2025年は0.18%。
-つまり低予算帯は「請求はするが発注しない」層であり、
-価格高騰により、この層が請求すらしなくなっている構図。
-一方、3,000〜3,500万帯は安定して2.5〜3%前後の発注率を維持している。</p>
-</div>
-</div>
-
-<!-- Evidence 5: Average budget trend -->
-<div class="section">
-<h3>エビデンス⑤ 請求者の平均予算と中央値の推移</h3>
-<div class="chart-container">
-<canvas id="avgBudgetChart"></canvas>
-</div>
-<div class="insight">
-<h4>読み取れること</h4>
-<p>カタログ請求者の平均予算は5年で1,185万→1,714万（+45%）、中央値は1,000万→1,500万。
-2025年に中央値が初めて1,500万に上がったのは、低予算層の流出と高予算層の残存を如実に示す。</p>
-</div>
-</div>
-
-<!-- Evidence summary -->
-<div class="section">
-<h3>エビデンス総括</h3>
-<div class="evidence">
-<div class="evidence-item">
-<span class="badge up">価格上昇</span>
-<div class="evidence-text"><strong>総工費中央値 +64%</strong>（2021→2025）: 2,800万→4,600万。契約の「最低ライン」が大幅に引き上がった。</div>
-</div>
-<div class="evidence-item">
-<span class="badge down">低予算撤退</span>
-<div class="evidence-text"><strong>~1,500万帯シェア 64%→27%</strong>: 低予算で憧れを持っていた層が資料請求すらしなくなった。</div>
-</div>
-<div class="evidence-item">
-<span class="badge shift">中間帯拡大</span>
-<div class="evidence-text"><strong>~2,500万帯 26%→55%</strong>: 価格上昇を受けて、請求者の予算感が全体的に上方シフト。</div>
-</div>
-<div class="evidence-item">
-<span class="badge down">セルフビルド消滅</span>
-<div class="evidence-text"><strong>セルフビルド 12.9%→2.0%</strong>: コスト削減手段としてのセルフビルドを望む「憧れ層」が撤退。</div>
-</div>
-<div class="evidence-item">
-<span class="badge down">件数減少</span>
-<div class="evidence-text"><strong>請求件数 3,532→2,160件（▼39%）</strong>: 低予算層の離脱が全体の請求件数減に直結している。</div>
-</div>
-<div class="evidence-item">
-<span class="badge up">発注率は微増</span>
-<div class="evidence-text"><strong>全体発注率 1.08%→1.39%</strong>: 「冷やかし」が減り、本気度の高い層の比率が上がっている。</div>
-</div>
-</div>
-</div>
-
-<!-- Conclusion -->
-<div class="summary">
-<h3>結論：データは仮説を裏付けている</h3>
-<p>
-カタログ請求データとEUDS契約者データの両方から、建築コスト高騰によるログハウス市場の構造変化が明確に読み取れる。
-</p>
-<p style="margin-top:12px">
-<strong>① 価格の壁</strong>：実際の総工費は5年で中央値2,800万→4,600万に上昇。もはや「1,500万で建てられる」時代ではない。<br>
-<strong>② 憧れ層の離脱</strong>：低予算帯（~1,500万）の請求シェアは64%→27%に半減。セルフビルド希望も12.9%→2.0%に。<br>
-<strong>③ 購買層の上方シフト</strong>：残っている請求者は予算2,500万前後が中心。実質的に「富裕層向け商品」化が進行。<br>
-<strong>④ 量より質への転換</strong>：件数は▼39%減だが、発注率は1.08%→1.39%に微増。本気度の高い層だけが残った。
-</p>
-<p style="margin-top:12px">
-今後の戦略的示唆として、「憧れ層」を取り戻すには小型・低価格モデルの開発が必要であり、
-現実的には高予算層への訴求力強化（デザイン性・性能・資産価値）が即効性のある施策となる。
-</p>
-</div>
-
-<div class="footer">TALO Log House Data Analysis &mdash; Generated with Claude (Cowork)</div>
-</div>
-
-<script>
-// Chart defaults
-Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',sans-serif";
-Chart.defaults.plugins.legend.labels.usePointStyle = true;
-
-const years = ['2021','2022','2023','2024','2025'];
-
-// 1. Budget Shift - Stacked Area
-new Chart(document.getElementById('budgetShiftChart'), {
-  type: 'bar',
-  data: {
-    labels: years,
-    datasets: [
-      {label:'~1,500万', data:[64.3,63.6,57.5,55.8,26.8], backgroundColor:'#3498db'},
-      {label:'~2,500万', data:[26.4,25.4,29.4,30.3,55.1], backgroundColor:'#e67e22'},
-      {label:'~3,500万', data:[7.2,8.5,9.3,10.6,13.7], backgroundColor:'#e74c3c'},
-      {label:'4,000万+', data:[2.1,2.4,3.8,3.4,4.4], backgroundColor:'#8e44ad'}
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    scales: {
-      x: {stacked:true, grid:{display:false}},
-      y: {stacked:true, max:100, ticks:{callback:v=>v+'%'}, grid:{color:'rgba(0,0,0,0.06)'}}
-    },
-    plugins: {
-      title:{display:true,text:'カタログ請求者の予算帯構成比（%）',font:{size:14}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}}
-    }
-  }
+<div class="page-header" style="background:linear-gradient(135deg,#7c2d12,#c2410c)">
+  <a href="index.html" class="back-link">← 一覧に戻る</a>
+  <div class="badge">v3 パース修正版</div>
+  <h1>💰 価格障壁分析</h1>
+  <p>建築コスト高騰による購買層の構造的変化を検証</p>
+</div><div class="stats-bar"><div class="stat"><div class="stat-val">+54%</div><div class="stat-lbl">契約単価変化率</div></div><div class="stat"><div class="stat-val">¥4,926万</div><div class="stat-lbl">直近平均契約単価</div></div><div class="stat"><div class="stat-val">12.7%</div><div class="stat-lbl">低予算層比率(直近)</div></div><div class="stat"><div class="stat-val">7.0%</div><div class="stat-lbl">セルフビルド比率(直近)</div></div></div><div class="container"><div class="insight"><ul>
+<li>契約平均単価は5年で<b>+54%</b>上昇（¥3,198万→¥4,926万）</li>
+<li>低予算層（〜1,500万）の比率は58.3%→12.7%に変化</li>
+<li>セルフビルド希望は12.9%→7.0%に推移</li>
+<li>コスト高騰により購買可能層が構造的に変化している</li>
+</ul></div><div class="section-title">📈 エビデンス1: 契約単価の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartContractCost"></canvas></div></div><div class="section-title">📉 エビデンス2: 低予算層（〜1,500万）の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartLowBudget"></canvas></div></div><div class="section-title">🔨 エビデンス3: セルフビルド希望の推移</div><div class="card-full"><div class="chart-md"><canvas id="chartSelfBuild"></canvas></div></div><div class="section-title">💰 エビデンス4: 予算帯分布の年度変化</div><div class="card-full"><div class="chart-lg"><canvas id="chartBudgetDist"></canvas></div></div><div class="section-title">🔨 エビデンス5: 建設方法の推移</div><div class="card-full"><div class="chart-lg"><canvas id="chartMethodDist"></canvas></div></div><div class="section-title">🔍 エビデンス6: 予算乖離の実態</div><div class="card-full">
+<p style="font-size:.9rem;line-height:1.8;color:#334155">
+カタログ請求時の予算と実際の契約金額を比較すると、平均で<b>+74%</b>超過しています。
+これは「予算通り」では建てられない現実を示しており、結果として予算不足層の離脱が起きています。
+予算乖離の詳細は<a href="gap-analysis.html" style="color:#0f766e">乖離分析レポート</a>をご覧ください。
+</p></div></div><script>
+new Chart(document.getElementById('chartContractCost'),{type:'bar',
+  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[
+    {label:'平均契約単価(万)',data:[3198.0, 3011.0, 3060.0, 3753.0, 4216.0, 4926.0],backgroundColor:'rgba(194,65,12,0.6)'}
+  ]},options:{responsive:true,maintainAspectRatio:false}
 });
-
-// 2. Cost Trend (EUDS)
-new Chart(document.getElementById('costTrendChart'), {
-  type: 'line',
-  data: {
-    labels: ['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
-    datasets: [
-      {label:'中央値', data:[1900,2000,2060,2350,2500,2500,2306,2710,2600,2800,2500,2800,3168,3000,3500,4600],
-       borderColor:'#e67e22',backgroundColor:'rgba(230,126,34,0.1)',fill:true,borderWidth:3,pointRadius:4,tension:0.3},
-      {label:'25th percentile', data:[1260,1584,1228,1964,2000,2000,1897,2024,2246,2327,2195,2408,2500,2688,3025,4500],
-       borderColor:'#3498db',borderDash:[5,5],borderWidth:2,pointRadius:3,tension:0.3},
-      {label:'75th percentile', data:[2400,2600,2700,2800,3000,2780,2582,3210,3084,3620,3048,3445,3615,3775,4078,4990],
-       borderColor:'#e74c3c',borderDash:[5,5],borderWidth:2,pointRadius:3,tension:0.3}
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    scales: {
-      y: {ticks:{callback:v=>v.toLocaleString()+'万'},grid:{color:'rgba(0,0,0,0.06)'}},
-      x: {grid:{display:false}}
-    },
-    plugins: {
-      title:{display:true,text:'契約者の総工費推移（万円・EUDS実績）',font:{size:14}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()+'万円'}}
-    }
-  }
+new Chart(document.getElementById('chartLowBudget'),{type:'line',
+  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[
+    {label:'低予算層比率(%)',data:[58.3, 57.3, 49.4, 48.5, 25.4, 12.7],borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,0.1)',fill:true,tension:0.3}
+  ]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}
 });
-
-// 3. Method change
-new Chart(document.getElementById('methodChart'), {
-  type: 'line',
-  data: {
-    labels: years,
-    datasets: [
-      {label:'セルフビルド', data:[12.9,11.3,2.9,1.7,2.0], borderColor:'#e74c3c', borderWidth:3, pointRadius:5, tension:0.3},
-      {label:'工務店', data:[23.7,24.5,9.7,6.9,5.0], borderColor:'#3498db', borderWidth:3, pointRadius:5, tension:0.3},
-      {label:'セミセルフ', data:[0.3,0.5,0.8,0.2,0.1], borderColor:'#2ecc71', borderWidth:2, pointRadius:4, tension:0.3}
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    scales: {
-      y: {ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}},
-      x: {grid:{display:false}}
-    },
-    plugins: {
-      title:{display:true,text:'建設方法の希望割合推移（%）',font:{size:14}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}}
-    }
-  }
+new Chart(document.getElementById('chartSelfBuild'),{type:'line',
+  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[
+    {label:'セルフビルド比率(%)',data:[12.9, 11.3, 2.9, 1.7, 2.0, 7.0],borderColor:'#d97706',backgroundColor:'rgba(217,119,6,0.1)',fill:true,tension:0.3}
+  ]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}
 });
-
-// 4. Order rate by budget
-new Chart(document.getElementById('orderRateChart'), {
-  type: 'line',
-  data: {
-    labels: years,
-    datasets: [
-      {label:'~1,500万', data:[0.19,0.32,0.40,0.54,0.18], borderColor:'#3498db', borderWidth:2, pointRadius:5, tension:0.3},
-      {label:'~2,500万', data:[0.95,1.76,1.83,0.99,1.33], borderColor:'#e67e22', borderWidth:2, pointRadius:5, tension:0.3},
-      {label:'~3,500万', data:[2.59,2.42,2.88,2.83,2.14], borderColor:'#e74c3c', borderWidth:3, pointRadius:5, tension:0.3},
-      {label:'4,000万+', data:[1.47,2.86,4.08,2.53,1.10], borderColor:'#8e44ad', borderWidth:2, pointRadius:5, tension:0.3}
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    scales: {
-      y: {ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.06)'}},
-      x: {grid:{display:false}}
-    },
-    plugins: {
-      title:{display:true,text:'予算帯別 発注率の推移（%）',font:{size:14}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}}
-    }
-  }
+new Chart(document.getElementById('chartBudgetDist'),{type:'bar',
+  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[{label:"1000万未満",data:[0, 0, 0, 0, 0, 0],backgroundColor:"#fecaca"},{label:"1000万",data:[1337, 1162, 922, 610, 35, 3],backgroundColor:"#fca5a5"},{label:"1500万",data:[667, 636, 543, 678, 503, 6],backgroundColor:"#f87171"},{label:"2000万",data:[494, 422, 466, 427, 810, 21],backgroundColor:"#ef4444"},{label:"2500万",data:[257, 242, 236, 253, 298, 9],backgroundColor:"#dc2626"},{label:"3000万",data:[141, 146, 153, 159, 185, 10],backgroundColor:"#b91c1c"},{label:"3500万",data:[54, 57, 61, 70, 89, 2],backgroundColor:"#991b1b"},{label:"4000万",data:[24, 26, 40, 31, 37, 2],backgroundColor:"#7f1d1d"},{label:"4500万",data:[6, 12, 18, 13, 14, 0],backgroundColor:"#450a0a"},{label:"5000万",data:[28, 25, 33, 32, 35, 1],backgroundColor:"#1c1917"},{label:"5000万以上",data:[0, 0, 0, 0, 0, 0],backgroundColor:"#0c0a09"}]},
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true}}}
 });
-
-// 5. Average budget
-new Chart(document.getElementById('avgBudgetChart'), {
-  type: 'bar',
-  data: {
-    labels: years,
-    datasets: [
-      {label:'平均予算', data:[1185,1236,1264,1311,1714], backgroundColor:'rgba(230,126,34,0.7)', borderRadius:6},
-      {label:'中央値', data:[1000,1000,1000,1000,1500], backgroundColor:'rgba(52,152,219,0.7)', borderRadius:6}
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    scales: {
-      y: {ticks:{callback:v=>v.toLocaleString()+'万'},grid:{color:'rgba(0,0,0,0.06)'}},
-      x: {grid:{display:false}}
-    },
-    plugins: {
-      title:{display:true,text:'カタログ請求者の予算（万円）推移',font:{size:14}},
-      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()+'万円'}}
-    }
-  }
+new Chart(document.getElementById('chartMethodDist'),{type:'bar',
+  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],datasets:[{label:"工務店",data:[837, 792, 294, 185, 109, 11],backgroundColor:"#059669"},{label:"セミセルフ",data:[11, 15, 24, 6, 2, 0],backgroundColor:"#d97706"},{label:"セルフビルド",data:[457, 364, 89, 47, 43, 5],backgroundColor:"#dc2626"},{label:"未定",data:[1646, 1387, 260, 127, 83, 3],backgroundColor:"#94a3b8"},{label:"その他/未記入",data:[581, 672, 2364, 2325, 1923, 52],backgroundColor:"#cbd5e1"}]},
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true}}}
 });
 </script>
-</body>
-</html>
+<div class="footer">
+  v3（パース修正版）— Generated with Claude (Cowork) ·
+  <a href="index.html">← レポート一覧に戻る</a>
+</div>
+</body></html>

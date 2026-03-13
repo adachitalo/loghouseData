@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>カタログ請求データ分析レポート | TALOログハウス</title>
+<title>カタログ請求データ分析レポート v3 | TALOログハウス</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f2f5;color:#2c3e50;min-height:100vh}
-
 .page-header{background:linear-gradient(135deg,#1a2e45 0%,#2e5077 100%);padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
 .page-header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
 .page-header .badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:3px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;position:relative;color:#fff}
@@ -16,623 +15,103 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f
 .page-header p{font-size:.85rem;color:rgba(255,255,255,.75);margin-top:.5rem;position:relative}
 .back-link{position:absolute;top:1rem;left:1.25rem;color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem}
 .back-link:hover{color:#fff}
-
 .stats-bar{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;justify-content:center;gap:2.5rem;padding:1.1rem 2rem;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.stat{text-align:center}
-.stat-val{font-size:1.5rem;font-weight:700;color:#1a2e45}
-.stat-lbl{font-size:.72rem;color:#94a3b8;margin-top:1px;letter-spacing:.5px}
-
+.stat{text-align:center}.stat-val{font-size:1.5rem;font-weight:700;color:#1a2e45}.stat-lbl{font-size:.72rem;color:#94a3b8;margin-top:1px;letter-spacing:.5px}
 .container{max-width:1280px;margin:0 auto;padding:2rem 1.25rem}
-
 .section-title{font-size:1.05rem;font-weight:700;color:#1e293b;margin:2rem 0 1rem;padding-left:.8rem;border-left:4px solid #2e5077;display:flex;align-items:center;gap:.5rem}
-
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
 .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem}
-
 .card{background:#fff;border-radius:12px;padding:1.4rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
 .card-full{background:#fff;border-radius:12px;padding:1.4rem;margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)}
 .card h3,.card-full h3{font-size:.82rem;font-weight:600;color:#94a3b8;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #f1f5f9;padding-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
 .data-note{font-size:.72rem;color:#94a3b8;font-weight:400;margin-left:.3rem;text-transform:none;letter-spacing:0;background:#f1f5f9;padding:1px 6px;border-radius:4px}
-
-.chart-sm{position:relative;height:220px}
-.chart-md{position:relative;height:280px}
-.chart-lg{position:relative;height:320px}
-
+.chart-sm{position:relative;height:220px}.chart-md{position:relative;height:280px}.chart-lg{position:relative;height:320px}
 table{width:100%;border-collapse:collapse;font-size:.84rem}
 thead th{background:#f8fafc;color:#64748b;padding:.6rem .8rem;text-align:left;font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0}
 thead th.r{text-align:right}
 tbody td{padding:.6rem .8rem;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle}
-tbody td.r{text-align:right}
-tbody tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:#f8fafc}
-.pct-high{color:#dc2626;font-weight:700}
-.pct-mid{color:#d97706;font-weight:600}
-.pct-low{color:#94a3b8}
-
-.insight{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:10px;padding:1.1rem 1.4rem;margin-bottom:1.5rem}
-.insight p{font-size:.88rem;line-height:1.8;color:#1e40af}
-.insight strong{color:#1d4ed8}
-
-.note-build{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.75rem;font-weight:600;background:#fef3c7;color:#92400e}
-.note-home{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.75rem;font-weight:600;background:#dbeafe;color:#1e40af}
-
-footer{text-align:center;padding:2rem 1rem;font-size:.78rem;color:#94a3b8;border-top:1px solid #e2e8f0;background:#fff;margin-top:2rem}
-footer a{color:#2e5077;text-decoration:none}
-
-@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:#f8fafc}
+.kpi{background:#fff;border-radius:12px;padding:1.2rem 1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid #2e5077}
+.kpi-val{font-size:1.8rem;font-weight:700;color:#1e293b}.kpi-lbl{font-size:.75rem;color:#94a3b8;margin-top:2px}
+.kpi-sub{font-size:.7rem;color:#64748b;margin-top:4px}
+.insight{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1.25rem;font-size:.85rem;line-height:1.7;color:#1e40af}
+.insight ul{margin:0;padding-left:1.2rem}.insight li{margin-bottom:.3rem}
+.footer{text-align:center;padding:2rem;font-size:.75rem;color:#94a3b8}
+.footer a{color:#3a7ca5;text-decoration:none}.footer a:hover{text-decoration:underline}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.stats-bar{gap:1.2rem}}
 </style>
 </head>
 <body>
 
 <div class="page-header">
-  <a class="back-link" href="index.html">← 目次へ戻る</a>
-  <div class="badge">全体分析レポート</div>
-  <h1>📊 カタログ請求データ分析</h1>
-  <p>対象期間：2021〜2025年　｜　14,714件　｜　発注判定：物件番号（HU列）</p>
+  <a href="index.html" class="back-link">← 一覧に戻る</a>
+  <div class="badge">v3 パース修正版</div>
+  <h1>カタログ請求データ分析レポート</h1>
+  <p>2021〜2025年 全14,714件の総合分析</p>
 </div>
 
 <div class="stats-bar">
   <div class="stat"><div class="stat-val">14,714</div><div class="stat-lbl">総請求件数</div></div>
-  <div class="stat"><div class="stat-val">185</div><div class="stat-lbl">発注件数</div></div>
-  <div class="stat"><div class="stat-val">1.26%</div><div class="stat-lbl">全体発注率</div></div>
-  <div class="stat"><div class="stat-val">7,943</div><div class="stat-lbl">ホット顧客数</div></div>
-  <div class="stat"><div class="stat-val">54.0%</div><div class="stat-lbl">ホット顧客率</div></div>
+  <div class="stat"><div class="stat-val">190</div><div class="stat-lbl">発注件数</div></div>
+  <div class="stat"><div class="stat-val">1.29%</div><div class="stat-lbl">発注率</div></div>
+  <div class="stat"><div class="stat-val">6</div><div class="stat-lbl">年数</div></div>
 </div>
+<div class="container"><div class="section-title">📊 年度別推移</div><div class="card-full"><div class="chart-md"><canvas id="chartYear"></canvas></div></div><div class="card-full"><h3>年度別集計テーブル</h3><table><thead><tr><th>年度</th><th class="r">請求件数</th><th class="r">発注件数</th><th class="r">発注率</th></tr></thead><tbody><tr><td>2021</td><td class="r">3,532</td><td class="r">38</td><td class="r">1.08%</td></tr><tr><td>2022</td><td class="r">3,230</td><td class="r">37</td><td class="r">1.15%</td></tr><tr><td>2023</td><td class="r">3,031</td><td class="r">44</td><td class="r">1.45%</td></tr><tr><td>2024</td><td class="r">2,690</td><td class="r">36</td><td class="r">1.34%</td></tr><tr><td>2025</td><td class="r">2,160</td><td class="r">30</td><td class="r">1.39%</td></tr><tr><td>2026</td><td class="r">71</td><td class="r">5</td><td class="r">7.04%</td></tr></tbody></table></div><div class="section-title">🗾 建設予定地 TOP15</div><div class="grid-2"><div class="card"><div class="chart-lg"><canvas id="chartPref"></canvas></div></div><div class="card"><h3>建設予定地別（件数順）</h3><table><thead><tr><th>都道府県</th><th class="r">件数</th><th class="r">発注</th><th class="r">発注率</th></tr></thead><tbody><tr><td>長野県</td><td class="r">1,374</td><td class="r">29</td><td class="r">2.11%</td></tr><tr><td>千葉県</td><td class="r">1,108</td><td class="r">17</td><td class="r">1.53%</td></tr><tr><td>東京都</td><td class="r">934</td><td class="r">4</td><td class="r">0.43%</td></tr><tr><td>神奈川県</td><td class="r">866</td><td class="r">7</td><td class="r">0.81%</td></tr><tr><td>北海道</td><td class="r">801</td><td class="r">10</td><td class="r">1.25%</td></tr><tr><td>山梨県</td><td class="r">645</td><td class="r">19</td><td class="r">2.95%</td></tr><tr><td>兵庫県</td><td class="r">616</td><td class="r">12</td><td class="r">1.95%</td></tr><tr><td>静岡県</td><td class="r">558</td><td class="r">7</td><td class="r">1.25%</td></tr><tr><td>埼玉県</td><td class="r">462</td><td class="r">6</td><td class="r">1.30%</td></tr><tr><td>愛知県</td><td class="r">437</td><td class="r">5</td><td class="r">1.14%</td></tr><tr><td>福岡県</td><td class="r">401</td><td class="r">3</td><td class="r">0.75%</td></tr><tr><td>大阪府</td><td class="r">395</td><td class="r">4</td><td class="r">1.01%</td></tr><tr><td>茨城県</td><td class="r">353</td><td class="r">6</td><td class="r">1.70%</td></tr><tr><td>栃木県</td><td class="r">331</td><td class="r">2</td><td class="r">0.60%</td></tr><tr><td>滋賀県</td><td class="r">309</td><td class="r">1</td><td class="r">0.32%</td></tr></tbody></table></div></div><div class="section-title">⏰ 建設予定時期</div><div class="grid-2"><div class="card"><div class="chart-md"><canvas id="chartTiming"></canvas></div></div><div class="card"><h3>建設予定時期</h3><table><thead><tr><th>カテゴリ</th><th class="r">件数</th><th class="r">構成比</th><th class="r">発注</th><th class="r">発注率</th></tr></thead><tbody><tr><td>未定</td><td class="r">5,647</td><td class="r">38.4%</td><td class="r">11</td><td class="r">0.19%</td></tr><tr><td>1年以内</td><td class="r">2,703</td><td class="r">18.4%</td><td class="r">64</td><td class="r">2.37%</td></tr><tr><td>1〜2年</td><td class="r">2,110</td><td class="r">14.3%</td><td class="r">30</td><td class="r">1.42%</td></tr><tr><td>2〜3年</td><td class="r">1,384</td><td class="r">9.4%</td><td class="r">7</td><td class="r">0.51%</td></tr><tr><td>その他/未記入</td><td class="r">1,055</td><td class="r">7.2%</td><td class="r">59</td><td class="r">5.59%</td></tr><tr><td>半年以内</td><td class="r">970</td><td class="r">6.6%</td><td class="r">14</td><td class="r">1.44%</td></tr><tr><td>3年以上</td><td class="r">845</td><td class="r">5.7%</td><td class="r">5</td><td class="r">0.59%</td></tr></tbody></table></div></div><div class="section-title">🔨 建設方法</div><div class="grid-2"><div class="card"><div class="chart-md"><canvas id="chartMethod"></canvas></div></div><div class="card"><h3>建設方法</h3><table><thead><tr><th>カテゴリ</th><th class="r">件数</th><th class="r">構成比</th><th class="r">発注</th><th class="r">発注率</th></tr></thead><tbody><tr><td>その他/未記入</td><td class="r">7,917</td><td class="r">53.8%</td><td class="r">71</td><td class="r">0.90%</td></tr><tr><td>未定</td><td class="r">3,506</td><td class="r">23.8%</td><td class="r">21</td><td class="r">0.60%</td></tr><tr><td>工務店</td><td class="r">2,228</td><td class="r">15.1%</td><td class="r">83</td><td class="r">3.73%</td></tr><tr><td>セルフビルド</td><td class="r">1,005</td><td class="r">6.8%</td><td class="r">13</td><td class="r">1.29%</td></tr><tr><td>セミセルフ</td><td class="r">58</td><td class="r">0.4%</td><td class="r">2</td><td class="r">3.45%</td></tr></tbody></table></div></div><div class="section-title">💰 予算帯</div><div class="grid-2"><div class="card"><div class="chart-md"><canvas id="chartBudget"></canvas></div></div><div class="card"><h3>予算帯</h3><table><thead><tr><th>カテゴリ</th><th class="r">件数</th><th class="r">構成比</th><th class="r">発注</th><th class="r">発注率</th></tr></thead><tbody><tr><td>1000万</td><td class="r">4,069</td><td class="r">27.7%</td><td class="r">11</td><td class="r">0.27%</td></tr><tr><td>1500万</td><td class="r">3,033</td><td class="r">20.6%</td><td class="r">9</td><td class="r">0.30%</td></tr><tr><td>2000万</td><td class="r">2,640</td><td class="r">17.9%</td><td class="r">22</td><td class="r">0.83%</td></tr><tr><td>2500万</td><td class="r">1,295</td><td class="r">8.8%</td><td class="r">21</td><td class="r">1.62%</td></tr><tr><td>その他/未記入</td><td class="r">1,040</td><td class="r">7.1%</td><td class="r">64</td><td class="r">6.15%</td></tr><tr><td>3000万</td><td class="r">794</td><td class="r">5.4%</td><td class="r">17</td><td class="r">2.14%</td></tr><tr><td>その他</td><td class="r">501</td><td class="r">3.4%</td><td class="r">1</td><td class="r">0.20%</td></tr><tr><td>3500万</td><td class="r">333</td><td class="r">2.3%</td><td class="r">5</td><td class="r">1.50%</td></tr><tr><td>2000万台</td><td class="r">165</td><td class="r">1.1%</td><td class="r">7</td><td class="r">4.24%</td></tr><tr><td>1500万台</td><td class="r">165</td><td class="r">1.1%</td><td class="r">4</td><td class="r">2.42%</td></tr><tr><td>4000万</td><td class="r">160</td><td class="r">1.1%</td><td class="r">4</td><td class="r">2.50%</td></tr><tr><td>5000万</td><td class="r">154</td><td class="r">1.0%</td><td class="r">3</td><td class="r">1.95%</td></tr></tbody></table></div></div><div class="section-title">🏠 用途</div><div class="grid-2"><div class="card"><div class="chart-md"><canvas id="chartUse"></canvas></div></div><div class="card"><h3>用途</h3><table><thead><tr><th>カテゴリ</th><th class="r">件数</th><th class="r">構成比</th><th class="r">発注</th><th class="r">発注率</th></tr></thead><tbody><tr><td>住居</td><td class="r">7,887</td><td class="r">53.6%</td><td class="r">93</td><td class="r">1.18%</td></tr><tr><td>別荘</td><td class="r">3,631</td><td class="r">24.7%</td><td class="r">43</td><td class="r">1.18%</td></tr><tr><td>その他/未記入</td><td class="r">2,411</td><td class="r">16.4%</td><td class="r">48</td><td class="r">1.99%</td></tr><tr><td>商業施設</td><td class="r">680</td><td class="r">4.6%</td><td class="r">1</td><td class="r">0.15%</td></tr><tr><td>公共施設</td><td class="r">29</td><td class="r">0.2%</td><td class="r">0</td><td class="r">0.00%</td></tr><tr><td>店舗</td><td class="r">27</td><td class="r">0.2%</td><td class="r">2</td><td class="r">7.41%</td></tr><tr><td>離れ</td><td class="r">23</td><td class="r">0.2%</td><td class="r">2</td><td class="r">8.70%</td></tr><tr><td>宿泊施設</td><td class="r">18</td><td class="r">0.1%</td><td class="r">0</td><td class="r">0.00%</td></tr><tr><td>事務所</td><td class="r">8</td><td class="r">0.1%</td><td class="r">1</td><td class="r">12.50%</td></tr></tbody></table></div></div><div class="section-title">📡 情報源</div><div class="grid-2"><div class="card"><div class="chart-md"><canvas id="chartSource"></canvas></div></div><div class="card"><h3>情報源</h3><table><thead><tr><th>カテゴリ</th><th class="r">件数</th><th class="r">構成比</th><th class="r">発注</th><th class="r">発注率</th></tr></thead><tbody><tr><td>Google</td><td class="r">5,296</td><td class="r">36.0%</td><td class="r">41</td><td class="r">0.77%</td></tr><tr><td>その他</td><td class="r">3,035</td><td class="r">20.6%</td><td class="r">45</td><td class="r">1.48%</td></tr><tr><td>Instagram</td><td class="r">2,497</td><td class="r">17.0%</td><td class="r">9</td><td class="r">0.36%</td></tr><tr><td>Yahoo!Japan</td><td class="r">2,092</td><td class="r">14.2%</td><td class="r">24</td><td class="r">1.15%</td></tr><tr><td>代理店経由</td><td class="r">669</td><td class="r">4.5%</td><td class="r">64</td><td class="r">9.57%</td></tr><tr><td>田舎暮らし/日経</td><td class="r">643</td><td class="r">4.4%</td><td class="r">6</td><td class="r">0.93%</td></tr><tr><td>Facebook</td><td class="r">482</td><td class="r">3.3%</td><td class="r">1</td><td class="r">0.21%</td></tr></tbody></table></div></div><div class="section-title">🏢 組織区分</div><div class="grid-2"><div class="kpi" style="border-left-color:#2e5077"><div class="kpi-val">8,084件</div><div class="kpi-lbl">TALO本部</div><div class=kpi-sub>発注59件（0.73%）</div></div><div class="kpi" style="border-left-color:#2e5077"><div class="kpi-val">6,630件</div><div class="kpi-lbl">代理店</div><div class=kpi-sub>発注131件（1.98%）</div></div></div></div><script>
 
-<div class="container">
-
-  <!-- サマリー -->
-  <div style="background:linear-gradient(135deg,#1e293b,#334155);border-radius:12px;padding:28px 32px;margin-bottom:24px;color:#fff">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-      <span style="font-size:1.3rem">📋</span>
-      <h2 style="font-size:1.1rem;font-weight:700;margin:0">サマリー</h2>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:.9rem;line-height:1.8">
-      <div>
-        <div style="color:#fbbf24;font-weight:600;margin-bottom:4px">現状認識</div>
-        <ul style="margin:0;padding-left:18px;color:#e2e8f0">
-          <li>カタログ請求数は5年で <strong style="color:#fbbf24">-39%</strong>（3,532→2,160件）。市場縮小が進行中</li>
-          <li>代理店の減少（-48%）が本部（-30%）より深刻。代理店網の弱体化リスク</li>
-          <li>発注率は微増傾向（1.08%→1.39%）。量より質への転換が起きている</li>
-        </ul>
-      </div>
-      <div>
-        <div style="color:#34d399;font-weight:600;margin-bottom:4px">課題と提案</div>
-        <ul style="margin:0;padding-left:18px;color:#e2e8f0">
-          <li><strong style="color:#34d399">代理店経由の発注率9.57%</strong>は全チャネル最高。代理店の営業力強化と新規開拓が最優先</li>
-          <li>Instagram（2,497件）は集客力があるが発注率0.36%。カタログ請求後のフォロー体制が課題</li>
-          <li>予算2500万以上・工務店希望の「ホット顧客」に営業リソースを集中すべき</li>
-          <li>東京在住→長野/山梨の移住・別荘需要がコア。このペルソナへの訴求を強化</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="insight">
-    <p>
-      <span class="note-build">建設予定地</span> と <span class="note-home">現住所</span> は別データです。このレポートでは地域分析の主軸を <strong>建設予定地</strong> に置いています。
-      建設予定地1位は <strong>長野県（1,374件）</strong> で発注率2.11%。現住所1位は <strong>東京都（2,413件）</strong> で、
-      都市居住者が地方にログハウスを建てる移住・別荘需要が主流と読み取れます。
-      情報源では <strong>代理店経由（9.57%）</strong> が圧倒的に高い発注率を示しています。
-    </p>
-  </div>
-
-  <!-- 年度別推移 -->
-  <div class="section-title">📅 年度別推移</div>
-  <div class="card-full">
-    <h3>年度別 請求件数・発注数・発注率（全体 / TALO本部 / 代理店）</h3>
-    <div class="chart-lg"><canvas id="yearChart"></canvas></div>
-  </div>
-  <div class="card-full">
-    <h3>年度別 集計表</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>年度</th>
-          <th class="r">総件数</th><th class="r">発注数</th><th class="r">発注率</th>
-          <th class="r">ホット顧客</th><th class="r">ホット率</th>
-          <th class="r">本部発注率</th><th class="r">代理店発注率</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>2021</strong></td>
-          <td class="r">3,532</td>
-          <td class="r">38</td>
-          <td class="r"><span class="pct-low">1.08%</span></td>
-          <td class="r">1,723</td>
-          <td class="r">48.8%</td>
-          <td class="r">0.44%</td>
-          <td class="r"><strong>1.76%</strong></td>
-        </tr>
-        <tr>
-          <td><strong>2022</strong></td>
-          <td class="r">3,230</td>
-          <td class="r">37</td>
-          <td class="r"><span class="pct-low">1.15%</span></td>
-          <td class="r">1,584</td>
-          <td class="r">49.0%</td>
-          <td class="r">0.58%</td>
-          <td class="r"><strong>1.8%</strong></td>
-        </tr>
-        <tr>
-          <td><strong>2023</strong></td>
-          <td class="r">3,031</td>
-          <td class="r">44</td>
-          <td class="r"><span class="pct-low">1.45%</span></td>
-          <td class="r">1,329</td>
-          <td class="r">43.8%</td>
-          <td class="r">0.91%</td>
-          <td class="r"><strong>2.1%</strong></td>
-        </tr>
-        <tr>
-          <td><strong>2024</strong></td>
-          <td class="r">2,690</td>
-          <td class="r">36</td>
-          <td class="r"><span class="pct-low">1.34%</span></td>
-          <td class="r">1,252</td>
-          <td class="r">46.5%</td>
-          <td class="r">0.83%</td>
-          <td class="r"><strong>2.06%</strong></td>
-        </tr>
-        <tr>
-          <td><strong>2025</strong></td>
-          <td class="r">2,160</td>
-          <td class="r">30</td>
-          <td class="r"><span class="pct-low">1.39%</span></td>
-          <td class="r">1,055</td>
-          <td class="r">48.8%</td>
-          <td class="r">0.86%</td>
-          <td class="r"><strong>2.14%</strong></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- TALO本部 vs 代理店 -->
-  <div class="section-title">🏢 TALO本部 vs 代理店</div>
-  <div class="insight" style="background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde68a">
-    <p style="color:#92400e">
-      TALO本部・代理店ともにカタログ請求数は減少傾向。本部は <strong>-30%</strong>（1,827→1,272件）、
-      代理店は <strong>-48%</strong>（1,705→888件）で代理店の減少が顕著。
-      一方、発注率は両者とも緩やかに改善しており、「数は減ったが質は上がっている」構造。
-      代理店の発注率（2%台）は本部（0.7〜0.9%）の約2.5倍を維持。
-    </p>
-  </div>
-  <div class="grid-2">
-    <div class="card">
-      <h3>区分別 件数・発注率</h3>
-      <table>
-        <thead><tr><th>区分</th><th class="r">件数</th><th class="r">発注数</th><th class="r">発注率</th><th class="r">ホット発注率</th></tr></thead>
-        <tbody>
-          <tr><td>TALO本部</td><td class="r">8,084</td><td class="r">59</td>
-              <td class="r"><span class="pct-low">0.73%</span></td>
-              <td class="r">1.26%</td></tr>
-          <tr><td><strong>代理店</strong></td><td class="r">6,630</td><td class="r">131</td>
-              <td class="r"><span class="pct-mid">1.98%</span></td>
-              <td class="r"><strong>3.07%</strong></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <h3>年度別 発注率推移（TALO本部 vs 代理店）</h3>
-      <div class="chart-sm"><canvas id="orgChart"></canvas></div>
-    </div>
-  </div>
-  <div class="card-full">
-    <h3>カタログ請求数の推移比較（TALO本部 vs 代理店）</h3>
-    <div class="chart-lg"><canvas id="orgCountChart"></canvas></div>
-  </div>
-  <div class="card-full">
-    <h3>年度別 本部 vs 代理店 詳細</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>年度</th>
-          <th class="r">本部 請求数</th><th class="r">本部 発注数</th><th class="r">本部 発注率</th>
-          <th class="r">代理店 請求数</th><th class="r">代理店 発注数</th><th class="r">代理店 発注率</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td><strong>2021</strong></td>
-          <td class="r">1,827</td><td class="r">8</td><td class="r"><span class="pct-low">0.44%</span></td>
-          <td class="r">1,705</td><td class="r">30</td><td class="r"><span class="pct-mid">1.76%</span></td></tr>
-        <tr><td><strong>2022</strong></td>
-          <td class="r">1,731</td><td class="r">10</td><td class="r"><span class="pct-low">0.58%</span></td>
-          <td class="r">1,499</td><td class="r">27</td><td class="r"><span class="pct-mid">1.80%</span></td></tr>
-        <tr><td><strong>2023</strong></td>
-          <td class="r">1,651</td><td class="r">15</td><td class="r"><span class="pct-low">0.91%</span></td>
-          <td class="r">1,380</td><td class="r">29</td><td class="r"><span class="pct-mid">2.10%</span></td></tr>
-        <tr><td><strong>2024</strong></td>
-          <td class="r">1,571</td><td class="r">13</td><td class="r"><span class="pct-low">0.83%</span></td>
-          <td class="r">1,119</td><td class="r">23</td><td class="r"><span class="pct-mid">2.06%</span></td></tr>
-        <tr><td><strong>2025</strong></td>
-          <td class="r">1,272</td><td class="r">11</td><td class="r"><span class="pct-low">0.86%</span></td>
-          <td class="r">888</td><td class="r">19</td><td class="r"><span class="pct-mid">2.14%</span></td></tr>
-        <tr style="background:#f8fafc;font-weight:600"><td>増減率</td>
-          <td class="r" colspan="3" style="color:#dc2626">-30.4%（請求数）</td>
-          <td class="r" colspan="3" style="color:#dc2626">-47.9%（請求数）</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 建設予定地 -->
-  <div class="section-title">📍 地域分析</div>
-  <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap">
-    <span class="note-build">建設予定地</span>
-    <span style="font-size:.85rem;color:#64748b">= 顧客が実際にログハウスを建てる予定の都道府県（col 223）</span>
-    <span class="note-home">現住所</span>
-    <span style="font-size:.85rem;color:#64748b">= 顧客の自宅住所の都道府県（col 1）</span>
-  </div>
-  <div class="card-full">
-    <h3>建設予定地 <span class="data-note">建設予定地ベース</span> vs 現住所 <span class="data-note">現住所ベース</span> — 上位10都道府県 比較</h3>
-    <div class="chart-md"><canvas id="crossChart"></canvas></div>
-  </div>
-  <div class="grid-2">
-    <div class="card">
-      <h3>建設予定地 別 請求・発注率 <span class="data-note">建設予定地ベース</span></h3>
-      <table>
-        <thead><tr><th>都道府県</th><th class="r">件数</th><th class="r">発注数</th><th class="r">発注率</th></tr></thead>
-        <tbody><tr><td>長野県</td><td class="r">1,374</td>
-          <td class="r">29</td>
-          <td class="r"><span class="pct-mid">2.11%</span></td></tr>
-<tr><td>千葉県</td><td class="r">1,108</td>
-          <td class="r">17</td>
-          <td class="r"><span class="pct-mid">1.53%</span></td></tr>
-<tr><td>東京都</td><td class="r">934</td>
-          <td class="r">4</td>
-          <td class="r"><span class="pct-low">0.43%</span></td></tr>
-<tr><td>神奈川県</td><td class="r">866</td>
-          <td class="r">7</td>
-          <td class="r"><span class="pct-low">0.81%</span></td></tr>
-<tr><td>北海道</td><td class="r">801</td>
-          <td class="r">10</td>
-          <td class="r"><span class="pct-low">1.25%</span></td></tr>
-<tr><td>山梨県</td><td class="r">645</td>
-          <td class="r">19</td>
-          <td class="r"><span class="pct-mid">2.95%</span></td></tr>
-<tr><td>兵庫県</td><td class="r">616</td>
-          <td class="r">12</td>
-          <td class="r"><span class="pct-mid">1.95%</span></td></tr>
-<tr><td>静岡県</td><td class="r">558</td>
-          <td class="r">7</td>
-          <td class="r"><span class="pct-low">1.25%</span></td></tr>
-<tr><td>埼玉県</td><td class="r">462</td>
-          <td class="r">6</td>
-          <td class="r"><span class="pct-low">1.3%</span></td></tr>
-<tr><td>愛知県</td><td class="r">437</td>
-          <td class="r">5</td>
-          <td class="r"><span class="pct-low">1.14%</span></td></tr>
-<tr><td>福岡県</td><td class="r">401</td>
-          <td class="r">3</td>
-          <td class="r"><span class="pct-low">0.75%</span></td></tr>
-<tr><td>大阪府</td><td class="r">395</td>
-          <td class="r">4</td>
-          <td class="r"><span class="pct-low">1.01%</span></td></tr>
-<tr><td>茨城県</td><td class="r">353</td>
-          <td class="r">6</td>
-          <td class="r"><span class="pct-mid">1.7%</span></td></tr>
-<tr><td>栃木県</td><td class="r">331</td>
-          <td class="r">2</td>
-          <td class="r"><span class="pct-low">0.6%</span></td></tr>
-<tr><td>滋賀県</td><td class="r">309</td>
-          <td class="r">1</td>
-          <td class="r"><span class="pct-low">0.32%</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <h3>建設予定地 発注率 ランキング <span class="data-note">建設予定地ベース</span></h3>
-      <div class="chart-md"><canvas id="buildRateChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- 情報源 -->
-  <div class="section-title">📣 情報源分析</div>
-  <div class="grid-2">
-    <div class="card">
-      <h3>情報源別 件数・発注率</h3>
-      <table>
-        <thead><tr><th>情報源</th><th class="r">件数</th><th class="r">発注数</th><th class="r">発注率</th></tr></thead>
-        <tbody><tr><td>代理店経由</td><td class="r">669</td>
-          <td class="r">64</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-high">9.57%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:100%"></div>
-            </div>
-          </td></tr>
-<tr><td>その他</td><td class="r">3,035</td>
-          <td class="r">45</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-low">1.48%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:15%"></div>
-            </div>
-          </td></tr>
-<tr><td>Yahoo!Japan</td><td class="r">2,092</td>
-          <td class="r">24</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-low">1.15%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:12%"></div>
-            </div>
-          </td></tr>
-<tr><td>田舎暮らし/日経</td><td class="r">643</td>
-          <td class="r">6</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-low">0.93%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:9%"></div>
-            </div>
-          </td></tr>
-<tr><td>Google</td><td class="r">5,296</td>
-          <td class="r">41</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-low">0.77%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:8%"></div>
-            </div>
-          </td></tr>
-<tr><td>Instagram</td><td class="r">2,497</td>
-          <td class="r">9</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-low">0.36%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:3%"></div>
-            </div>
-          </td></tr>
-<tr><td>Facebook</td><td class="r">482</td>
-          <td class="r">1</td>
-          <td class="r" style="min-width:110px">
-            <span class="pct-low">0.21%</span>
-            <div style="background:#f1f5f9;border-radius:3px;height:4px;margin-top:3px">
-              <div style="background:#2e5077;height:4px;border-radius:3px;width:2%"></div>
-            </div>
-          </td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <h3>情報源 件数分布</h3>
-      <div class="chart-md"><canvas id="srcChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- 顧客属性 -->
-  <div class="section-title">🏠 顧客属性</div>
-  <div class="grid-3">
-    <div class="card">
-      <h3>建設方法 × 発注率</h3>
-      <table>
-        <thead><tr><th>建設方法</th><th class="r">件数</th><th class="r">発注率</th></tr></thead>
-        <tbody><tr><td>工務店</td><td class="r">2,228</td>
-          <td class="r"><span class="pct-high">3.73%</span></td></tr>
-<tr><td>セミセルフ</td><td class="r">58</td>
-          <td class="r"><span class="pct-high">3.45%</span></td></tr>
-<tr><td>セルフビルド</td><td class="r">1,005</td>
-          <td class="r"><span class="pct-low">1.29%</span></td></tr>
-<tr><td>その他/未記入</td><td class="r">7,917</td>
-          <td class="r"><span class="pct-low">0.9%</span></td></tr>
-<tr><td>未定</td><td class="r">3,506</td>
-          <td class="r"><span class="pct-low">0.6%</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <h3>用途 × 発注率</h3>
-      <table>
-        <thead><tr><th>用途</th><th class="r">件数</th><th class="r">発注率</th></tr></thead>
-        <tbody><tr><td>離れ</td><td class="r">23</td>
-          <td class="r"><span class="pct-high">8.7%</span></td></tr>
-<tr><td>その他/未記入</td><td class="r">2,462</td>
-          <td class="r"><span class="pct-mid">2.07%</span></td></tr>
-<tr><td>住宅</td><td class="r">7,887</td>
-          <td class="r"><span class="pct-low">1.18%</span></td></tr>
-<tr><td>別荘</td><td class="r">3,631</td>
-          <td class="r"><span class="pct-low">1.18%</span></td></tr>
-<tr><td>商業</td><td class="r">680</td>
-          <td class="r"><span class="pct-low">0.15%</span></td></tr>
-<tr><td>公共</td><td class="r">28</td>
-          <td class="r"><span class="pct-low">0.0%</span></td></tr>
-<tr><td>店舗</td><td class="r">3</td>
-          <td class="r"><span class="pct-low">0.0%</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="card">
-      <h3>ホット顧客 vs 非ホット顧客</h3>
-      <div class="chart-sm"><canvas id="hotChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- 担当者別 -->
-  <div class="section-title">👤 担当者別分析</div>
-  <div class="card-full">
-    <h3>担当者別 件数・発注率（30件以上）</h3>
-    <table>
-      <thead><tr><th>担当者</th><th class="r">件数</th><th class="r">発注数</th><th class="r">発注率</th></tr></thead>
-      <tbody><tr><td>未割当</td><td class="r">7,019</td>
-        <td class="r">97</td>
-        <td class="r"><span class="pct-low">1.38%</span></td></tr>
-<tr><td>OH</td><td class="r">3,290</td>
-        <td class="r">38</td>
-        <td class="r"><span class="pct-low">1.16%</span></td></tr>
-<tr><td>JO</td><td class="r">2,659</td>
-        <td class="r">19</td>
-        <td class="r"><span class="pct-low">0.71%</span></td></tr>
-<tr><td>EB</td><td class="r">506</td>
-        <td class="r">1</td>
-        <td class="r"><span class="pct-low">0.2%</span></td></tr>
-<tr><td>NT</td><td class="r">481</td>
-        <td class="r">5</td>
-        <td class="r"><span class="pct-low">1.04%</span></td></tr>
-<tr><td>MJ</td><td class="r">343</td>
-        <td class="r">1</td>
-        <td class="r"><span class="pct-low">0.29%</span></td></tr>
-<tr><td>KT</td><td class="r">239</td>
-        <td class="r">0</td>
-        <td class="r"><span class="pct-low">0.0%</span></td></tr>
-<tr><td>AD</td><td class="r">50</td>
-        <td class="r">1</td>
-        <td class="r"><span class="pct-mid">2.0%</span></td></tr>
-<tr><td>日野</td><td class="r">38</td>
-        <td class="r">11</td>
-        <td class="r"><span class="pct-high">28.95%</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
-
-<footer>
-  <a href="index.html">← レポート一覧</a> &nbsp;·&nbsp;
-  <a href="https://github.com/adachitalo/loghouseData" target="_blank">github.com/adachitalo/loghouseData</a>
-  &nbsp;·&nbsp; Generated with Claude (Cowork)
-</footer>
-
-<script>
-const GRID='rgba(0,0,0,0.06)';
-const TICK={color:'#64748b',font:{size:11}};
-const hBarScales={
-  x:{ticks:TICK,grid:{color:GRID}},
-  y:{ticks:{...TICK,font:{size:10}},grid:{display:false}}
-};
-const PIE=['#6366f1','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
-
-// 年度推移
-new Chart(document.getElementById('yearChart'),{
-  data:{
-    labels:["2021", "2022", "2023", "2024", "2025"],
-    datasets:[
-      {type:'bar',label:'請求件数',data:[3532, 3230, 3031, 2690, 2160],backgroundColor:'rgba(46,80,119,0.15)',borderColor:'rgba(46,80,119,0.4)',borderWidth:1,yAxisID:'y',order:3},
-      {type:'bar',label:'発注件数',data:[38, 37, 44, 36, 30],backgroundColor:'#2e5077cc',yAxisID:'y',order:2},
-      {type:'line',label:'全体発注率',data:[1.08, 1.15, 1.45, 1.34, 1.39],borderColor:'#2e5077',pointBackgroundColor:'#2e5077',pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:0},
-      {type:'line',label:'TALO本部発注率',data:[0.44, 0.58, 0.91, 0.83, 0.86],borderColor:'#94a3b8',borderDash:[4,3],pointBackgroundColor:'#94a3b8',pointRadius:4,borderWidth:1.5,yAxisID:'y2',order:1},
-      {type:'line',label:'代理店発注率',data:[1.76, 1.8, 2.1, 2.06, 2.14],borderColor:'#e94560',pointBackgroundColor:'#e94560',pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:0}
-    ]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:true,labels:{color:'#475569',font:{size:11},boxWidth:12}}},
-    scales:{
-      x:{ticks:TICK,grid:{color:GRID}},
-      y:{ticks:TICK,grid:{color:GRID},title:{display:true,text:'件数',color:'#94a3b8',font:{size:10}}},
-      y2:{position:'right',ticks:{...TICK,callback:v=>v+'%'},grid:{display:false},title:{display:true,text:'発注率',color:'#94a3b8',font:{size:10}}}
-    }
-  }
-});
-
-// 本部 vs 代理店 年度推移
-new Chart(document.getElementById('orgChart'),{
-  type:'line',
-  data:{
-    labels:["2021", "2022", "2023", "2024", "2025"],
-    datasets:[
-      {label:'TALO本部',data:[0.44, 0.58, 0.91, 0.83, 0.86],borderColor:'#94a3b8',backgroundColor:'transparent',pointBackgroundColor:'#94a3b8',pointRadius:4,borderWidth:2},
-      {label:'代理店',data:[1.76, 1.8, 2.1, 2.06, 2.14],borderColor:'#e94560',backgroundColor:'transparent',pointBackgroundColor:'#e94560',pointRadius:5,borderWidth:2.5}
-    ]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:true,labels:{color:'#475569',font:{size:11},boxWidth:12}}},
-    scales:{
-      x:{ticks:TICK,grid:{color:GRID}},
-      y:{ticks:{...TICK,callback:v=>v+'%'},grid:{color:GRID}}
-    }
-  }
-});
-
-// 本部 vs 代理店 請求数推移
-new Chart(document.getElementById('orgCountChart'),{
-  data:{
-    labels:["2021","2022","2023","2024","2025"],
-    datasets:[
-      {type:'bar',label:'TALO本部 請求数',data:[1827,1731,1651,1571,1272],backgroundColor:'#2e507733',borderColor:'#2e5077',borderWidth:1,borderRadius:4,yAxisID:'y',order:3},
-      {type:'bar',label:'代理店 請求数',data:[1705,1499,1380,1119,888],backgroundColor:'#e9456033',borderColor:'#e94560',borderWidth:1,borderRadius:4,yAxisID:'y',order:2},
-      {type:'line',label:'TALO本部 発注率',data:[0.44,0.58,0.91,0.83,0.86],borderColor:'#2e5077',pointBackgroundColor:'#2e5077',pointRadius:5,borderWidth:2.5,borderDash:[],yAxisID:'y2',order:0},
-      {type:'line',label:'代理店 発注率',data:[1.76,1.80,2.10,2.06,2.14],borderColor:'#e94560',pointBackgroundColor:'#e94560',pointRadius:5,borderWidth:2.5,yAxisID:'y2',order:1}
-    ]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:true,labels:{color:'#475569',font:{size:11},boxWidth:12}}},
-    scales:{
-      x:{ticks:TICK,grid:{color:GRID}},
-      y:{ticks:TICK,grid:{color:GRID},title:{display:true,text:'請求数',color:'#94a3b8',font:{size:10}}},
-      y2:{position:'right',ticks:{...TICK,callback:v=>v+'%'},grid:{display:false},title:{display:true,text:'発注率',color:'#94a3b8',font:{size:10}}}
-    }
-  }
-});
-
-// 建設予定地 vs 現住所
-new Chart(document.getElementById('crossChart'),{
+new Chart(document.getElementById('chartYear'),{
   type:'bar',
-  data:{
-    labels:["\u9577\u91ce\u770c", "\u5343\u8449\u770c", "\u6771\u4eac\u90fd", "\u795e\u5948\u5ddd\u770c", "\u5317\u6d77\u9053", "\u5c71\u68a8\u770c", "\u5175\u5eab\u770c", "\u9759\u5ca1\u770c", "\u57fc\u7389\u770c", "\u611b\u77e5\u770c"],
+  data:{labels:["2021", "2022", "2023", "2024", "2025", "2026"],
     datasets:[
-      {label:'建設予定地',data:[1374, 1108, 934, 866, 801, 645, 616, 558, 462, 437],backgroundColor:'#f59e0b99',borderColor:'#f59e0b',borderWidth:1,borderRadius:3},
-      {label:'現住所',data:[556, 879, 2413, 1393, 644, 163, 611, 406, 637, 616],backgroundColor:'#3b82f699',borderColor:'#3b82f6',borderWidth:1,borderRadius:3}
-    ]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:true,labels:{color:'#475569',font:{size:11},boxWidth:12}}},
-    scales:{
-      x:{ticks:TICK,grid:{color:GRID}},
-      y:{ticks:TICK,grid:{color:GRID}}
-    }
+      {label:'請求件数',data:[3532, 3230, 3031, 2690, 2160, 71],backgroundColor:'rgba(46,80,119,0.6)',yAxisID:'y'},
+      {label:'発注率(%)',data:[1.08, 1.15, 1.45, 1.34, 1.39, 7.04],type:'line',borderColor:'#dc2626',backgroundColor:'#dc2626',yAxisID:'y1',tension:0.3,pointRadius:5}
+    ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{y:{beginAtZero:true,title:{display:true,text:'件数'}},y1:{position:'right',beginAtZero:true,title:{display:true,text:'発注率(%)'},grid:{drawOnChartArea:false}}}
   }
 });
 
-// 建設予定地 発注率ランキング（上位12）
-new Chart(document.getElementById('buildRateChart'),{
+new Chart(document.getElementById('chartPref'),{
   type:'bar',
-  data:{
-    labels:["\u9577\u91ce\u770c", "\u5343\u8449\u770c", "\u6771\u4eac\u90fd", "\u795e\u5948\u5ddd\u770c", "\u5317\u6d77\u9053", "\u5c71\u68a8\u770c", "\u5175\u5eab\u770c", "\u9759\u5ca1\u770c", "\u57fc\u7389\u770c", "\u611b\u77e5\u770c", "\u798f\u5ca1\u770c", "\u5927\u962a\u5e9c"],
-    datasets:[{data:[2.11, 1.53, 0.43, 0.81, 1.25, 2.95, 1.95, 1.25, 1.3, 1.14, 0.75, 1.01],backgroundColor:[2.11, 1.53, 0.43, 0.81, 1.25, 2.95, 1.95, 1.25, 1.3, 1.14, 0.75, 1.01].map(v=>v>=3?'#dc2626cc':v>=1.5?'#d97706cc':'#94a3b8cc'),borderRadius:4}]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,indexAxis:'y',
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+'%'}}},
-    scales:hBarScales
-  }
+  data:{labels:["長野県", "千葉県", "東京都", "神奈川県", "北海道", "山梨県", "兵庫県", "静岡県", "埼玉県", "愛知県", "福岡県", "大阪府", "茨城県", "栃木県", "滋賀県"],
+    datasets:[
+      {label:'件数',data:[1374, 1108, 934, 866, 801, 645, 616, 558, 462, 437, 401, 395, 353, 331, 309],backgroundColor:'rgba(46,80,119,0.6)'},
+    ]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y'}
 });
 
-// 情報源
-new Chart(document.getElementById('srcChart'),{
-  type:'doughnut',
-  data:{labels:["\u4ee3\u7406\u5e97\u7d4c\u7531", "\u305d\u306e\u4ed6", "Yahoo!Japan", "\u7530\u820e\u66ae\u3089\u3057/\u65e5\u7d4c", "Google", "Instagram", "Facebook"],datasets:[{data:[669, 3035, 2092, 643, 5296, 2497, 482],backgroundColor:PIE,borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#475569',font:{size:11},boxWidth:12,padding:10}}}}
-});
-
-// ホット vs 非ホット
-new Chart(document.getElementById('hotChart'),{
+new Chart(document.getElementById('chartTiming'),{
   type:'bar',
-  data:{
-    labels:['ホット顧客','非ホット顧客'],
-    datasets:[{
-      data:[
-        2.09,
-        0.57
-      ],
-      backgroundColor:['#2e5077cc','rgba(148,163,184,0.4)'],
-      borderColor:['#2e5077','#94a3b8'],
-      borderWidth:1,borderRadius:6
-    }]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}},
-    scales:{
-      x:{ticks:TICK,grid:{display:false}},
-      y:{ticks:{...TICK,callback:v=>v+'%'},grid:{color:GRID}}
-    }
-  }
+  data:{labels:["未定", "1年以内", "1〜2年", "2〜3年", "その他/未記入", "半年以内", "3年以上"],datasets:[{label:'件数',data:[5647, 2703, 2110, 1384, 1055, 970, 845],backgroundColor:'rgba(46,80,119,0.6)'}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('chartMethod'),{
+  type:'bar',
+  data:{labels:["その他/未記入", "未定", "工務店", "セルフビルド", "セミセルフ"],datasets:[{label:'件数',data:[7917, 3506, 2228, 1005, 58],backgroundColor:'rgba(39,174,96,0.6)'}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('chartBudget'),{
+  type:'bar',
+  data:{labels:["1000万", "1500万", "2000万", "2500万", "その他/未記入", "3000万", "その他", "3500万", "2000万台", "1500万台", "4000万", "5000万"],datasets:[{label:'件数',data:[4069, 3033, 2640, 1295, 1040, 794, 501, 333, 165, 165, 160, 154],backgroundColor:'rgba(230,126,34,0.6)'}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('chartUse'),{
+  type:'bar',
+  data:{labels:["住居", "別荘", "その他/未記入", "商業施設", "公共施設", "店舗", "離れ", "宿泊施設", "事務所"],datasets:[{label:'件数',data:[7887, 3631, 2411, 680, 29, 27, 23, 18, 8],backgroundColor:'rgba(124,58,237,0.6)'}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('chartSource'),{
+  type:'bar',
+  data:{labels:["Google", "その他", "Instagram", "Yahoo!Japan", "代理店経由", "田舎暮らし/日経", "Facebook"],datasets:[{label:'件数',data:[5296, 3035, 2497, 2092, 669, 643, 482],backgroundColor:'rgba(8,145,178,0.6)'}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}
 });
 </script>
-</body>
-</html>
+<div class="footer">
+  v3（パース修正版）— Generated with Claude (Cowork) ·
+  <a href="index.html">← レポート一覧に戻る</a>
+</div>
+</body></html>
