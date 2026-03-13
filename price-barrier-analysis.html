@@ -50,16 +50,16 @@ tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:h
   <div class="badge">v3 パース修正版</div>
   <h1>💰 価格障壁分析</h1>
   <p>建築コスト高騰による購買層の構造的変化を検証</p>
-</div><div class="stats-bar"><div class="stat"><div class="stat-val">+32%</div><div class="stat-lbl">契約単価変化率</div></div><div class="stat"><div class="stat-val">¥4,216万</div><div class="stat-lbl">直近平均契約単価</div></div><div class="stat"><div class="stat-val">¥180万/坪</div><div class="stat-lbl">直近平均坪単価</div></div><div class="stat"><div class="stat-val">25.4%</div><div class="stat-lbl">低予算層比率(直近)</div></div><div class="stat"><div class="stat-val">2.0%</div><div class="stat-lbl">セルフビルド比率(直近)</div></div></div><div class="container"><div class="insight"><ul>
+</div><div class="stats-bar"><div class="stat"><div class="stat-val">+32%</div><div class="stat-lbl">契約単価変化率</div></div><div class="stat"><div class="stat-val">¥4,216万</div><div class="stat-lbl">直近平均契約単価</div></div><div class="stat"><div class="stat-val">¥147万/坪</div><div class="stat-lbl">直近平均坪単価</div></div><div class="stat"><div class="stat-val">25.4%</div><div class="stat-lbl">低予算層比率(直近)</div></div><div class="stat"><div class="stat-val">2.0%</div><div class="stat-lbl">セルフビルド比率(直近)</div></div></div><div class="container"><div class="insight"><ul>
 <li>契約平均単価は5年で<b>+32%</b>上昇（¥3,198万→¥4,216万）</li>
 <li>低予算層（〜1,500万）の比率は58.3%→25.4%に変化</li>
 <li>セルフビルド希望は12.9%→2.0%に推移</li>
-<li>坪単価は¥111万/坪→¥180万/坪へ<b>+62%</b>上昇</li>
-</ul></div><div class="section-title">📈 エビデンス1: 契約単価の推移</div><div class="section-desc">実際の契約総工費（EUDS実績データ）が年々どう変化しているか</div><div class="card-full"><div class="chart-md"><canvas id="chartContractCost"></canvas></div></div><div class="section-title">📉 エビデンス2: 低予算層（〜1,500万）の推移</div><div class="section-desc">予算1,500万円以下の請求者が年度ごとにどう変化しているか</div><div class="card-full"><div class="chart-md"><canvas id="chartLowBudget"></canvas></div></div><div class="section-title">🔨 エビデンス3: セルフビルド希望の推移</div><div class="section-desc">セルフビルド（自分で建てたい）希望者の割合が年度でどう変化しているか</div><div class="card-full"><div class="chart-md"><canvas id="chartSelfBuild"></canvas></div></div><div class="section-title">💰 エビデンス4: 予算帯分布の年度変化</div><div class="section-desc">全請求者の予算帯が年度ごとにどう変化しているか（低予算↔高予算のシフト）</div><div class="card-full"><div class="chart-lg"><canvas id="chartBudgetDist"></canvas></div></div><div class="section-title">🔨 エビデンス5: 建設方法の推移</div><div class="section-desc">施工委託・セルフビルド・ハーフビルドなど建設方法の年度別構成変化</div><div class="card-full"><div class="chart-lg"><canvas id="chartMethodDist"></canvas></div></div><div class="section-title">📐 エビデンス6: 坪単価の推移</div><div class="section-desc">総工費÷希望坪数で算出した概算坪単価の年度別推移。建築コスト上昇の直接的な指標</div><div class="card-full">
+<li>坪単価は¥112万/坪→¥147万/坪へ<b>+32%</b>上昇</li>
+</ul></div><div class="section-title">📈 エビデンス1: 契約単価の推移</div><div class="section-desc">実際の契約総工費（EUDS実績データ）が年々どう変化しているか</div><div class="card-full"><div class="chart-md"><canvas id="chartContractCost"></canvas></div></div><div class="section-title">📉 エビデンス2: 低予算層（〜1,500万）の推移</div><div class="section-desc">予算1,500万円以下の請求者が年度ごとにどう変化しているか</div><div class="card-full"><div class="chart-md"><canvas id="chartLowBudget"></canvas></div></div><div class="section-title">🔨 エビデンス3: セルフビルド希望の推移</div><div class="section-desc">セルフビルド（自分で建てたい）希望者の割合が年度でどう変化しているか</div><div class="card-full"><div class="chart-md"><canvas id="chartSelfBuild"></canvas></div></div><div class="section-title">💰 エビデンス4: 予算帯分布の年度変化</div><div class="section-desc">全請求者の予算帯が年度ごとにどう変化しているか（低予算↔高予算のシフト）</div><div class="card-full"><div class="chart-lg"><canvas id="chartBudgetDist"></canvas></div></div><div class="section-title">🔨 エビデンス5: 建設方法の推移</div><div class="section-desc">施工委託・セルフビルド・ハーフビルドなど建設方法の年度別構成変化</div><div class="card-full"><div class="chart-lg"><canvas id="chartMethodDist"></canvas></div></div><div class="section-title">📐 エビデンス6: 坪単価の推移</div><div class="section-desc">実際の延床面積（m²→坪換算）と総工費から算出した坪単価の年度別推移。建築コスト上昇の直接的な指標</div><div class="card-full">
 <p style="font-size:.9rem;line-height:1.8;color:#334155">
-総工費を希望坪数で割った概算坪単価は、2021年の<b>¥111万/坪</b>から
-2025年には<b>¥180万/坪</b>へと<b>+62%</b>上昇しています。
-建築資材高騰・人件費上昇の影響が坪単価に直接反映されています。
+実際の延床面積（m²→坪換算）を用いた坪単価は、2021年の<b>¥112万/坪</b>から
+2025年には<b>¥147万/坪</b>へと<b>+32%</b>上昇しています。
+（93件中、実延床面積ベース93件）。建築資材高騰・人件費上昇の影響が坪単価に直接反映されています。
 </p>
 <div class="chart-md"><canvas id="chartTsuboTankaP"></canvas></div></div><div class="section-title">🔍 エビデンス7: 予算乖離の実態</div><div class="section-desc">カタログ請求時の希望予算と実際の契約金額がどれだけ乖離しているか（EUDS実績データ）</div><div class="card-full">
 <p style="font-size:.9rem;line-height:1.8;color:#334155">
@@ -88,8 +88,8 @@ new Chart(document.getElementById('chartBudgetDist'),{type:'bar',
 });
 new Chart(document.getElementById('chartTsuboTankaP'),{type:'bar',
   data:{labels:["2021", "2022", "2023", "2024", "2025"],datasets:[
-    {label:'平均坪単価(万/坪)',data:[110.8, 132.5, 137.4, 140.1, 179.8],backgroundColor:'rgba(194,65,12,0.6)'},
-    {label:'中央値(万/坪)',data:[115.7, 116.7, 128.5, 128.0, 150.3],type:'line',borderColor:'#d97706',backgroundColor:'#d97706',tension:0.3,pointRadius:5}
+    {label:'平均坪単価(万/坪)',data:[111.5, 118.8, 132.2, 131.4, 147.2],backgroundColor:'rgba(194,65,12,0.6)'},
+    {label:'中央値(万/坪)',data:[108.5, 111.7, 133.8, 124.1, 153.9],type:'line',borderColor:'#d97706',backgroundColor:'#d97706',tension:0.3,pointRadius:5}
   ]},options:{responsive:true,maintainAspectRatio:false}
 });
 new Chart(document.getElementById('chartMethodDist'),{type:'bar',
