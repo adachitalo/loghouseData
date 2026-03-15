@@ -15,7 +15,7 @@ Interactive HTML reports analyzing 5 years of catalog request data (2021–2025)
 | [prefecture-trends-analysis.html](./prefecture-trends-analysis.html) | Prefectural trends for current address vs. planned construction site |
 | [talo-hq-analysis.html](./talo-hq-analysis.html) | TALO HQ (direct) performance analysis |
 | [gap-analysis.html](./gap-analysis.html) | Budget vs. actual construction cost gap analysis (outlier-corrected) |
-| [scoring-analysis.html](./scoring-analysis.html) | Conversion prediction scoring model (D–S rank, 32x lift between D and A) |
+| [scoring-analysis.html](./scoring-analysis.html) | 6-attribute conversion prediction scoring model (4 ranks A–D, ~25x lift between D and A) |
 | [price-barrier-analysis.html](./price-barrier-analysis.html) | Price barrier analysis: structural shift in buyer demographics due to 64% cost increase |
 
 ### Agency Reports (6 reports)
@@ -37,7 +37,8 @@ Or use the **[index.html](./index.html)** portal page for card-based navigation 
 
 ## Data
 
-- Source: Catalog request records (14,714 entries, 2021–2025) + EUDS customer data (9,593 entries)
+- Source: Catalog request records (14,643 entries after excluding 2026, 2021–2025) + EUDS customer data (9,593 entries)
+- Orders: 185 (overall conversion rate 1.26%)
 - **Note:** Raw data files are not included in this repository.
 
 ---
