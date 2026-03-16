@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALO 営業指標 × WEB解析 統合ダッシュボード</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #f0f2f5; color: #2c3e50; line-height: 1.6; }
+.header { background: linear-gradient(135deg, #1a5276 0%, #2e86c1 100%); color: #fff; padding: 28px 32px; }
+.header h1 { font-size: 22px; font-weight: 700; }
+.header p { font-size: 13px; opacity: .8; margin-top: 4px; }
+.container { max-width: 1280px; margin: 0 auto; padding: 24px 16px; }
+.nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.nav a { padding: 8px 16px; background: #fff; border-radius: 8px; text-decoration: none; color: #2e86c1; font-size: 13px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.06); transition: all .2s; }
+.nav a:hover, .nav a.active { background: #2e86c1; color: #fff; }
+.section { margin-bottom: 32px; scroll-margin-top: 20px; }
+.section-title { font-size: 18px; font-weight: 700; color: #1a5276; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid #2e86c1; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.kpi { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.kpi-label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+.kpi-value { font-size: 28px; font-weight: 800; color: #1a5276; margin: 4px 0; }
+.kpi-sub { font-size: 12px; color: #94a3b8; }
+.kpi-change { font-size: 13px; font-weight: 700; }
+.kpi-change.up { color: #059669; }
+.kpi-change.down { color: #dc2626; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+.chart-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.chart-card h3 { font-size: 14px; color: #475569; margin-bottom: 12px; font-weight: 600; }
+.chart-card canvas { max-height: 320px; }
+.insight { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 16px; border-left: 4px solid #f59e0b; }
+.insight h3 { font-size: 14px; color: #92400e; margin-bottom: 8px; }
+.insight ul { list-style: none; padding: 0; }
+.insight li { padding: 6px 0; font-size: 13px; color: #475569; border-bottom: 1px solid #f1f5f9; }
+.insight li:last-child { border: none; }
+.insight li strong { color: #1a5276; }
+.table-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow-x: auto; margin-bottom: 16px; }
+.table-card table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-card th { background: #f8fafc; color: #475569; font-weight: 600; padding: 10px 12px; text-align: right; border-bottom: 2px solid #e2e8f0; }
+.table-card th:first-child { text-align: left; }
+.table-card td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #f1f5f9; }
+.table-card td:first-child { text-align: left; font-weight: 600; color: #1a5276; }
+.table-card tr:hover { background: #f8fafc; }
+.full-width { grid-column: 1 / -1; }
+.footer { text-align: center; font-size: 11px; color: #94a3b8; padding: 24px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>TALO 営業指標 × WEB解析 統合ダッシュボード</h1>
+  <p>2021〜2025年 | カタログ請求データ・GA4・リスティング広告・市場データの横断分析</p>
+</div>
+<div class="container">
+<nav class="nav">
+  <a href="#funnel">ファネル分析</a>
+  <a href="#ad-roi">広告ROI</a>
+  <a href="#channel">チャネル分析</a>
+  <a href="#market">市場環境比較</a>
+  <a href="#cost">コスト構造</a>
+  <a href="#price">価格分析</a>
+</nav>
+
+<!-- ===== KPI サマリー ===== -->
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">カタログ請求数 2025</div>
+    <div class="kpi-value">2,112</div>
+    <div class="kpi-change down">▼52% vs 2021</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">契約棟数 2025</div>
+    <div class="kpi-value">22</div>
+    <div class="kpi-change down">▼68% vs 2021</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">来場→契約率 2025</div>
+    <div class="kpi-value">9.61%</div>
+    <div class="kpi-change up">▲0.2pt vs 2021</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">広告CPA 2025</div>
+    <div class="kpi-value">¥8,105</div>
+    <div class="kpi-change down">▲116% vs 2021</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">TALO坪単価 2025</div>
+    <div class="kpi-value">128万</div>
+    <div class="kpi-change down">▲64% vs 2021</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">リピーター率 2025</div>
+    <div class="kpi-value">18.0%</div>
+    <div class="kpi-change up">▲4.2pt vs 2022</div>
+  </div>
+</div>
+
+<!-- ===== Section 1: ファネル分析 ===== -->
+<div class="section" id="funnel">
+<h2 class="section-title">ファネル転換率分析</h2>
+
+<div class="insight">
+  <h3>ファネル分析のポイント</h3>
+  <ul>
+    <li><strong>最大のボトルネック：WEBアクセス→CV</strong> — 転換率は0.55〜0.75%で推移。2025年はPV急減(-39%)でCV数が激減</li>
+    <li><strong>来場→契約率は改善傾向</strong> — 2021年9.38% → 2025年9.61%。来場者の質は向上している</li>
+    <li><strong>見積依頼率は2024年がピーク</strong> — カタログ請求者のうち4.76%が見積依頼（2021年は3.74%）</li>
+    <li><strong>「量」は激減、「質」は微改善</strong> — ファネル上流の縮小が全体業績を圧迫</li>
+  </ul>
+</div>
+
+<div class="table-card">
+  <table>
+    <tr><th>指標</th><th>2021年</th><th>2022年</th><th>2023年</th><th>2024年</th><th>2025年</th><th>変化</th></tr>
+    <tr><td>WEBアクセス(PV)</td><td>592,507</td><td>642,568</td><td>651,545</td><td>625,575</td><td>383,629</td><td class="kpi-change down">-35%</td></tr>
+    <tr><td>カタログ請求(CV)</td><td>4,439</td><td>3,705</td><td>3,242</td><td>2,710</td><td>2,112</td><td class="kpi-change down">-52%</td></tr>
+    <tr><td>PV→CV率</td><td>0.75%</td><td>0.58%</td><td>0.5%</td><td>0.43%</td><td>0.55%</td><td>-0.2pt</td></tr>
+    <tr><td>見積依頼</td><td>166</td><td>117</td><td>122</td><td>129</td><td>80</td><td class="kpi-change down">-52%</td></tr>
+    <tr><td>CV→見積率</td><td>3.74%</td><td>3.16%</td><td>3.76%</td><td>4.76%</td><td>3.79%</td><td>0.05pt</td></tr>
+    <tr><td>来場者数</td><td>725</td><td>561</td><td>498</td><td>384</td><td>229</td><td class="kpi-change down">-68%</td></tr>
+    <tr><td>CV→来場率</td><td>16.33%</td><td>15.14%</td><td>15.36%</td><td>14.17%</td><td>10.84%</td><td>-5.49pt</td></tr>
+    <tr><td>契約棟数</td><td>68</td><td>45</td><td>49</td><td>28</td><td>22</td><td class="kpi-change down">-68%</td></tr>
+    <tr><td>来場→契約率</td><td>9.38%</td><td>8.02%</td><td>9.84%</td><td>7.29%</td><td>9.61%</td><td class="kpi-change up">+0.23pt</td></tr>
+  </table>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>ファネル各段階の指数推移（2021=100）</h3>
+    <canvas id="funnelIndex"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>2025年 ファネル（人数フロー）</h3>
+    <canvas id="funnelBar2025"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>転換率の推移</h3>
+    <canvas id="conversionRates"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>各段階の減少率比較（2021→2025）</h3>
+    <canvas id="declineRate"></canvas>
+  </div>
+</div>
+</div>
+
+<!-- ===== Section 2: 広告ROI ===== -->
+<div class="section" id="ad-roi">
+<h2 class="section-title">広告チャネルROI分析</h2>
+
+<div class="insight">
+  <h3>広告ROI分析のポイント</h3>
+  <ul>
+    <li><strong>Yahoo広告は2025年に事実上停止</strong> — CVわずか9件、CPA¥15,259。費用対効果が大幅悪化</li>
+    <li><strong>Google広告はCV数最大だがCPA悪化</strong> — 2021年¥4,851→2025年¥7,884（+63%）</li>
+    <li><strong>Instagram広告はCPAが乱高下</strong> — 2024年に¥10,744まで悪化後、2025年¥8,544に改善</li>
+    <li><strong>推定発注あたりコスト</strong> — Google: ¥625,695/件、Instagram: ¥678,103/件（発注率1.26%で計算）</li>
+  </ul>
+</div>
+
+<div class="table-card">
+  <table>
+    <tr><th>チャネル</th><th>指標</th><th>2021年</th><th>2022年</th><th>2023年</th><th>2024年</th><th>2025年</th></tr>
+    <tr><td rowspan="3">Google</td><td>コスト</td><td>¥5,578,220</td><td>¥5,954,544</td><td>¥5,339,029</td><td>¥7,327,778</td><td>¥7,237,294</td></tr>
+    <tr><td>CV数</td><td>1,150</td><td>1,359</td><td>1,285</td><td>1,132</td><td>918</td></tr>
+    <tr><td>CPA</td><td>¥4,850</td><td>¥4,381</td><td>¥4,154</td><td>¥6,473</td><td>¥7,883</td></tr>
+    <tr><td rowspan="3">Yahoo</td><td>コスト</td><td>¥1,572,345</td><td>¥1,558,068</td><td>¥2,617,290</td><td>¥1,511,876</td><td>¥137,335</td></tr>
+    <tr><td>CV数</td><td>391</td><td>442</td><td>454</td><td>190</td><td>9</td></tr>
+    <tr><td>CPA</td><td>¥4,021</td><td>¥3,525</td><td>¥5,764</td><td>¥7,957</td><td>¥15,259</td></tr>
+    <tr><td rowspan="3">Instagram</td><td>コスト</td><td>¥2,657,938</td><td>¥2,366,981</td><td>¥2,169,618</td><td>¥2,997,611</td><td>¥2,922,080</td></tr>
+    <tr><td>CV数</td><td>1,071</td><td>551</td><td>362</td><td>279</td><td>342</td></tr>
+    <tr><td>CPA</td><td>¥2,481</td><td>¥4,295</td><td>¥5,993</td><td>¥10,744</td><td>¥8,544</td></tr>
+  </table>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>チャネル別CV数の推移</h3>
+    <canvas id="channelCV"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>チャネル別CPA（CV単価）の推移</h3>
+    <canvas id="channelCPA"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>チャネル別 広告費構成比の推移</h3>
+    <canvas id="channelShare"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>推定「発注あたりコスト」の推移（発注率1.26%で計算）</h3>
+    <canvas id="costPerOrder"></canvas>
+  </div>
+</div>
+</div>
+
+<!-- ===== Section 3: GA4チャネル ===== -->
+<div class="section" id="channel">
+<h2 class="section-title">GA4 ユーザー獲得チャネル分析</h2>
+
+<div class="insight">
+  <h3>チャネル分析のポイント</h3>
+  <ul>
+    <li><strong>Paid Searchが最大チャネルだが急縮小</strong> — 2022年249,100人→2025年74,585人（-70%）</li>
+    <li><strong>Organic Searchは安定</strong> — 4年間で53,563→52,860とほぼ横ばい。SEO投資の効果</li>
+    <li><strong>Cross-networkが急成長</strong> — 2023年1,203→2025年82,130。Displayの代替チャネルとして台頭</li>
+    <li><strong>リピーター率は年々上昇</strong> — 13.8%→18.0%。既存ユーザーの再訪が増加中</li>
+  </ul>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>GA4 ユーザー獲得チャネル推移</h3>
+    <canvas id="ga4Channels"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>新規 vs リピーターの推移</h3>
+    <canvas id="repeaterChart"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>GA4 コンバージョン推移（資料請求）</h3>
+    <canvas id="ga4CV"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Organic vs Paid ユーザー比率</h3>
+    <canvas id="orgVsPaid"></canvas>
+  </div>
+</div>
+</div>
+
+<!-- ===== Section 4: 市場環境 ===== -->
+<div class="section" id="market">
+<h2 class="section-title">市場環境 vs 自社パフォーマンス</h2>
+
+<div class="insight">
+  <h3>市場環境との比較</h3>
+  <ul>
+    <li><strong>住宅着工数は-14%</strong>（2021→2025）に対し、<strong>TALOカタログ請求は-52%、契約は-68%</strong> — 市場全体よりはるかに急減</li>
+    <li><strong>TALO坪単価は+64%上昇</strong>（78→128万）に対し、木造住宅全体は+21%（66→80万）— TALO価格は市場の3倍のペースで上昇</li>
+    <li><strong>為替レート+30%</strong>（135→175円）がTALO価格上昇の主因。フィンランド産木材の輸入コスト増</li>
+    <li><strong>価格上昇が需要を圧迫</strong> — 坪単価が業界平均との乖離を拡大させ、潜在顧客の離脱を加速</li>
+  </ul>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>指数比較（2021=100）：住宅着工 vs TALO業績</h3>
+    <canvas id="marketVsTalo"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>坪単価比較：TALO vs 木造住宅平均 vs 為替</h3>
+    <canvas id="priceCompare"></canvas>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card full-width">
+    <h3>各指標の5年間変化率の比較</h3>
+    <canvas id="changeComparison"></canvas>
+  </div>
+</div>
+</div>
+
+<!-- ===== Section 5: コスト構造 ===== -->
+<div class="section" id="cost">
+<h2 class="section-title">広告宣伝費のコスト構造</h2>
+
+<div class="insight">
+  <h3>コスト構造のポイント</h3>
+  <ul>
+    <li><strong>広告宣伝費合計は-44%削減</strong>（3,366万→1,889万）— 特に雑誌広告（-100%）と制作関連（-77%）の大幅削減</li>
+    <li><strong>WEB広告費はほぼ横ばい</strong>（1,272万→1,246万、-2%）— 全体削減の中でWEB比率が上昇</li>
+    <li><strong>カタログ請求取得単価は+18%上昇</strong>（¥7,583→¥8,945）— 広告費は削減したが効率も悪化</li>
+    <li><strong>来場者取得単価は+78%急騰</strong>（¥46,432→¥82,493）— 来場者減が最大の課題</li>
+  </ul>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>広告宣伝費の内訳推移</h3>
+    <canvas id="costBreakdown"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>各種取得単価の推移</h3>
+    <canvas id="cpaAll"></canvas>
+  </div>
+</div>
+</div>
+
+<!-- ===== Section 6: 価格分析 ===== -->
+<div class="section" id="price">
+<h2 class="section-title">TALO価格動向と影響分析</h2>
+
+<div class="insight">
+  <h3>価格分析のポイント</h3>
+  <ul>
+    <li><strong>TALO坪単価は5年で+64%</strong> — 78万→128万。業界平均（+21%）の3倍のペースで上昇</li>
+    <li><strong>キット単価も+56%</strong>（41万→64万）— 為替（+30%）以上の上昇</li>
+    <li><strong>TALO/業界平均比率は拡大</strong> — 2021年1.18倍→2025年1.60倍。価格競争力が低下</li>
+    <li><strong>契約棟数との強い負の相関</strong> — 坪単価上昇と契約数減少がほぼ鏡像関係</li>
+  </ul>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>坪単価推移（万円）</h3>
+    <canvas id="tsuboTrend"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>坪単価指数 vs 契約指数（2021=100）</h3>
+    <canvas id="priceVsContract"></canvas>
+  </div>
+</div>
+</div>
+
+<div class="footer">
+  TALO 営業指標×WEB解析 統合ダッシュボード | データソース: 営業指標推移_2021-2025.xlsx, GA4分析.xlsx, リスティング広告実績 | 生成日: 2026-03-17
+</div>
+</div>
+
+<script>
+const years = [2021, 2022, 2023, 2024, 2025];
+const ga4Years = ["2022", "2023", "2024", "2025"];
+Chart.defaults.font.family = "'Helvetica Neue','Hiragino Sans',sans-serif";
+Chart.defaults.font.size = 12;
+const gridColor = 'rgba(0,0,0,0.06)';
+const tickColor = '#64748b';
+
+// ===== ファネル指数 =====
+new Chart(document.getElementById('funnelIndex'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'WEBアクセス', data: [100.0, 108.4, 110.0, 105.6, 64.7], borderColor: '#2e86c1', backgroundColor: 'rgba(46,134,193,.1)', fill: true, tension: .3 },
+      { label: 'カタログ請求', data: [100.0, 83.5, 73.0, 61.0, 47.6], borderColor: '#e74c3c', tension: .3 },
+      { label: '見積依頼', data: [100.0, 70.5, 73.5, 77.7, 48.2], borderColor: '#f39c12', tension: .3 },
+      { label: '来場者', data: [100.0, 77.4, 68.7, 53.0, 31.6], borderColor: '#27ae60', tension: .3 },
+      { label: '契約', data: [100.0, 66.2, 72.1, 41.2, 32.4], borderColor: '#8e44ad', tension: .3 },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 2025年ファネルバー =====
+new Chart(document.getElementById('funnelBar2025'), {
+  type: 'bar',
+  data: {
+    labels: ['WEB PV', 'CV(資料請求)', '見積依頼', '来場', '契約'],
+    datasets: [{ data: [383629, 2112, 80, 229, 22], backgroundColor: ['#2e86c1','#e74c3c','#f39c12','#27ae60','#8e44ad'] }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { type: 'logarithmic', grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { display: false }, ticks: { color: tickColor } } } }
+});
+
+// ===== 転換率 =====
+new Chart(document.getElementById('conversionRates'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'CV→見積率', data: [3.74, 3.16, 3.76, 4.76, 3.79], borderColor: '#f39c12', tension: .3, yAxisID: 'y' },
+      { label: 'CV→来場率', data: [16.33, 15.14, 15.36, 14.17, 10.84], borderColor: '#27ae60', tension: .3, yAxisID: 'y' },
+      { label: '来場→契約率', data: [9.38, 8.02, 9.84, 7.29, 9.61], borderColor: '#8e44ad', tension: .3, yAxisID: 'y' },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 減少率比較 =====
+new Chart(document.getElementById('declineRate'), {
+  type: 'bar',
+  data: {
+    labels: ['WEB PV', 'カタログ請求', '見積依頼', '来場者', '契約棟数', '住宅着工(参考)'],
+    datasets: [{ data: [-35, -52, -52, -68, -68, -14], backgroundColor: ['#2e86c1','#e74c3c','#f39c12','#27ae60','#8e44ad','#95a5a6'] }]
+  },
+  options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } }, y: { grid: { display: false }, ticks: { color: tickColor } } } }
+});
+
+// ===== 広告チャネルCV =====
+new Chart(document.getElementById('channelCV'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Google', data: [1150, 1359, 1285, 1132, 918], backgroundColor: '#4285f4' },
+      { label: 'Yahoo', data: [391, 442, 454, 190, 9], backgroundColor: '#ff0033' },
+      { label: 'Instagram', data: [1071, 551, 362, 279, 342], backgroundColor: '#c13584' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: tickColor } }, y: { stacked: true, grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 広告チャネルCPA =====
+new Chart(document.getElementById('channelCPA'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Google', data: [4851, 4382, 4155, 6473, 7884], borderColor: '#4285f4', tension: .3 },
+      { label: 'Yahoo', data: [4021, 3525, 5765, 7957, 15259], borderColor: '#ff0033', tension: .3 },
+      { label: 'Instagram', data: [2482, 4296, 5993, 10744, 8544], borderColor: '#c13584', tension: .3 },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => '¥'+v.toLocaleString() } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 広告費構成比 =====
+new Chart(document.getElementById('channelShare'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Google', data: [56.9, 60.3, 52.7, 61.9, 70.3], backgroundColor: '#4285f4' },
+      { label: 'Yahoo', data: [16.0, 15.8, 25.8, 12.8, 1.3], backgroundColor: '#ff0033' },
+      { label: 'Instagram', data: [27.1, 24.0, 21.4, 25.3, 28.4], backgroundColor: '#c13584' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: tickColor } }, y: { stacked: true, max: 100, grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } } } }
+});
+
+// ===== 発注あたりコスト =====
+new Chart(document.getElementById('costPerOrder'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Google', data: [384970, 347743, 329753, 513754, 625695], borderColor: '#4285f4', tension: .3 },
+      { label: 'Yahoo', data: [319154, 279765, 457536, 631527, 1211067], borderColor: '#ff0033', tension: .3 },
+      { label: 'Instagram', data: [196963, 340936, 475668, 852708, 678103], borderColor: '#c13584', tension: .3 },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => '¥'+v.toLocaleString() } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== GA4チャネル =====
+new Chart(document.getElementById('ga4Channels'), {
+  type: 'bar',
+  data: {
+    labels: ga4Years,
+    datasets: [
+      { label: 'Paid Search', data: [249100, 182442, 140218, 74585], backgroundColor: '#4285f4' },
+      { label: 'Organic Search', data: [53563, 65309, 58604, 52860], backgroundColor: '#34a853' },
+      { label: 'Display', data: [0, 116222, 75209, 30037], backgroundColor: '#fbbc04' },
+      { label: 'Cross-network', data: [0, 1203, 116489, 82130], backgroundColor: '#ea4335' },
+      { label: 'Direct', data: [32151, 57661, 37144, 26114], backgroundColor: '#9aa0a6' },
+      { label: 'Paid Social', data: [34498, 21474, 369, 180], backgroundColor: '#c13584' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: tickColor } }, y: { stacked: true, grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== リピーター =====
+new Chart(document.getElementById('repeaterChart'), {
+  type: 'bar',
+  data: {
+    labels: ["2022", "2023", "2024", "2025"],
+    datasets: [
+      { label: '新規ユーザー', data: [380702, 469170, 434418, 262525], backgroundColor: '#2e86c1' },
+      { label: 'リピーター', data: [52511, 74485, 69948, 47309], backgroundColor: '#e74c3c' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== GA4 CV =====
+const cvYears = ["2022", "2023", "2024", "2025"];
+const cvEvents = [1680, 3770, 2573, 1923];
+const cvUsers = [1147, 2932, 2399, 1835];
+new Chart(document.getElementById('ga4CV'), {
+  type: 'bar',
+  data: {
+    labels: cvYears,
+    datasets: [
+      { label: 'CV イベント数', data: cvEvents, backgroundColor: '#2e86c1' },
+      { label: 'CV ユーザー数', data: cvUsers, backgroundColor: '#e74c3c' },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { display: false }, ticks: { color: tickColor } } } }
+});
+
+// ===== Organic vs Paid =====
+const orgTotal = [59793, 72825, 65352, 56207];
+const paidTotal = [283598, 321341, 332285, 186932];
+new Chart(document.getElementById('orgVsPaid'), {
+  type: 'bar',
+  data: {
+    labels: ga4Years,
+    datasets: [
+      { label: 'Organic', data: orgTotal, backgroundColor: '#34a853' },
+      { label: 'Paid', data: paidTotal, backgroundColor: '#ea4335' },
+      { label: 'Direct/Other', data: [36389, 62856, 40782, 28697], backgroundColor: '#9aa0a6' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 市場 vs TALO =====
+new Chart(document.getElementById('marketVsTalo'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: '住宅着工指数', data: [100.0, 100.4, 95.7, 92.5, 86.5], borderColor: '#95a5a6', borderDash: [5,5], tension: .3 },
+      { label: 'WEBアクセス指数', data: [100.0, 108.4, 110.0, 105.6, 64.7], borderColor: '#2e86c1', tension: .3 },
+      { label: 'カタログ請求指数', data: [100.0, 83.5, 73.0, 61.0, 47.6], borderColor: '#e74c3c', tension: .3 },
+      { label: 'TALO契約指数', data: [100.0, 66.2, 72.1, 41.2, 32.4], borderColor: '#8e44ad', tension: .3, borderWidth: 3 },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 坪単価比較 =====
+new Chart(document.getElementById('priceCompare'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'TALO坪単価指数', data: [100.0, 107.7, 123.1, 126.9, 164.1], borderColor: '#e74c3c', tension: .3, yAxisID: 'y' },
+      { label: '木造住宅坪単価指数', data: [100.0, 110.6, 113.6, 118.2, 121.2], borderColor: '#95a5a6', borderDash: [5,5], tension: .3, yAxisID: 'y' },
+      { label: '為替レート指数', data: [100.0, 103.7, 118.5, 120.0, 129.6], borderColor: '#f39c12', tension: .3, yAxisID: 'y' },
+      { label: 'TALO契約指数', data: [100.0, 66.2, 72.1, 41.2, 32.4], borderColor: '#8e44ad', borderDash: [3,3], tension: .3, yAxisID: 'y' },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 変化率比較 =====
+new Chart(document.getElementById('changeComparison'), {
+  type: 'bar',
+  data: {
+    labels: ['住宅着工', 'WEB PV', 'カタログ請求', '契約棟数', 'TALO坪単価', '木造坪単価', '為替', '広告宣伝費'],
+    datasets: [{ data: [
+      -14,
+      -35,
+      -52,
+      -68,
+      64,
+      21,
+      30,
+      -44
+    ], backgroundColor: ['#95a5a6','#2e86c1','#e74c3c','#8e44ad','#e67e22','#95a5a6','#f39c12','#27ae60'] }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } }, x: { grid: { display: false }, ticks: { color: tickColor } } } }
+});
+
+// ===== コスト内訳 =====
+new Chart(document.getElementById('costBreakdown'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'WEB広告', data: [1272, 1224, 1317, 1440, 1245], backgroundColor: '#2e86c1' },
+      { label: 'SEO', data: [288, 288, 288, 288, 240], backgroundColor: '#27ae60' },
+      { label: 'WEB制作', data: [210, 230, 255, 278, 163], backgroundColor: '#f39c12' },
+      { label: '雑誌広告', data: [546, 501, 293, 80, 0], backgroundColor: '#e74c3c' },
+      { label: '制作関連', data: [1050, 677, 513, 888, 240], backgroundColor: '#8e44ad' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label+': '+ctx.parsed.y+'万円' } } }, scales: { x: { stacked: true }, y: { stacked: true, grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'万' } } } }
+});
+
+// ===== 各種取得単価 =====
+new Chart(document.getElementById('cpaAll'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'カタログ請求取得単価', data: [7583, 7881, 8223, 10974, 8945], borderColor: '#e74c3c', tension: .3, yAxisID: 'y' },
+      { label: '来場者取得単価(÷100)', data: [464, 520, 535, 774, 825], borderColor: '#27ae60', tension: .3, yAxisID: 'y' },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => '¥'+v.toLocaleString() } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== 坪単価実数 =====
+new Chart(document.getElementById('tsuboTrend'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'TALO坪単価', data: [78, 84, 96, 99, 128], backgroundColor: '#e74c3c' },
+      { label: '木造住宅平均', data: [66, 73, 75, 78, 80], backgroundColor: '#95a5a6' },
+      { label: 'キット単価', data: [41, 44, 47, 50, 64], backgroundColor: '#f39c12' },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'万' } }, x: { grid: { display: false }, ticks: { color: tickColor } } } }
+});
+
+// ===== 坪単価 vs 契約 =====
+new Chart(document.getElementById('priceVsContract'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'TALO坪単価指数', data: [100.0, 107.7, 123.1, 126.9, 164.1], borderColor: '#e74c3c', tension: .3 },
+      { label: 'TALO契約指数', data: [100.0, 66.2, 72.1, 41.2, 32.4], borderColor: '#8e44ad', tension: .3 },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== Nav active state =====
+document.querySelectorAll('.nav a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
