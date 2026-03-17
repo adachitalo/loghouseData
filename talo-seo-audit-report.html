@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALO WEB広告 & SEO 監査レポート - 2026年3月</title>
+<style>
+  :root {
+    --primary: #1a365d;
+    --accent: #2b6cb0;
+    --success: #38a169;
+    --warning: #d69e2e;
+    --danger: #e53e3e;
+    --bg: #f7fafc;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #718096;
+    --border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 40px 0; margin-bottom: 30px; }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 28px; font-weight: 700; }
+  header .subtitle { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+  header .date-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px; font-size: 14px; }
+  .section { margin-bottom: 30px; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 3px solid var(--accent); display: flex; align-items: center; gap: 8px; }
+  .section-title .icon { font-size: 24px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--border); }
+  .card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .card .value { font-size: 28px; font-weight: 700; color: var(--primary); }
+  .card .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .card.highlight { border-left: 4px solid var(--accent); }
+  .card.success { border-left: 4px solid var(--success); }
+  .card.warning { border-left: 4px solid var(--warning); }
+  .card.danger { border-left: 4px solid var(--danger); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; }
+  th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; }
+  td { padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  tr:hover td { background: #edf2f7; }
+  .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .rank-1 { background: #fefcbf; color: #975a16; }
+  .rank-2 { background: #e2e8f0; color: #4a5568; }
+  .rank-3 { background: #fed7aa; color: #9c4221; }
+  .rank-other { background: #edf2f7; color: #718096; }
+  .bar { height: 8px; border-radius: 4px; background: #edf2f7; overflow: hidden; margin-top: 4px; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .status-ok { color: var(--success); font-weight: 600; }
+  .status-warn { color: var(--warning); font-weight: 600; }
+  .status-error { color: var(--danger); font-weight: 600; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr 1fr; } }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+  .tag-ga4 { background: #ebf8ff; color: #2b6cb0; }
+  .tag-ads { background: #fefcbf; color: #975a16; }
+  .tag-fb { background: #fce8f3; color: #97266d; }
+  .tag-yahoo { background: #f0fff4; color: #276749; }
+  .tag-ms { background: #e6fffa; color: #285e61; }
+  .insight-box { background: linear-gradient(135deg, #ebf8ff, #e6fffa); border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #bee3f8; }
+  .insight-box h4 { color: var(--accent); margin-bottom: 8px; }
+  .action-item { background: var(--card); border-radius: 10px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .action-item .priority { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .priority-high { color: var(--danger); }
+  .priority-mid { color: var(--warning); }
+  .priority-low { color: var(--success); }
+  .action-item h4 { font-size: 15px; margin-bottom: 4px; }
+  .action-item p { font-size: 13px; color: var(--muted); }
+  .competitor-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .competitor-bar .name { width: 160px; font-size: 13px; font-weight: 500; text-align: right; }
+  .competitor-bar .bar-wrapper { flex: 1; }
+  .competitor-bar .val { width: 80px; font-size: 13px; color: var(--muted); }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 768px) { .summary-grid { grid-template-columns: 1fr; } }
+  .summary-item { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; }
+  .summary-item .grade { font-size: 48px; font-weight: 800; }
+  .grade-a { color: var(--success); }
+  .grade-b { color: #2b6cb0; }
+  .grade-c { color: var(--warning); }
+  .grade-d { color: var(--danger); }
+  .summary-item .category { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .summary-item .desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .toc { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 30px; }
+  .toc h3 { font-size: 16px; margin-bottom: 12px; color: var(--primary); }
+  .toc a { display: block; padding: 6px 0; color: var(--accent); text-decoration: none; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .toc a:hover { color: var(--primary); }
+  .toc a:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div>
+      <h1>TALO WEB広告 & SEO 監査レポート</h1>
+      <div class="subtitle">www.talo.co.jp ― GTM / GA4 / Ahrefs 統合分析</div>
+    </div>
+    <div class="date-badge">2026年3月18日</div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- 目次 -->
+<div class="toc">
+  <h3>目次</h3>
+  <a href="#summary">1. 総合評価サマリー</a>
+  <a href="#gtm">2. GTM タグ設定状況</a>
+  <a href="#ga4">3. GA4 トラフィック分析（過去28日間）</a>
+  <a href="#seo">4. SEO分析（Ahrefs データ）</a>
+  <a href="#keywords">5. オーガニックキーワード詳細</a>
+  <a href="#competitors">6. 競合サイト比較</a>
+  <a href="#actions">7. 改善アクションプラン</a>
+</div>
+
+<!-- 1. 総合評価 -->
+<div class="section" id="summary">
+  <div class="section-title"><span class="icon">📊</span> 総合評価サマリー</div>
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="grade grade-b">B</div>
+      <div class="category">GTM / 広告タグ設定</div>
+      <div class="desc">33タグ稼働中。Yahoo広告UTM欠落あり</div>
+    </div>
+    <div class="summary-item">
+      <div class="grade grade-b">B</div>
+      <div class="category">GA4 データ収集</div>
+      <div class="desc">Google/Instagram正常受信。Yahoo欠落</div>
+    </div>
+    <div class="summary-item">
+      <div class="grade grade-d">D</div>
+      <div class="category">SEO / オーガニック</div>
+      <div class="desc">DR 4.5。競合BESSに5倍の差</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. GTM -->
+<div class="section" id="gtm">
+  <div class="section-title"><span class="icon">🏷️</span> GTM タグ設定状況（GTM-TNZMHC4）</div>
+
+  <div class="cards">
+    <div class="card highlight">
+      <div class="label">総タグ数</div>
+      <div class="value">33</div>
+      <div class="sub">全タグ稼働中</div>
+    </div>
+    <div class="card success">
+      <div class="label">GA4 計測ID</div>
+      <div class="value" style="font-size:18px">G-5KDKTD3RPQ</div>
+      <div class="sub">正常受信確認済み</div>
+    </div>
+    <div class="card warning">
+      <div class="label">マルウェアスキャン警告</div>
+      <div class="value">33件</div>
+      <div class="sub">表示のみ。実害なし</div>
+    </div>
+    <div class="card success">
+      <div class="label">コンバージョンリンカー</div>
+      <div class="value">有効</div>
+      <div class="sub">全ページ発火</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>プラットフォーム</th><th>タグ数</th><th>主なタグ</th><th>状態</th></tr>
+    <tr>
+      <td><strong>GA4</strong></td><td>7</td>
+      <td>Google タグ(初期化), SP_Gナビ, SP_メニュー, 中間バナー, 資料請求フォーム到達, 追従ボタン, フォームフォーカス</td>
+      <td><span class="status-ok">✓ 正常</span></td>
+    </tr>
+    <tr>
+      <td><strong>Google Ads</strong></td><td>5</td>
+      <td>Web資料請求, 資料請求SSL, 家づくり相談会, 東京展示場来場予約, Googleタグ(広告)</td>
+      <td><span class="status-ok">✓ 正常</span></td>
+    </tr>
+    <tr>
+      <td><strong>Facebook Pixel</strong></td><td>3</td>
+      <td>全ページ, コンバージョン, 展示場予約</td>
+      <td><span class="status-ok">✓ 正常</span></td>
+    </tr>
+    <tr>
+      <td><strong>Yahoo広告</strong></td><td>3</td>
+      <td>サイトジェネラルタグ, CVページ用, mCVページ用</td>
+      <td><span class="status-warn">⚠ UTM欠落</span></td>
+    </tr>
+    <tr>
+      <td><strong>Microsoft UET</strong></td><td>2</td>
+      <td>Base Tag(187035850), フォームフォーカス</td>
+      <td><span class="status-ok">✓ 正常</span></td>
+    </tr>
+    <tr>
+      <td><strong>Clarity</strong></td><td>1</td>
+      <td>カスタムHTML</td>
+      <td><span class="status-ok">✓ 正常</span></td>
+    </tr>
+    <tr>
+      <td><strong>UA（旧版）</strong></td><td>4</td>
+      <td>アナリティクス, SP_Gナビ, SP_メニュー, 中間バナー</td>
+      <td><span class="status-warn">⚠ 非推奨</span></td>
+    </tr>
+    <tr>
+      <td><strong>フォーム関連</strong></td><td>4</td>
+      <td>input変更取得, フォーム遷移, フォーム遷移(広告), 実例詳細追従ボタン</td>
+      <td><span class="status-ok">✓ 正常</span></td>
+    </tr>
+    <tr>
+      <td><strong>Yahoo リターゲ（直埋め）</strong></td><td>-</td>
+      <td>ID: 08675TKYG3 / SS ID: 1000006432（GTM外、HTML直書き）</td>
+      <td><span class="status-warn">⚠ GTM管理外</span></td>
+    </tr>
+  </table>
+
+  <div class="insight-box">
+    <h4>GTM所見</h4>
+    <p>33タグは全て稼働中で、GA4・Google Ads・Facebook Pixel・Microsoft UETの主要プラットフォームはカバー済みです。課題は「Yahoo広告のUTMパラメータ欠落」と「UA（旧アナリティクス）タグが残存」の2点。Yahoo リターゲティングタグがGTM外に直書きされている点もタグ管理の観点から要改善です。</p>
+  </div>
+</div>
+
+<!-- 3. GA4 -->
+<div class="section" id="ga4">
+  <div class="section-title"><span class="icon">📈</span> GA4 トラフィック分析（過去28日間）</div>
+
+  <div class="cards">
+    <div class="card highlight">
+      <div class="label">総セッション数</div>
+      <div class="value">27,800</div>
+      <div class="sub">89チャネル組み合わせ</div>
+    </div>
+    <div class="card success">
+      <div class="label">キーイベント合計</div>
+      <div class="value">163</div>
+      <div class="sub">全体CVR 0.59%</div>
+    </div>
+    <div class="card highlight">
+      <div class="label">最大チャネル</div>
+      <div class="value" style="font-size:18px">google / cpc</div>
+      <div class="sub">14,560セッション（52.4%）</div>
+    </div>
+    <div class="card success">
+      <div class="label">最高CVRチャネル</div>
+      <div class="value" style="font-size:18px">ig / display</div>
+      <div class="sub">CVR 1.17%（46件）</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>ソース / メディア</th><th>セッション</th><th>シェア</th><th>キーイベント</th><th>CVR</th><th>評価</th></tr>
+    <tr>
+      <td><strong>google / cpc</strong></td><td>14,560</td><td>52.4%</td><td>68</td><td>0.47%</td>
+      <td><span class="status-ok">主力チャネル</span></td>
+    </tr>
+    <tr>
+      <td><strong>(direct) / (none)</strong></td><td>4,141</td><td>14.9%</td><td>19</td><td>0.46%</td>
+      <td><span class="status-ok">安定</span></td>
+    </tr>
+    <tr>
+      <td><strong>ig / display</strong></td><td>3,947</td><td>14.2%</td><td>46</td><td style="color:var(--success);font-weight:700">1.17%</td>
+      <td><span class="status-ok">最優秀CVR</span></td>
+    </tr>
+    <tr>
+      <td><strong>google / organic</strong></td><td>3,027</td><td>10.9%</td><td>12</td><td>0.40%</td>
+      <td><span class="status-warn">改善余地大</span></td>
+    </tr>
+    <tr>
+      <td><strong>yahoo / organic</strong></td><td>1,296</td><td>4.7%</td><td>9</td><td>0.69%</td>
+      <td><span class="status-ok">CVR良好</span></td>
+    </tr>
+    <tr>
+      <td><strong>bing / organic</strong></td><td>437</td><td>1.6%</td><td>-</td><td>-</td>
+      <td><span class="status-warn">少量</span></td>
+    </tr>
+  </table>
+
+  <h4 style="margin-bottom:12px; color:var(--primary);">キャンペーン別パフォーマンス</h4>
+  <table>
+    <tr><th>キャンペーン</th><th>セッション</th><th>シェア</th><th>キーイベント</th><th>CVR</th><th>評価</th></tr>
+    <tr>
+      <td><strong>G_DIS_ファインド250219</strong></td><td>10,891</td><td>39.2%</td><td>39</td><td>0.36%</td>
+      <td><span class="status-warn">CVR低め</span></td>
+    </tr>
+    <tr>
+      <td><strong>(organic)</strong></td><td>4,870</td><td>17.5%</td><td>22</td><td>0.45%</td>
+      <td><span class="status-ok">安定</span></td>
+    </tr>
+    <tr>
+      <td><strong>(direct)</strong></td><td>4,141</td><td>14.9%</td><td>19</td><td>0.46%</td>
+      <td><span class="status-ok">安定</span></td>
+    </tr>
+    <tr>
+      <td><strong>display（Instagram）</strong></td><td>3,980</td><td>14.3%</td><td>46</td><td style="color:var(--success);font-weight:700">1.16%</td>
+      <td><span class="status-ok">最優秀</span></td>
+    </tr>
+    <tr>
+      <td><strong>G_LIS_Google検索240807</strong></td><td>2,362</td><td>8.5%</td><td>27</td><td style="color:var(--success);font-weight:700">1.14%</td>
+      <td><span class="status-ok">高効率</span></td>
+    </tr>
+    <tr>
+      <td><strong>G_DIS_東京展示場202509</strong></td><td>1,231</td><td>4.4%</td><td>2</td><td style="color:var(--danger);font-weight:700">0.16%</td>
+      <td><span class="status-error">要改善</span></td>
+    </tr>
+    <tr>
+      <td><strong>(referral)</strong></td><td>698</td><td>2.5%</td><td>7</td><td>1.00%</td>
+      <td><span class="status-ok">良好</span></td>
+    </tr>
+    <tr>
+      <td><strong>G_DIS_イベント東京展示場202601</strong></td><td>51</td><td>0.2%</td><td>0</td><td style="color:var(--danger);font-weight:700">0.00%</td>
+      <td><span class="status-error">要停止検討</span></td>
+    </tr>
+  </table>
+
+  <div class="insight-box">
+    <h4>GA4所見</h4>
+    <p><strong>Instagram広告（display）が最も効率的</strong>で、CVR 1.16%はGoogle検索広告（1.14%）とほぼ同等でありながら、セッション数は1.7倍です。一方、<strong>ファインドキャンペーン</strong>は最大の予算投下先（39.2%）ですがCVR 0.36%と低く、費用対効果の検証が必要です。<strong>東京展示場キャンペーン（202509）</strong>はCVR 0.16%と著しく低く、クリエイティブまたはターゲティングの見直しが急務です。</p>
+  </div>
+</div>
+
+<!-- 4. SEO -->
+<div class="section" id="seo">
+  <div class="section-title"><span class="icon">🔍</span> SEO分析（Ahrefs データ）</div>
+
+  <div class="cards">
+    <div class="card danger">
+      <div class="label">ドメイン評価（DR）</div>
+      <div class="value">4.5</div>
+      <div class="sub">100点中。競合BESS: 53</div>
+    </div>
+    <div class="card highlight">
+      <div class="label">オーガニックKW数</div>
+      <div class="value">151</div>
+      <div class="sub">ランクイン中</div>
+    </div>
+    <div class="card highlight">
+      <div class="label">推定月間トラフィック</div>
+      <div class="value">2,700</div>
+      <div class="sub">トラフィック価値 $477</div>
+    </div>
+    <div class="card warning">
+      <div class="label">被リンク / 参照ドメイン</div>
+      <div class="value" style="font-size:20px">5,200 / 267</div>
+      <div class="sub">Followed 88.8%</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 style="margin-bottom:12px; color:var(--primary);">検索意図別キーワード内訳</h4>
+      <table>
+        <tr><th>検索意図</th><th>KW数</th><th>トラフィック</th><th>評価</th></tr>
+        <tr><td>ブランド型</td><td>17</td><td>166</td><td><span class="status-ok">正常</span></td></tr>
+        <tr><td>非ブランド型</td><td>134</td><td>2,500</td><td><span class="status-ok">主力</span></td></tr>
+        <tr><td>インフォメーショナル</td><td>151</td><td>2,700</td><td><span class="status-ok">多数</span></td></tr>
+        <tr><td>コマーシャル</td><td>43</td><td>321</td><td><span class="status-warn">要強化</span></td></tr>
+        <tr><td>トランザクショナル</td><td>4</td><td>-</td><td><span class="status-error">極少</span></td></tr>
+        <tr><td>ローカル</td><td>10</td><td>-</td><td><span class="status-warn">要強化</span></td></tr>
+      </table>
+    </div>
+    <div>
+      <h4 style="margin-bottom:12px; color:var(--primary);">クロールされたページ状況</h4>
+      <table>
+        <tr><th>HTTPコード</th><th>ページ数</th><th>割合</th></tr>
+        <tr><td>200 OK</td><td>2,965</td><td><span class="status-ok">83.0%</span></td></tr>
+        <tr><td>3XX リダイレクト</td><td>480</td><td><span class="status-warn">13.4%</span></td></tr>
+        <tr><td>404 Not Found</td><td>128</td><td><span class="status-error">3.6%</span></td></tr>
+        <tr><td>4XX その他</td><td>0</td><td>0%</td></tr>
+        <tr><td>5XX サーバーエラー</td><td>0</td><td>0%</td></tr>
+      </table>
+      <p style="font-size:12px; color:var(--muted); margin-top:8px;">※ 404エラー128件、リダイレクト480件は要対応</p>
+    </div>
+  </div>
+</div>
+
+<!-- 5. キーワード -->
+<div class="section" id="keywords">
+  <div class="section-title"><span class="icon">🔑</span> オーガニックキーワード詳細（トラフィック順Top30）</div>
+
+  <table>
+    <tr><th>#</th><th>キーワード</th><th>月間Vol</th><th>推定トラフィック</th><th>順位</th><th>意図</th></tr>
+    <tr><td>1</td><td><strong>ログハウス</strong></td><td>7,500</td><td>1,589</td><td><span class="rank-badge rank-other">4位</span></td><td>Info</td></tr>
+    <tr><td>2</td><td>ログハウス 平屋</td><td>150</td><td>113</td><td><span class="rank-badge rank-other">7位</span></td><td>Commercial</td></tr>
+    <tr><td>3</td><td>ログハウス 内装 おしゃれ</td><td>200</td><td>68</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>4</td><td>ログハウス 内装</td><td>450</td><td>59</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>5</td><td>talo ログハウス 価格</td><td>100</td><td>49</td><td><span class="rank-badge rank-1">1位</span></td><td>Brand</td></tr>
+    <tr><td>6</td><td>平屋 ログハウス</td><td>100</td><td>48</td><td><span class="rank-badge rank-1">1位</span></td><td>Commercial</td></tr>
+    <tr><td>7</td><td>ログハウス キッチン</td><td>100</td><td>40</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>8</td><td>ログハウス おしゃれ</td><td>100</td><td>40</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>9</td><td>ログハウス メンテナンス</td><td>60</td><td>36</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>10</td><td>talo ログハウス</td><td>50</td><td>30</td><td><span class="rank-badge rank-3">3位</span></td><td>Brand</td></tr>
+    <tr><td>11</td><td>talo 平屋 価格</td><td>70</td><td>28</td><td><span class="rank-badge rank-1">1位</span></td><td>Brand</td></tr>
+    <tr><td>12</td><td>ログハウスとは</td><td>500</td><td>26</td><td><span class="rank-badge rank-other">5位</span></td><td>Info</td></tr>
+    <tr><td>13</td><td>ログハウス 一人暮らし</td><td>70</td><td>25</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>14</td><td>ログハウス 耐震性</td><td>60</td><td>25</td><td><span class="rank-badge rank-2">2位</span></td><td>Info</td></tr>
+    <tr><td>15</td><td>ログハウス インテリア</td><td>150</td><td>23</td><td><span class="rank-badge rank-2">2位</span></td><td>Info</td></tr>
+    <tr><td>16</td><td>50坪</td><td>1,900</td><td>22</td><td><span class="rank-badge rank-other">10位</span></td><td>Info</td></tr>
+    <tr><td>17</td><td>taloログハウス 価格</td><td>50</td><td>22</td><td><span class="rank-badge rank-1">1位</span></td><td>Brand</td></tr>
+    <tr><td>18</td><td>小さな別荘</td><td>60</td><td>21</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>19</td><td>talo</td><td>80</td><td>16</td><td><span class="rank-badge rank-2">2位</span></td><td>Brand</td></tr>
+    <tr><td>20</td><td>ログハウス風 平屋</td><td>40</td><td>16</td><td><span class="rank-badge rank-2">2位</span></td><td>Commercial</td></tr>
+    <tr><td>21</td><td>ログハウス 薪ストーブ</td><td>40</td><td>16</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>22</td><td>おしゃれ ログハウス</td><td>40</td><td>16</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>23</td><td>丸太の家</td><td>150</td><td>15</td><td><span class="rank-badge rank-3">3位</span></td><td>Info</td></tr>
+    <tr><td>24</td><td>ログハウス 暖炉</td><td>40</td><td>15</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>25</td><td>ログハウス セルフビルド</td><td>80</td><td>14</td><td><span class="rank-badge rank-3">3位</span></td><td>Info</td></tr>
+    <tr><td>26</td><td>ログハウス 価格</td><td>1,000</td><td>13</td><td><span class="rank-badge rank-other">6位</span></td><td>Commercial</td></tr>
+    <tr><td>27</td><td>ログハウス内装</td><td>60</td><td>13</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+    <tr><td>28</td><td>talo ログハウス 後悔</td><td>90</td><td>13</td><td><span class="rank-badge rank-3">3位</span></td><td>Brand</td></tr>
+    <tr><td>29</td><td>15坪</td><td>1,700</td><td>12</td><td><span class="rank-badge rank-other">11位</span></td><td>Info</td></tr>
+    <tr><td>30</td><td>ログハウス 地震</td><td>30</td><td>11</td><td><span class="rank-badge rank-1">1位</span></td><td>Info</td></tr>
+  </table>
+
+  <div class="insight-box">
+    <h4>キーワード所見</h4>
+    <p><strong>「ログハウス」単体で4位</strong>はポジションとして強く、全トラフィックの約60%を占めます。しかし裏を返せばこの1語への依存度が極めて高い状態です。<strong>「ログハウス 価格」（Vol 1,000）で6位</strong>は惜しく、3位以内に入れればトラフィックが3〜5倍に増える可能性があります。<strong>「50坪」（Vol 1,900）で10位</strong>、<strong>「15坪」（Vol 1,700）で11位</strong>はビッグキーワードなのに1ページ目ギリギリ。専用ページを作ればトップ5入りの可能性があります。また<strong>「talo ログハウス 後悔」（Vol 90）</strong>が検索されている点は要注意で、口コミ対策コンテンツを用意すべきです。</p>
+  </div>
+</div>
+
+<!-- 6. 競合 -->
+<div class="section" id="competitors">
+  <div class="section-title"><span class="icon">⚔️</span> 競合サイト比較</div>
+
+  <h4 style="margin-bottom:16px; color:var(--primary);">オーガニックトラフィック比較</h4>
+  <div style="background:var(--card); border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); margin-bottom:20px;">
+    <div class="competitor-bar">
+      <div class="name">bess.jp（BESS）</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:100%; background:var(--danger)"></div></div></div>
+      <div class="val"><strong>13,400</strong></div>
+    </div>
+    <div class="competitor-bar">
+      <div class="name">fin-bigbox.com</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:36%; background:var(--warning)"></div></div></div>
+      <div class="val"><strong>4,800</strong></div>
+    </div>
+    <div class="competitor-bar">
+      <div class="name" style="color:var(--accent); font-weight:700">talo.co.jp（TALO）</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:20%; background:var(--accent)"></div></div></div>
+      <div class="val"><strong>2,700</strong></div>
+    </div>
+    <div class="competitor-bar">
+      <div class="name">saelahomes.com</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:13%; background:#a0aec0"></div></div></div>
+      <div class="val"><strong>1,800</strong></div>
+    </div>
+    <div class="competitor-bar">
+      <div class="name">yumekiko.com</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:5%; background:#a0aec0"></div></div></div>
+      <div class="val"><strong>698</strong></div>
+    </div>
+    <div class="competitor-bar">
+      <div class="name">shinwa-m.com</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:3%; background:#a0aec0"></div></div></div>
+      <div class="val"><strong>414</strong></div>
+    </div>
+    <div class="competitor-bar">
+      <div class="name">daimarulog.com</div>
+      <div class="bar-wrapper"><div class="bar"><div class="bar-fill" style="width:2%; background:#a0aec0"></div></div></div>
+      <div class="val"><strong>209</strong></div>
+    </div>
+  </div>
+
+  <h4 style="margin-bottom:12px; color:var(--primary);">直接競合 詳細比較</h4>
+  <table>
+    <tr><th>サイト</th><th>DR</th><th>共通KW</th><th>重複率</th><th>トラフィック</th><th>価値</th><th>ページ数</th></tr>
+    <tr style="background:#ebf8ff">
+      <td><strong>talo.co.jp（TALO）</strong></td><td><strong>4.5</strong></td><td>-</td><td>-</td><td><strong>2,700</strong></td><td><strong>$477</strong></td><td>90</td>
+    </tr>
+    <tr>
+      <td>bess.jp（BESS）</td><td style="color:var(--success);font-weight:700">53</td><td>23</td><td>7.5%</td><td style="color:var(--danger);font-weight:700">13,400</td><td>$3,300</td><td>240</td>
+    </tr>
+    <tr>
+      <td>fin-bigbox.com</td><td style="color:var(--success);font-weight:700">68</td><td>52</td><td>16.9%</td><td>4,800</td><td>$567</td><td>107</td>
+    </tr>
+    <tr>
+      <td>saelahomes.com</td><td>43</td><td>37</td><td>30.5%</td><td>1,800</td><td>$178</td><td>33</td>
+    </tr>
+    <tr>
+      <td>yumekiko.com</td><td>31</td><td>27</td><td>23.2%</td><td>698</td><td>$108</td><td>39</td>
+    </tr>
+    <tr>
+      <td>daimarulog.com</td><td>35</td><td>13</td><td>14.7%</td><td>209</td><td>$19</td><td>4</td>
+    </tr>
+  </table>
+
+  <div class="insight-box">
+    <h4>競合所見</h4>
+    <p>TALOの<strong>DR 4.5は致命的に低い</strong>値です。BESSのDR 53、ビッグボックスのDR 68と比べると、サイト全体の「信頼度」で大きな差があります。DRはGoogleのランキング要因の一つとされ、この差がある限り同じコンテンツを書いてもTALOの記事は上位に表示されにくくなります。被リンク獲得施策（メディア露出、業界団体サイトからのリンク、施工事例メディアへの掲載等）が急務です。</p>
+  </div>
+</div>
+
+<!-- 7. アクション -->
+<div class="section" id="actions">
+  <div class="section-title"><span class="icon">🎯</span> 改善アクションプラン</div>
+
+  <div class="action-item">
+    <div class="priority priority-high">優先度：高</div>
+    <h4>Instagram広告への予算シフト</h4>
+    <p>Instagram（display）のCVR 1.16%はファインドキャンペーン（0.36%）の3.2倍。ファインドからInstagramへ予算を段階的にシフトすることで、同一予算でCV数を大幅に増やせる可能性があります。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-high">優先度：高</div>
+    <h4>東京展示場キャンペーンの改善</h4>
+    <p>G_DIS_東京展示場202509（CVR 0.16%）とG_DIS_イベント東京展示場202601（CVR 0%）は効果が極めて低い。クリエイティブ差替え・ターゲティング見直し、または一旦停止して効果検証を実施すべきです。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-high">優先度：高</div>
+    <h4>DR（ドメイン評価）の改善 ― 被リンク獲得施策</h4>
+    <p>現在DR 4.5は業界内で最低水準。住宅系メディアへの事例掲載、業界団体（日本ログハウス協会等）からのリンク獲得、プレスリリース配信、施工事例のオウンドメディア化などを通じて、まずDR 20を目標に被リンクを増やすべきです。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-high">優先度：高</div>
+    <h4>「ログハウス 価格」ページの強化</h4>
+    <p>Vol 1,000の重要キーワードで現在6位。価格帯別の詳細ページ（20坪/30坪/40坪/50坪）、坪単価の明示、他メーカー比較を含む包括的な価格ガイドを作成すれば3位以内が狙えます。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-mid">優先度：中</div>
+    <h4>「talo ログハウス 後悔」対策コンテンツ</h4>
+    <p>Vol 90で3位に入っている「後悔」キーワード。放置するとネガティブ記事に流れます。実際のオーナー体験談、メンテナンス方法、後悔しないための選び方など、ポジティブな情報で上位を取りに行くべきです。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-mid">優先度：中</div>
+    <h4>坪数キーワード（50坪・15坪）専用ページ作成</h4>
+    <p>「50坪」Vol 1,900で10位、「15坪」Vol 1,700で11位。ログハウスに特化した坪数別の施工事例・間取り・費用ページを作成すれば、これらのビッグワードで上位表示の可能性があります。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-mid">優先度：中</div>
+    <h4>Yahoo広告にUTMパラメータを付与</h4>
+    <p>GA4でYahoo有料検索のデータが取得できていません。Yahoo広告の各広告URLに utm_source=yahoo&utm_medium=cpc&utm_campaign=キャンペーン名 を設定してください。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-mid">優先度：中</div>
+    <h4>404エラー128件の修正</h4>
+    <p>Ahrefsのクロールで404 Not Foundが128件検出。リンク切れはSEOに悪影響です。Ahrefsの「Site Audit」機能で詳細を確認し、適切なリダイレクトまたはページ復旧を行ってください。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-low">優先度：低</div>
+    <h4>UA（旧アナリティクス）タグの除去</h4>
+    <p>GTM内にUA用タグが4つ残存。GA4への移行は完了しているため、不要なUAタグを削除してページ読み込み速度を微改善できます。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-low">優先度：低</div>
+    <h4>Yahoo リターゲティングタグのGTM統合</h4>
+    <p>現在HTML直書きのYahooリターゲティングタグ（ID: 08675TKYG3）をGTMに移行し、タグ管理を一元化してください。</p>
+  </div>
+
+  <div class="action-item">
+    <div class="priority priority-low">優先度：低</div>
+    <h4>コマーシャル・トランザクショナルキーワード新規開拓</h4>
+    <p>「ログハウス メーカー 比較」「ログハウス おすすめ」「ログハウス 見積もり」など、購入検討フェーズのキーワードに対応するコンテンツを新設。現在この領域のキーワード数が極端に少ない（トランザクショナル4語のみ）ため、成長余地が大きいです。</p>
+  </div>
+</div>
+
+<div style="text-align:center; padding:30px 0; color:var(--muted); font-size:12px; border-top:1px solid var(--border); margin-top:20px;">
+  TALO WEB広告 & SEO 監査レポート ― Generated 2026-03-18<br>
+  データソース: GTM (GTM-TNZMHC4) / GA4 (G-5KDKTD3RPQ) / Ahrefs Site Explorer
+</div>
+
+</div>
+</body>
+</html>
