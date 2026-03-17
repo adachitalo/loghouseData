@@ -55,6 +55,7 @@ body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #
 <div class="container">
 <nav class="nav">
   <a href="#funnel">ファネル分析</a>
+  <a href="#cohort">コホート分析</a>
   <a href="#ad-roi">広告ROI</a>
   <a href="#channel">チャネル分析</a>
   <a href="#market">市場環境比較</a>
@@ -103,10 +104,19 @@ body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #
 <div class="insight">
   <h3>ファネル分析のポイント</h3>
   <ul>
-    <li><strong>最大のボトルネック：WEBアクセス→CV</strong> — 転換率は0.55〜0.75%で推移。2025年はPV急減(-39%)でCV数が激減</li>
-    <li><strong>来場→契約率は改善傾向</strong> — 2021年9.38% → 2025年9.61%。来場者の質は向上している</li>
+    <li><strong>実際の順序：請求→見積依頼→（来場）→契約</strong> — 来場（展示場訪問）は必須ステップではなく、見積依頼の後に任意で発生</li>
+    <li><strong>最大のボトルネック：WEBアクセス→CV</strong> — 転換率は0.43〜0.75%で推移。2025年はPV急減(-35%)でCV数が激減</li>
     <li><strong>見積依頼率は2024年がピーク</strong> — カタログ請求者のうち4.76%が見積依頼（2021年は3.74%）</li>
     <li><strong>「量」は激減、「質」は微改善</strong> — ファネル上流の縮小が全体業績を圧迫</li>
+  </ul>
+</div>
+
+<div class="insight" style="border-left-color: #6366f1;">
+  <h3>この表の注意点</h3>
+  <ul>
+    <li><strong>同年集計の近似値</strong> — 各段階の数字は同じ年の合計値を並べたもので、同一人物の追跡ではありません</li>
+    <li><strong>ただしコホート分析の結果（下のセクション参照）、発注の85%は請求と同年に発生</strong>しており、同年集計でも傾向は概ね正確です</li>
+    <li><strong>来場は見積依頼と並列的</strong> — 展示場来場は必須ではなく、来場せず見積→契約するケースもあります</li>
   </ul>
 </div>
 
@@ -115,13 +125,12 @@ body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #
     <tr><th>指標</th><th>2021年</th><th>2022年</th><th>2023年</th><th>2024年</th><th>2025年</th><th>変化</th></tr>
     <tr><td>WEBアクセス(PV)</td><td>592,507</td><td>642,568</td><td>651,545</td><td>625,575</td><td>383,629</td><td class="kpi-change down">-35%</td></tr>
     <tr><td>カタログ請求(CV)</td><td>4,439</td><td>3,705</td><td>3,242</td><td>2,710</td><td>2,112</td><td class="kpi-change down">-52%</td></tr>
-    <tr><td>PV→CV率</td><td>0.75%</td><td>0.58%</td><td>0.5%</td><td>0.43%</td><td>0.55%</td><td>-0.2pt</td></tr>
+    <tr><td>PV→CV率</td><td>0.75%</td><td>0.58%</td><td>0.50%</td><td>0.43%</td><td>0.55%</td><td>-0.20pt</td></tr>
     <tr><td>見積依頼</td><td>166</td><td>117</td><td>122</td><td>129</td><td>80</td><td class="kpi-change down">-52%</td></tr>
-    <tr><td>CV→見積率</td><td>3.74%</td><td>3.16%</td><td>3.76%</td><td>4.76%</td><td>3.79%</td><td>0.05pt</td></tr>
-    <tr><td>来場者数</td><td>725</td><td>561</td><td>498</td><td>384</td><td>229</td><td class="kpi-change down">-68%</td></tr>
-    <tr><td>CV→来場率</td><td>16.33%</td><td>15.14%</td><td>15.36%</td><td>14.17%</td><td>10.84%</td><td>-5.49pt</td></tr>
+    <tr><td>CV→見積率</td><td>3.74%</td><td>3.16%</td><td>3.76%</td><td>4.76%</td><td>3.79%</td><td>+0.05pt</td></tr>
+    <tr><td>来場者数 ※任意</td><td>725</td><td>561</td><td>498</td><td>384</td><td>229</td><td class="kpi-change down">-68%</td></tr>
     <tr><td>契約棟数</td><td>68</td><td>45</td><td>49</td><td>28</td><td>22</td><td class="kpi-change down">-68%</td></tr>
-    <tr><td>来場→契約率</td><td>9.38%</td><td>8.02%</td><td>9.84%</td><td>7.29%</td><td>9.61%</td><td class="kpi-change up">+0.23pt</td></tr>
+    <tr><td>CV→契約率（発注率）</td><td>1.53%</td><td>1.21%</td><td>1.51%</td><td>1.03%</td><td>1.04%</td><td>-0.49pt</td></tr>
   </table>
 </div>
 
@@ -145,6 +154,52 @@ body { font-family: 'Helvetica Neue', 'Hiragino Sans', sans-serif; background: #
     <h3>各段階の減少率比較（2021→2025）</h3>
     <canvas id="declineRate"></canvas>
   </div>
+</div>
+</div>
+
+<!-- ===== Section: コホート分析 ===== -->
+<div class="section" id="cohort">
+<h2 class="section-title">コホート分析：請求→発注の時間差</h2>
+
+<div class="insight">
+  <h3>コホート分析の結果</h3>
+  <ul>
+    <li><strong>発注の85%は請求と同年に発生</strong> — 「カタログ請求した年に発注する」パターンが圧倒的多数</li>
+    <li><strong>翌年以降に初めて発注するケースは0件</strong> — 「遅れて効果が出る」のではなく、発注者はすぐ動いている</li>
+    <li><strong>15%は過去発注済みのリピーター</strong> — 過去に発注した顧客が再度カタログ請求しているケース</li>
+    <li><strong>2025年はリピーター比率が上昇（31%）</strong> — 新規顧客の獲得力が低下し、既存顧客の再請求が増加</li>
+  </ul>
+</div>
+
+<div class="table-card">
+  <table>
+    <tr><th>請求年</th><th>請求数</th><th>同年発注</th><th>同年発注率</th><th>リピーター</th><th>リピーター率</th></tr>
+    <tr><td>2021</td><td>3,532</td><td>36件</td><td>1.02%</td><td>0件</td><td>0%</td></tr>
+    <tr><td>2022</td><td>3,230</td><td>28件</td><td>0.87%</td><td>4件</td><td>12%</td></tr>
+    <tr><td>2023</td><td>3,031</td><td>34件</td><td>1.12%</td><td>4件</td><td>11%</td></tr>
+    <tr><td>2024</td><td>2,690</td><td>23件</td><td>0.86%</td><td>8件</td><td>26%</td></tr>
+    <tr><td>2025</td><td>2,160</td><td>18件</td><td>0.83%</td><td>8件</td><td>31%</td></tr>
+  </table>
+</div>
+
+<div class="chart-row">
+  <div class="chart-card">
+    <h3>請求年別：同年発注 vs リピーター構成</h3>
+    <canvas id="cohortBar"></canvas>
+  </div>
+  <div class="chart-card">
+    <h3>同年発注率の推移</h3>
+    <canvas id="cohortRate"></canvas>
+  </div>
+</div>
+
+<div class="insight" style="border-left-color: #6366f1;">
+  <h3>分析上の注意</h3>
+  <ul>
+    <li><strong>「請求日」は最新の請求日</strong> — CSVの日付列は最終更新日のため、初回請求日とは異なる可能性があります</li>
+    <li><strong>発注コードの年（例："25-004"→2025年）と請求日の年を比較</strong>して時間差を算出</li>
+    <li><strong>リピーターとは</strong> — 発注コードの年が請求日より前のケース。過去に発注済みで再度カタログを請求した顧客</li>
+  </ul>
 </div>
 </div>
 
@@ -351,12 +406,12 @@ new Chart(document.getElementById('funnelIndex'), {
   options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
 });
 
-// ===== 2025年ファネルバー =====
+// ===== 2025年ファネルバー（正しい順序：請求→見積→(来場)→契約） =====
 new Chart(document.getElementById('funnelBar2025'), {
   type: 'bar',
   data: {
-    labels: ['WEB PV', 'CV(資料請求)', '見積依頼', '来場', '契約'],
-    datasets: [{ data: [383629, 2112, 80, 229, 22], backgroundColor: ['#2e86c1','#e74c3c','#f39c12','#27ae60','#8e44ad'] }]
+    labels: ['WEB PV', 'CV(資料請求)', '見積依頼', '来場(任意)', '契約'],
+    datasets: [{ data: [383629, 2112, 80, 229, 22], backgroundColor: ['#2e86c1','#e74c3c','#f39c12','#94a3b8','#8e44ad'] }]
   },
   options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { type: 'logarithmic', grid: { color: gridColor }, ticks: { color: tickColor } }, x: { grid: { display: false }, ticks: { color: tickColor } } } }
 });
@@ -368,8 +423,8 @@ new Chart(document.getElementById('conversionRates'), {
     labels: years,
     datasets: [
       { label: 'CV→見積率', data: [3.74, 3.16, 3.76, 4.76, 3.79], borderColor: '#f39c12', tension: .3, yAxisID: 'y' },
-      { label: 'CV→来場率', data: [16.33, 15.14, 15.36, 14.17, 10.84], borderColor: '#27ae60', tension: .3, yAxisID: 'y' },
-      { label: '来場→契約率', data: [9.38, 8.02, 9.84, 7.29, 9.61], borderColor: '#8e44ad', tension: .3, yAxisID: 'y' },
+      { label: 'CV→契約率(発注率)', data: [1.53, 1.21, 1.51, 1.03, 1.04], borderColor: '#8e44ad', tension: .3, yAxisID: 'y', borderWidth: 3 },
+      { label: 'CV→来場率(参考)', data: [16.33, 15.14, 15.36, 14.17, 10.84], borderColor: '#94a3b8', tension: .3, yAxisID: 'y', borderDash: [5,5] },
     ]
   },
   options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
@@ -383,6 +438,32 @@ new Chart(document.getElementById('declineRate'), {
     datasets: [{ data: [-35, -52, -52, -68, -68, -14], backgroundColor: ['#2e86c1','#e74c3c','#f39c12','#27ae60','#8e44ad','#95a5a6'] }]
   },
   options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } }, y: { grid: { display: false }, ticks: { color: tickColor } } } }
+});
+
+// ===== コホート：同年発注 vs リピーター =====
+new Chart(document.getElementById('cohortBar'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: '同年新規発注', data: [36, 28, 34, 23, 18], backgroundColor: '#2e86c1' },
+      { label: 'リピーター(過去発注済)', data: [0, 4, 4, 8, 8], backgroundColor: '#e74c3c' },
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: tickColor } }, y: { stacked: true, grid: { color: gridColor }, ticks: { color: tickColor } } } }
+});
+
+// ===== コホート：同年発注率 =====
+new Chart(document.getElementById('cohortRate'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: '同年発注率', data: [1.02, 0.87, 1.12, 0.86, 0.83], borderColor: '#2e86c1', tension: .3, borderWidth: 3 },
+      { label: 'リピーター含む全発注率', data: [1.02, 0.99, 1.25, 1.15, 1.20], borderColor: '#e74c3c', tension: .3, borderDash: [5,5] },
+    ]
+  },
+  options: { responsive: true, scales: { y: { grid: { color: gridColor }, ticks: { color: tickColor, callback: v => v+'%' } }, x: { grid: { color: gridColor }, ticks: { color: tickColor } } } }
 });
 
 // ===== 広告チャネルCV =====
