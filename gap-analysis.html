@@ -58,7 +58,54 @@ tbody td.r{text-align:right}tbody tr:last-child td{border-bottom:none}tbody tr:h
 <p style="font-size:.82rem;color:#64748b;margin-bottom:.8rem">
 契約時の実際の延床面積（m²→坪換算）と総工費から算出した坪単価（93件、うち実延床93件）。
 </p>
-<div class="chart-md"><canvas id="chartTsuboTanka"></canvas></div></div><div class="section-title">📊 延床面積帯別 平均総工費 & 坪単価</div><div class="section-desc">延床面積帯（10坪刻み）ごとの平均総工費と坪単価の比較</div><div class="card-full"><table><thead><tr><th>延床面積帯</th><th class="r">件数</th><th class="r">平均総工費</th><th class="r">平均坪単価</th></tr></thead><tbody><tr><td>0〜9坪</td><td class="r">3</td><td class="r">¥1,395万</td><td class="r">¥163.3万/坪</td></tr><tr><td>10〜19坪</td><td class="r">19</td><td class="r">¥2,277万</td><td class="r">¥141.2万/坪</td></tr><tr><td>20〜29坪</td><td class="r">34</td><td class="r">¥3,213万</td><td class="r">¥130.3万/坪</td></tr><tr><td>30〜39坪</td><td class="r">28</td><td class="r">¥3,676万</td><td class="r">¥109.9万/坪</td></tr><tr><td>40〜49坪</td><td class="r">4</td><td class="r">¥4,889万</td><td class="r">¥113.0万/坪</td></tr><tr><td>50〜59坪</td><td class="r">2</td><td class="r">¥6,062万</td><td class="r">¥119.7万/坪</td></tr><tr><td>60〜69坪</td><td class="r">2</td><td class="r">¥6,700万</td><td class="r">¥108.8万/坪</td></tr></tbody></table></div></div><script>
+<div class="chart-md"><canvas id="chartTsuboTanka"></canvas></div></div><div class="section-title">📊 延床面積帯別 平均総工費 & 坪単価</div><div class="section-desc">延床面積帯（10坪刻み）ごとの平均総工費と坪単価の比較</div><div class="card-full"><table><thead><tr><th>延床面積帯</th><th class="r">件数</th><th class="r">平均総工費</th><th class="r">平均坪単価</th></tr></thead><tbody><tr><td>0〜9坪</td><td class="r">3</td><td class="r">¥1,395万</td><td class="r">¥163.3万/坪</td></tr><tr><td>10〜19坪</td><td class="r">19</td><td class="r">¥2,277万</td><td class="r">¥141.2万/坪</td></tr><tr><td>20〜29坪</td><td class="r">34</td><td class="r">¥3,213万</td><td class="r">¥130.3万/坪</td></tr><tr><td>30〜39坪</td><td class="r">28</td><td class="r">¥3,676万</td><td class="r">¥109.9万/坪</td></tr><tr><td>40〜49坪</td><td class="r">4</td><td class="r">¥4,889万</td><td class="r">¥113.0万/坪</td></tr><tr><td>50〜59坪</td><td class="r">2</td><td class="r">¥6,062万</td><td class="r">¥119.7万/坪</td></tr><tr><td>60〜69坪</td><td class="r">2</td><td class="r">¥6,700万</td><td class="r">¥108.8万/坪</td></tr></tbody></table></div><div class="section-title">📅 カタログ請求から発注までの日数</div>
+<div class="section-desc">カタログ送付日から発注プロセス開始日までのリードタイム分析（2021〜2025年発注分、n=137）</div>
+
+<div class="grid-4">
+  <div class="kpi"><div class="kpi-val">35日</div><div class="kpi-lbl">中央値（全体）</div><div class="kpi-sub">半数は35日以内に発注</div></div>
+  <div class="kpi"><div class="kpi-val">106日</div><div class="kpi-lbl">平均（全体）</div><div class="kpi-sub">長期検討層が押し上げ</div></div>
+  <div class="kpi"><div class="kpi-val">49%</div><div class="kpi-lbl">30日以内</div><div class="kpi-sub">69件 / 141件</div></div>
+  <div class="kpi"><div class="kpi-val">89日</div><div class="kpi-lbl">2025年 中央値</div><div class="kpi-sub">2021年28日→3.2倍に長期化</div></div>
+</div>
+
+<div class="grid-2">
+  <div class="card"><h3>📈 年度別リードタイム推移</h3><div class="chart-md"><canvas id="chartLeadYear"></canvas></div></div>
+  <div class="card"><h3>📊 リードタイム分布</h3><div class="chart-md"><canvas id="chartLeadDist"></canvas></div></div>
+</div>
+
+<div class="card-full">
+<table>
+  <thead><tr><th>発注年</th><th class="r">件数</th><th class="r">中央値</th><th class="r">平均</th><th class="r">最短</th><th class="r">最長</th></tr></thead>
+  <tbody>
+    <tr><td>2021年</td><td class="r">33</td><td class="r">28日</td><td class="r">53日</td><td class="r">0日</td><td class="r">238日</td></tr>
+    <tr><td>2022年</td><td class="r">30</td><td class="r">26日</td><td class="r">72日</td><td class="r">0日</td><td class="r">399日</td></tr>
+    <tr><td>2023年</td><td class="r">34</td><td class="r">24日</td><td class="r">89日</td><td class="r">0日</td><td class="r">622日</td></tr>
+    <tr><td>2024年</td><td class="r">21</td><td class="r">66日</td><td class="r">147日</td><td class="r">0日</td><td class="r">685日</td></tr>
+    <tr><td>2025年</td><td class="r">19</td><td class="r">89日</td><td class="r">257日</td><td class="r">0日</td><td class="r">1157日</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="insight"><ul>
+<li><b>リードタイム長期化が顕著</b>：中央値が2021年の28日→2025年の89日へ3.2倍に伸長。検討期間が長期化している</li>
+<li><b>約半数が30日以内に発注</b>（49%）：代理店経由や即決層。残り半数は1か月以上の検討期間が必要</li>
+<li><b>平均と中央値の乖離が大きい</b>（106日 vs 35日）：少数の長期検討層（1〜3年）が平均を押し上げ</li>
+<li><b>2024-2025年の長期化</b>は、坪単価上昇（78万→128万/坪）による慎重な購買行動と整合</li>
+</ul></div>
+
+</div><script>
+new Chart(document.getElementById('chartLeadYear'),{type:'bar',
+  data:{labels:['2021','2022','2023','2024','2025'],datasets:[
+    {label:'中央値(日)',data:[28,26,24,66,89],backgroundColor:'rgba(15,118,110,0.6)'},
+    {label:'平均(日)',data:[53,72,89,147,257],type:'line',borderColor:'#d97706',backgroundColor:'#d97706',tension:0.3,pointRadius:5}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'リードタイム年度別推移（日）'}}}
+});
+new Chart(document.getElementById('chartLeadDist'),{type:'bar',
+  data:{labels:['0-30日','31-90日','91-180日','181-365日','1-2年','2年以上'],datasets:[
+    {label:'件数',data:[69,27,23,11,8,3],backgroundColor:['#059669','#10b981','#34d399','#6ee7b7','#a7f3d0','#d1fae5']}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'リードタイム分布（全期間）'},legend:{display:false}}}
+});
+
 new Chart(document.getElementById('chartGapBudget'),{type:'bar',
   data:{labels:["1500万", "2000万", "3000万", "2500万", "2000万台", "2500万台", "3500万台", "3000万台"],datasets:[{label:'乖離率(%)',data:[186.5, 99.2, 89.8, 72.3, 53.5, 8.5, 4.6, -0.6],backgroundColor:'rgba(15,118,110,0.6)'}]},
   options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}
@@ -81,7 +128,7 @@ new Chart(document.getElementById('chartTsuboTanka'),{type:'bar',
 });
 </script>
 <div class="footer">
-  v3（パース修正版）— Generated with Claude (Cowork) ·
+  v4（リードタイム統計追加）— Generated with Claude (Cowork) ·
   <a href="index.html">← レポート一覧に戻る</a>
 </div>
 </body></html>
