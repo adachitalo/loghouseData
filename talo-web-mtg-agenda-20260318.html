@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALO WEB戦略MTG アジェンダ - 2026年3月18日</title>
+<style>
+  :root {
+    --primary: #1a365d;
+    --accent: #2b6cb0;
+    --success: #38a169;
+    --warning: #d69e2e;
+    --danger: #e53e3e;
+    --bg: #f7fafc;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #718096;
+    --border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+  .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+  header { background: linear-gradient(135deg, #1a365d, #2c5282); color: white; padding: 36px 0; margin-bottom: 24px; }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 24px; font-weight: 700; }
+  header .subtitle { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+  header .date-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 8px; font-size: 13px; text-align: right; line-height: 1.5; }
+  .toc { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
+  .toc h3 { font-size: 15px; margin-bottom: 10px; color: var(--primary); }
+  .toc a { display: block; padding: 5px 0; color: var(--accent); text-decoration: none; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .toc a:hover { color: var(--primary); }
+  .toc a:last-child { border-bottom: none; }
+  .toc .time { color: var(--muted); font-size: 12px; display: inline-block; width: 60px; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 3px solid var(--accent); display: flex; align-items: center; gap: 8px; }
+  .section-title .icon { font-size: 22px; }
+  .agenda-item { background: var(--card); border-radius: 10px; padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-left: 4px solid var(--accent); }
+  .agenda-item h4 { font-size: 15px; color: var(--primary); margin-bottom: 6px; }
+  .agenda-item p, .agenda-item li { font-size: 13px; color: var(--text); }
+  .agenda-item .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .data-box { background: #edf2f7; border-radius: 8px; padding: 14px; margin: 10px 0; font-size: 13px; }
+  .data-box .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .data-box .value { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .data-box .note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .data-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 10px 0; }
+  .question-box { background: linear-gradient(135deg, #fff5f5, #fff9db); border-radius: 10px; padding: 16px; margin: 12px 0; border: 1px solid #fed7d7; }
+  .question-box h5 { color: var(--danger); font-size: 13px; margin-bottom: 6px; }
+  .question-box p { font-size: 13px; }
+  .proposal-box { background: linear-gradient(135deg, #ebf8ff, #e6fffa); border-radius: 10px; padding: 16px; margin: 12px 0; border: 1px solid #bee3f8; }
+  .proposal-box h5 { color: var(--accent); font-size: 13px; margin-bottom: 6px; }
+  .proposal-box p { font-size: 13px; }
+  .pro-con { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+  .pro { background: #f0fff4; border-radius: 8px; padding: 12px; border: 1px solid #c6f6d5; }
+  .con { background: #fff5f5; border-radius: 8px; padding: 12px; border: 1px solid #fed7d7; }
+  .pro h5 { color: var(--success); font-size: 12px; margin-bottom: 4px; }
+  .con h5 { color: var(--danger); font-size: 12px; margin-bottom: 4px; }
+  .pro li, .con li { font-size: 12px; margin-left: 16px; margin-bottom: 2px; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin: 12px 0; font-size: 13px; }
+  th { background: var(--primary); color: white; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; }
+  td { padding: 8px 14px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: #edf2f7; }
+  .highlight-row { background: #ebf8ff !important; }
+  .danger-text { color: var(--danger); font-weight: 700; }
+  .success-text { color: var(--success); font-weight: 700; }
+  .warning-text { color: var(--warning); font-weight: 700; }
+  .priority-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .priority-1 { background: #fed7d7; color: #c53030; }
+  .priority-2 { background: #fefcbf; color: #975a16; }
+  .priority-3 { background: #c6f6d5; color: #276749; }
+  .timeline { margin: 12px 0; }
+  .timeline-item { display: flex; gap: 12px; margin-bottom: 8px; }
+  .timeline-period { min-width: 100px; font-size: 12px; font-weight: 600; color: var(--accent); }
+  .timeline-content { font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid var(--border); flex: 1; }
+  @media (max-width: 768px) { .pro-con, .data-row { grid-template-columns: 1fr; } }
+  .footer { text-align: center; padding: 24px 0; color: var(--muted); font-size: 11px; border-top: 1px solid var(--border); margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div>
+      <h1>TALO WEB戦略MTG アジェンダ</h1>
+      <div class="subtitle">WEB広告運用・SEO担当者ミーティング</div>
+    </div>
+    <div class="date-badge">2026年3月18日<br>議題整理資料</div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- 目次 -->
+<div class="toc">
+  <h3>アジェンダ</h3>
+  <a href="#s1"><span class="time">10分</span> 1. 現状の数値把握 ― 何がどれだけ落ちているか</a>
+  <a href="#s2"><span class="time">10分</span> 2. 市場環境の変化 ― なぜ落ちているか</a>
+  <a href="#s3"><span class="time">15分</span> 3. キーワード戦略 ― ログハウスKWにとどまるか、広げるか</a>
+  <a href="#s4"><span class="time">10分</span> 4. 広告運用の最適化 ― 限られた予算でどう戦うか</a>
+  <a href="#s5"><span class="time">10分</span> 5. SEO戦略 ― 中断の影響と、GEO（AI SEO）対策</a>
+  <a href="#s6"><span class="time">10分</span> 6. サイト改修・LP・差別化 ― 優先順位の決定</a>
+  <a href="#s7"><span class="time">5分</span> 7. まとめ ― 限られた予算での施策優先順位</a>
+</div>
+
+<!-- ============================================ -->
+<!-- 1. 現状の数値把握 -->
+<!-- ============================================ -->
+<div class="section" id="s1">
+  <div class="section-title"><span class="icon">📉</span> 1. 現状の数値把握 ― 何がどれだけ落ちているか</div>
+
+  <div class="agenda-item">
+    <h4>GA4 直近28日間の実測データ（2026年3月）</h4>
+    <div class="data-row">
+      <div class="data-box">
+        <div class="label">総セッション</div>
+        <div class="value">27,800</div>
+        <div class="note">うち広告経由 52.4%（14,560）</div>
+      </div>
+      <div class="data-box">
+        <div class="label">キーイベント（CV）</div>
+        <div class="value">163件</div>
+        <div class="note">全体CVR 0.59%</div>
+      </div>
+      <div class="data-box">
+        <div class="label">オーガニック検索</div>
+        <div class="value">4,323</div>
+        <div class="note">Google 3,027 + Yahoo 1,296</div>
+      </div>
+      <div class="data-box">
+        <div class="label">オーガニック比率</div>
+        <div class="value danger-text">15.6%</div>
+        <div class="note">広告依存度 84.4%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>確認事項：WEB閲覧数半減の詳細</h4>
+    <div class="question-box">
+      <h5>担当者に確認したいこと</h5>
+      <p>① 「半減」はどの期間との比較か？（前年同月？ピーク時？）<br>
+      ② 減少はオーガニック・広告・ダイレクトのどこが主因か？<br>
+      ③ 広告のインプレッション自体が減ったのか、CTRが落ちたのか？<br>
+      ④ クリック単価の具体的な上昇幅（例：200円→350円？）</p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>広告キャンペーン別のパフォーマンス問題</h4>
+    <table>
+      <tr><th>キャンペーン</th><th>セッション</th><th>CVR</th><th>評価</th></tr>
+      <tr><td><strong>ファインド (G_DIS_ファインド250219)</strong></td><td>10,891 (39%)</td><td class="warning-text">0.36%</td><td>最大予算投下だがCVR低</td></tr>
+      <tr><td><strong>Instagram display</strong></td><td>3,980 (14%)</td><td class="success-text">1.16%</td><td>最高CVR ← ここに注目</td></tr>
+      <tr><td><strong>Google検索 (G_LIS_240807)</strong></td><td>2,362 (9%)</td><td class="success-text">1.14%</td><td>高効率</td></tr>
+      <tr><td><strong>東京展示場 (G_DIS_202509)</strong></td><td>1,231 (4%)</td><td class="danger-text">0.16%</td><td>要停止検討</td></tr>
+      <tr><td><strong>イベント東京展示場 (202601)</strong></td><td>51 (0.2%)</td><td class="danger-text">0.00%</td><td>即停止推奨</td></tr>
+    </table>
+    <div class="proposal-box">
+      <h5>即効性のある改善ポイント</h5>
+      <p>東京展示場2キャンペーン（CVR 0.16%と0%）の予算を、Instagram（CVR 1.16%）にシフトするだけで、<strong>同一予算でCV数が3〜7倍</strong>になる可能性。これはMTGで最初に合意を取りたい項目。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 2. 市場環境の変化 -->
+<!-- ============================================ -->
+<div class="section" id="s2">
+  <div class="section-title"><span class="icon">🌍</span> 2. 市場環境の変化 ― なぜ落ちているか</div>
+
+  <div class="agenda-item">
+    <h4>「ログハウス」キーワードの構造的変化</h4>
+    <div class="data-row">
+      <div class="data-box">
+        <div class="label">「ログハウス」月間検索Vol</div>
+        <div class="value">7,900</div>
+        <div class="note">Ahrefs実測。TALO 4位</div>
+      </div>
+      <div class="data-box">
+        <div class="label">「注文住宅」月間検索Vol</div>
+        <div class="value warning-text">約90,000</div>
+        <div class="note">参考：ログハウスの11倍の市場</div>
+      </div>
+      <div class="data-box">
+        <div class="label">「平屋」月間検索Vol</div>
+        <div class="value warning-text">約110,000</div>
+        <div class="note">参考：ログハウスの14倍の市場</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px; margin-top:10px;">ログハウス市場自体が縮小傾向にある背景：</p>
+    <ul style="font-size:13px; margin: 8px 0 0 20px;">
+      <li><strong>建築コスト1.5倍</strong> ― 木材価格・輸送費高騰で、かつて2,000万円台だった物件が3,000万円台に</li>
+      <li><strong>「憧れで買える商品」→「高級品」へ変質</strong> ― 30代若年層の購買力低下でメイン層が50代以上に偏重</li>
+      <li><strong>検索ボリュームの縮小</strong> ― 「ログハウス」で検索する母数自体が減少傾向</li>
+      <li><strong>CPC上昇</strong> ― 住宅業界全体でGoogle広告の単価が上昇（AI自動入札の影響も）</li>
+    </ul>
+  </div>
+
+  <div class="agenda-item">
+    <h4>月8,000クリック・日300回弱の現実</h4>
+    <div class="question-box">
+      <h5>この表示回数で「確実に取れる見込み客」を増やすには？</h5>
+      <p>月8,000クリック × CVR 0.59% = <strong>月47件のCV</strong>（現状）<br>
+      もしCVR 1.16%（Instagram水準）に改善できれば → <strong>月93件のCV</strong>に倍増<br><br>
+      つまり、<strong>表示回数を増やすよりも、CVRを上げるほうが現実的</strong>。<br>
+      具体的には「誰に見せるか」（ターゲティング精度）と「何を見せるか」（LP・クリエイティブ）の問題。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 3. キーワード戦略 -->
+<!-- ============================================ -->
+<div class="section" id="s3">
+  <div class="section-title"><span class="icon">🔑</span> 3. キーワード戦略 ― ログハウスKWにとどまるか、広げるか</div>
+
+  <div class="agenda-item">
+    <h4>選択肢A：ログハウスKWに留まる（現状維持＋深掘り）</h4>
+    <div class="pro-con">
+      <div class="pro">
+        <h5>メリット</h5>
+        <ul>
+          <li>TALO 4位という確立されたポジション</li>
+          <li>競合が少ない（CPC相対的に低い）</li>
+          <li>検索者の意図が明確（ログハウスが欲しい人）</li>
+          <li>ブランド指名検索もある程度ある</li>
+        </ul>
+      </div>
+      <div class="con">
+        <h5>デメリット</h5>
+        <ul>
+          <li>市場自体が縮小中（Vol 7,900で頭打ち）</li>
+          <li>全トラフィックの60%が「ログハウス」1語に依存</li>
+          <li>新規顧客の流入天井が見えている</li>
+          <li>価格上昇でCV率が今後さらに低下する恐れ</li>
+        </ul>
+      </div>
+    </div>
+    <div class="proposal-box">
+      <h5>深掘り案：ロングテール強化</h5>
+      <p>「ログハウス 価格」(Vol 1,000, 現6位)、「ログハウス 平屋」(Vol 150, 現7位) など、<strong>購入意図の強いロングテールKW</strong>でのポジション改善に集中。市場は小さいが<strong>CVRが高い</strong>ため、限られた予算での効率は最も良い。</p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>選択肢B：隣接KWへ拡張（木の家・自然素材・北欧住宅 etc.）</h4>
+    <table>
+      <tr><th>候補キーワード</th><th>推定月間Vol</th><th>競合レベル</th><th>TALOとの相性</th><th>リスク</th></tr>
+      <tr><td><strong>木の家</strong></td><td>3,000〜5,000</td><td class="warning-text">中〜高</td><td>住友林業等が上位独占</td><td>レッドオーシャン</td></tr>
+      <tr><td><strong>自然素材の家</strong></td><td>1,000〜2,000</td><td>中</td><td>差別化しやすい</td><td>CPC高め</td></tr>
+      <tr><td><strong>北欧住宅</strong></td><td>500〜1,000</td><td class="success-text">低〜中</td><td>フィンランド直輸入で◎</td><td>市場小さい</td></tr>
+      <tr><td><strong>平屋 注文住宅</strong></td><td>5,000〜10,000</td><td class="danger-text">超高</td><td>大手HM多数参入</td><td>完全レッドオーシャン</td></tr>
+      <tr><td><strong>サウナ 家</strong></td><td>2,000〜3,000</td><td class="success-text">低</td><td>サウナブーム × ログ</td><td>ニッチだが伸び盛り</td></tr>
+      <tr class="highlight-row"><td><strong>別荘 / セカンドハウス</strong></td><td>3,000〜5,000</td><td>中</td><td>TALO実績多数</td><td>季節変動大</td></tr>
+      <tr class="highlight-row"><td><strong>二拠点生活 / デュアルライフ</strong></td><td>1,000〜2,000</td><td class="success-text">低</td><td>ライフスタイル提案◎</td><td>新興KW・変動あり</td></tr>
+    </table>
+
+    <div class="question-box">
+      <h5>議論ポイント：レッドオーシャン問題</h5>
+      <p>「注文住宅」「平屋」は月10万回以上の巨大市場だが、<strong>住友林業・一条工務店・積水ハウス等がCPC 500〜1,000円超で入札</strong>。TALOの予算では月1,000クリックも確保できない可能性が高い。<br><br>
+      一方、<strong>「北欧住宅」「サウナ 家」「二拠点生活」はブルーオーシャン</strong>。Volは小さいが、競合が少なくCPCも低い。TALOのブランドストーリーとも合致する。</p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>選択肢C：KWではなく「ターゲット人物像」で攻める</h4>
+    <div class="proposal-box">
+      <h5>発想の転換案</h5>
+      <p>KWを変えるのではなく、<strong>「誰に届けるか」を変える</strong>。<br><br>
+      <strong>従来のターゲット：</strong>「ログハウスが欲しい人」→ 母数が減少中<br>
+      <strong>新しいターゲット：</strong>「ライフスタイルを変えたい人」→ 母数は増加中<br><br>
+      具体的には：<br>
+      ・リモートワークで場所に縛られなくなった40〜50代<br>
+      ・サウナに凝り始めた30〜40代<br>
+      ・老後の住まいを考え始めた50〜60代<br>
+      ・セカンドハウス/別荘を検討している富裕層<br><br>
+      → Instagram広告の高CVR（1.16%）はまさにこの層に刺さっている証拠。<br>
+      <strong>検索KWに頼らず、SNS広告でライフスタイル訴求</strong>するのが現実的な第3の道。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 4. 広告運用の最適化 -->
+<!-- ============================================ -->
+<div class="section" id="s4">
+  <div class="section-title"><span class="icon">💰</span> 4. 広告運用の最適化 ― 限られた予算でどう戦うか</div>
+
+  <div class="agenda-item">
+    <h4>現状の広告効率（GA4データより）</h4>
+    <table>
+      <tr><th>チャネル</th><th>CVR</th><th>CV単価効率</th><th>方針案</th></tr>
+      <tr class="highlight-row"><td><strong>Instagram display</strong></td><td class="success-text">1.16%</td><td>最高効率</td><td><span class="priority-badge priority-1">予算増</span></td></tr>
+      <tr><td><strong>Google検索（リスティング）</strong></td><td class="success-text">1.14%</td><td>高効率</td><td><span class="priority-badge priority-2">維持〜微増</span></td></tr>
+      <tr><td><strong>ファインドキャンペーン</strong></td><td class="warning-text">0.36%</td><td>低効率</td><td><span class="priority-badge priority-1">予算削減</span></td></tr>
+      <tr><td><strong>東京展示場（202509）</strong></td><td class="danger-text">0.16%</td><td>非常に低</td><td><span class="priority-badge priority-1">停止</span></td></tr>
+      <tr><td><strong>イベント東京展示場</strong></td><td class="danger-text">0.00%</td><td>効果なし</td><td><span class="priority-badge priority-1">即停止</span></td></tr>
+    </table>
+
+    <div class="proposal-box">
+      <h5>提案：予算の再配分だけで成果倍増を狙う</h5>
+      <p>① 東京展示場2キャンペーンの予算 → Instagramに移管<br>
+      ② ファインドの予算30%削減 → Google検索リスティングに移管<br>
+      ③ Yahoo広告のUTMパラメータ設定（現在効果測定不能）<br><br>
+      <strong>追加費用ゼロで、CVR平均を0.59% → 0.8〜1.0%に改善可能と推定。</strong><br>
+      月8,000クリック × CVR 1.0% = 月80件CV（現状47件から70%増）</p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>Yahoo広告の「見えない効果」問題</h4>
+    <p style="font-size:13px;">GTM監査の結果、<strong>Yahoo広告にはUTMパラメータが設定されておらず</strong>、GA4で広告経由のセッション・CVが正しく計測できていません。Yahoo リターゲティングタグ（ID: 08675TKYG3）もGTM外の直書きです。</p>
+    <div class="question-box">
+      <h5>担当者に確認したいこと</h5>
+      <p>① Yahoo広告の月額予算と、Yahoo管理画面上のCV数<br>
+      ② UTMパラメータを全URL に設定する工数の見積もり<br>
+      ③ Yahoo広告自体の費用対効果を検証した上で継続判断</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 5. SEO戦略 -->
+<!-- ============================================ -->
+<div class="section" id="s5">
+  <div class="section-title"><span class="icon">🔍</span> 5. SEO戦略 ― 中断の影響と、GEO（AI SEO）対策</div>
+
+  <div class="agenda-item">
+    <h4>現状のSEOポジション（Ahrefs）</h4>
+    <div class="data-row">
+      <div class="data-box">
+        <div class="label">ドメイン評価（DR）</div>
+        <div class="value">43</div>
+        <div class="note">BESS: 53 / BigBox: 68</div>
+      </div>
+      <div class="data-box">
+        <div class="label">ランクインKW数</div>
+        <div class="value">151</div>
+        <div class="note">1位獲得: 16キーワード</div>
+      </div>
+      <div class="data-box">
+        <div class="label">月間オーガニック</div>
+        <div class="value">2,700</div>
+        <div class="note">全体の10.9%にすぎない</div>
+      </div>
+    </div>
+
+    <div class="question-box">
+      <h5>SEO中断の影響は？</h5>
+      <p>現状、「ログハウス」4位、「ログハウス 内装」「ログハウス キッチン」等で1位を維持。<br>
+      <strong>短期的にはポジション維持されているが、中断が続くとDR低下→順位低下のリスクあり。</strong><br>
+      特にBESSはDR 53でコンテンツ投下を継続しており、差が開く一方。<br><br>
+      ただし、<strong>SEOは即効性がないため、限られた予算では広告最適化が先</strong>。<br>
+      SEOは「やめる」のではなく「最小コストで維持する」が現実的。</p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>GEO（生成エンジン最適化） ― AI時代のSEO</h4>
+    <p style="font-size:13px; margin-bottom:10px;">2026年、SEOは大きな転換期を迎えています。Google AI Overview、ChatGPT Search、Perplexity等の生成AIが検索結果を変え始めています。</p>
+
+    <table>
+      <tr><th>従来のSEO</th><th>GEO（生成エンジン最適化）</th></tr>
+      <tr><td>検索結果1ページ目に表示</td><td>AIの回答に自社が「引用」される</td></tr>
+      <tr><td>キーワード密度・被リンク重視</td><td>構造化データ・専門性・信頼性重視</td></tr>
+      <tr><td>クリックしてサイトに来てもらう</td><td>AIに選ばれ「指名検索」を誘発する</td></tr>
+      <tr><td>競合は同業他社</td><td>競合はAIが参照する全ての情報源</td></tr>
+    </table>
+
+    <div class="proposal-box">
+      <h5>TALOが今すぐ着手すべきGEO対策</h5>
+      <p><strong>1. 構造化データ（Schema.org）の実装</strong><br>
+      → 商品情報、FAQ、施工事例をAIが読み取れる形式に<br><br>
+      <strong>2. E-E-A-T（経験・専門性・権威性・信頼性）の強化</strong><br>
+      → 「フィンランド直輸入40年の実績」「施工実績1,200棟」等の具体的数値をサイトに明記<br><br>
+      <strong>3. FAQ/ナレッジベースの充実</strong><br>
+      → 「ログハウスとは」「メンテナンス方法」「価格の目安」等をQ&A形式で整備<br>
+      → AIが回答生成時に引用しやすい形式にする<br><br>
+      <strong>4.「ログハウスといえばTALO」の指名検索を増やす</strong><br>
+      → GEO時代は「AIに選ばれる → 指名検索で来訪」が主流導線に<br><br>
+      <strong>コスト：低（サイト内コンテンツ整備が中心）</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 6. サイト改修・LP・差別化 -->
+<!-- ============================================ -->
+<div class="section" id="s6">
+  <div class="section-title"><span class="icon">🏗️</span> 6. サイト改修・LP・差別化 ― 優先順位の決定</div>
+
+  <div class="agenda-item">
+    <h4>3つの施策の優先順位</h4>
+    <table>
+      <tr><th>施策</th><th>効果</th><th>コスト</th><th>即効性</th><th>優先度</th></tr>
+      <tr>
+        <td><strong>① LP制作（広告専用）</strong></td>
+        <td class="success-text">高</td><td>中（50〜100万円）</td><td class="success-text">即効</td>
+        <td><span class="priority-badge priority-1">最優先</span></td>
+      </tr>
+      <tr>
+        <td><strong>② 差別化コンテンツ追加</strong></td>
+        <td>中〜高</td><td class="success-text">低</td><td>中期</td>
+        <td><span class="priority-badge priority-2">優先度2</span></td>
+      </tr>
+      <tr>
+        <td><strong>③ サイト全面改修</strong></td>
+        <td>高</td><td class="danger-text">高（300万〜）</td><td class="danger-text">半年〜</td>
+        <td><span class="priority-badge priority-3">後回し</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="agenda-item">
+    <h4>① LP制作が最優先である理由</h4>
+    <div class="proposal-box">
+      <h5>現状の問題</h5>
+      <p>広告 → トップページ に流している場合、<strong>ユーザーの検索意図と着地ページの内容がミスマッチ</strong>している可能性が高い。<br><br>
+      例：「ログハウス 価格」で検索 → トップページに来る → 価格情報がすぐ見つからない → 離脱<br><br>
+      <strong>広告KW別の専用LP</strong>を作れば：<br>
+      ・「ログハウス 価格」→ 価格一覧LP → CVR 2〜3倍に<br>
+      ・「ログハウス 平屋」→ 平屋施工事例LP → CVR 2〜3倍に<br>
+      ・Instagram広告 → ライフスタイル訴求LP → CVR維持〜改善<br><br>
+      <strong>LP1本で月間CV数が大幅に変わる</strong>。サイト全面改修の1/5のコストで、広告効果は直ちに改善。</p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>② 他社との差別化ポイント</h4>
+    <p style="font-size:13px; margin-bottom:10px;">TALOが打ち出すべき差別化要素（サイト内で不足しているもの）：</p>
+    <table>
+      <tr><th>差別化要素</th><th>TALOの強み</th><th>現サイトでの訴求</th></tr>
+      <tr><td>フィンランド直輸入</td><td>本場フィンランドからの直輸入は国内唯一級</td><td class="warning-text">弱い</td></tr>
+      <tr><td>40年以上の実績</td><td>施工実績の信頼性</td><td class="warning-text">不明確</td></tr>
+      <tr><td>カスタマイズ自由度</td><td>完全注文設計が可能</td><td class="warning-text">伝わりにくい</td></tr>
+      <tr><td>サウナとの親和性</td><td>フィンランド式サウナ×ログハウス</td><td class="danger-text">未訴求</td></tr>
+      <tr><td>リセールバリュー</td><td>ログハウスの経年美化</td><td class="danger-text">未訴求</td></tr>
+      <tr><td>全国対応</td><td>代理店ネットワーク</td><td>普通</td></tr>
+    </table>
+    <p style="font-size:12px; color:var(--muted); margin-top:8px;">→ 特に「サウナ×ログハウス」はHonkaが先行しているが、TALOは未着手。大きなチャンス。</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 7. まとめ -->
+<!-- ============================================ -->
+<div class="section" id="s7">
+  <div class="section-title"><span class="icon">🎯</span> 7. まとめ ― 限られた予算での施策優先順位</div>
+
+  <div class="agenda-item">
+    <h4>今日決めたい3つのこと</h4>
+
+    <div style="margin-top:12px;">
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+        <span class="priority-badge priority-1">決定①</span>
+        <strong style="font-size:14px;">広告予算の再配分（追加コスト：ゼロ）</strong>
+      </div>
+      <p style="font-size:13px; margin-left:72px; margin-bottom:16px;">
+        東京展示場2キャンペーン停止 → Instagram/Google検索に再配分。<br>
+        ファインドキャンペーン30%削減 → 高CVRチャネルに移管。<br>
+        <strong>効果見込み：月CV 47件 → 70〜80件（50〜70%増）</strong>
+      </p>
+
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+        <span class="priority-badge priority-1">決定②</span>
+        <strong style="font-size:14px;">LP制作の着手判断（投資：50〜100万円）</strong>
+      </div>
+      <p style="font-size:13px; margin-left:72px; margin-bottom:16px;">
+        まず「ログハウス 価格」LP1本から。広告CVRの直接的な改善を狙う。<br>
+        <strong>効果見込み：該当KWのCVR 2〜3倍改善</strong>
+      </p>
+
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+        <span class="priority-badge priority-2">決定③</span>
+        <strong style="font-size:14px;">KW拡張の方向性（短期：ロングテール深掘り / 中期：ライフスタイルKW）</strong>
+      </div>
+      <p style="font-size:13px; margin-left:72px; margin-bottom:16px;">
+        短期 → ログハウス関連ロングテールKWの広告・SEO強化（低コスト）<br>
+        中期 → 「サウナ×ログ」「北欧住宅」「二拠点生活」への段階的拡張<br>
+        <strong>レッドオーシャン（注文住宅・平屋）には飛び込まない</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="agenda-item">
+    <h4>実行タイムライン案</h4>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-period">今週中</div>
+        <div class="timeline-content">東京展示場キャンペーン停止 / ファインド予算30%削減 / Instagram予算増</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-period">〜4月中旬</div>
+        <div class="timeline-content">Yahoo広告UTMパラメータ設定 / Yahoo リターゲのGTM統合</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-period">〜5月末</div>
+        <div class="timeline-content">「ログハウス 価格」LP制作・公開 / 構造化データ（Schema.org）実装</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-period">〜6月末</div>
+        <div class="timeline-content">差別化コンテンツ追加（サウナ×ログ / フィンランド直輸入ストーリー）</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-period">7月〜</div>
+        <div class="timeline-content">GEO対策本格化 / 新KW（北欧住宅・二拠点生活）のテスト広告開始</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  TALO WEB戦略MTG アジェンダ ― 2026年3月18日<br>
+  データソース: GA4 (G-5KDKTD3RPQ) / Ahrefs Site Explorer / GTM (GTM-TNZMHC4)<br>
+  参考: <a href="https://adachitalo.github.io/loghouseData/talo-seo-audit-report.html" style="color:var(--accent)">TALO SEO監査レポート全文</a>
+</div>
+
+</div>
+</body>
+</html>
