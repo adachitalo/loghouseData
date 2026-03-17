@@ -1,0 +1,172 @@
+# ----------------------------------------
+# http://www.talo.co.jp - GA4
+# 自由形式-自由形式 1
+# 20260217-20260316
+# ----------------------------------------
+
+				ページパス + クエリ文字列	/thanks/catalog.html	/thanks/entry.html	/thanks/catalog.html	/thanks/catalog.html	/thanks/catalog.html	合計
+				セッションの Google 広告キーワードのテキスト	(not set)	(not set)	ログハウス	ログハウス メーカー	セルフビルド キット	合計
+日時（YYYYMMDDHH）	セッションのデフォルト チャネル グループ	セッションの参照元 / メディア	セッションのキャンペーン	セッションの Google 広告グループ名	アクティブ ユーザー	アクティブ ユーザー	アクティブ ユーザー	アクティブ ユーザー	アクティブ ユーザー	アクティブ ユーザー
+					120	9	4	2	2	156	総計
+2026030119	Display	ig / display	display	(not set)	2	0	0	0	0	2
+2026031111	Display	ig / display	display	(not set)	2	0	0	0	0	2
+2026031221	Display	ig / display	display	(not set)	2	0	0	0	0	2
+2026021709	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026021712	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026021715	Organic Social	ig / social	(referral)	(not set)	1	0	0	0	0	1
+2026021801	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026021806	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026021812	Direct	(direct) / (none)	(direct)	(not set)	0	0	0	0	0	1
+2026021816	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026021818	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026021820	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026021901	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	1	0	0	1
+2026021913	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026021920	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022013	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026022014	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022021	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022022	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022106	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022108	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022109	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022110	Organic Search	bing / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022112	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026022116	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022122	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022122	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026022207	Direct	(direct) / (none)	(direct)	(not set)	0	1	0	0	0	1
+2026022216	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022309	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022309	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022309	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022310	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022311	Organic Video	youtube.com / referral	(referral)	(not set)	1	0	0	0	0	1
+2026022314	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022320	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022321	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022321	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022322	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022413	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022416	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022419	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026022420	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026022507	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026022517	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022519	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022521	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026022522	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026022523	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022615	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022619	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022621	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022708	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022711	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026022713	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022713	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022717	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022719	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022719	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026022801	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022803	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022810	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022811	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022819	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	1	0	0	1
+2026022820	Organic Search	google / organic	(organic)	(not set)	0	1	0	0	0	1
+2026022821	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026022821	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026022823	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	1	0	0	1
+2026030106	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030111	Organic Video	youtube.com / referral	(referral)	(not set)	1	0	0	0	0	1
+2026030115	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030118	Referral	mail.yahoo.co.jp / referral	(referral)	(not set)	0	1	0	0	0	1
+2026030119	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030120	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030122	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030212	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026030215	Cross-network	google / cpc	G_DIS_東京展示場202509	(not set)	1	0	0	0	0	1
+2026030218	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026030219	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030220	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026030220	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026030222	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030311	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030313	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030317	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030317	Organic Social	ig / social	(referral)	(not set)	0	0	0	0	0	1
+2026030318	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026030319	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030401	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026030411	Organic Video	youtube.com / referral	(referral)	(not set)	1	0	0	0	0	1
+2026030413	Direct	(direct) / (none)	(direct)	(not set)	0	0	0	0	0	1
+2026030418	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030418	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	1	1
+2026030419	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	1	0	1
+2026030420	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030421	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026030422	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030422	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	1	0	1
+2026030506	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030512	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	1	0	0	1
+2026030513	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026030513	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026030514	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026030515	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	1	0	0	1
+2026030518	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026030519	Display	ig / display	display	(not set)	0	1	0	0	0	1
+2026030522	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030522	Direct	(direct) / (none)	(direct)	(not set)	0	0	0	0	0	1
+2026030611	Paid Search	google / cpc	G_LIS_Google検索240807	(not set)	1	0	0	0	0	1
+2026030617	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030619	Paid Search	google / cpc	G_LIS_Google検索240807	指名検索	0	0	0	0	0	1
+2026030620	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030621	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030713	Display	ig / display	display	(not set)	0	1	0	0	0	1
+2026030714	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030715	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030715	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026030716	Direct	(direct) / (none)	(direct)	(not set)	0	1	0	0	0	1
+2026030721	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030722	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030722	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026030806	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026030816	Cross-network	google / cpc	G_DIS_東京展示場202509	(not set)	1	0	0	0	0	1
+2026030817	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030818	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030908	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030909	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026030910	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026030911	Referral	talo-m.com / referral	(referral)	(not set)	1	0	0	0	0	1
+2026030920	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026030922	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026031005	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026031020	Display	ig / display	display	(not set)	0	1	0	0	0	1
+2026031022	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026031101	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026031109	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031112	Display	ig / display	display	(not set)	0	1	0	0	0	1
+2026031112	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031120	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031214	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026031215	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026031309	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026031318	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	1	1
+2026031320	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031321	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026031403	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026031404	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026031410	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026031413	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	1	0	1
+2026031417	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031420	Organic Search	google / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031502	Organic Search	yahoo / organic	(organic)	(not set)	1	0	0	0	0	1
+2026031508	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026031508	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026031611	Paid Search	google / cpc	G_LIS_Google検索240807	一般検索	0	0	0	0	0	1
+2026031617	Direct	(direct) / (none)	(direct)	(not set)	0	1	0	0	0	1
+2026031619	Direct	(direct) / (none)	(direct)	(not set)	0	1	0	0	0	1
+2026031620	Direct	(direct) / (none)	(direct)	(not set)	1	0	0	0	0	1
+2026031621	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+2026031621	Display	ig / display	display	(not set)	1	0	0	0	0	1
+2026031622	Cross-network	google / cpc	G_DIS_ファインド250219	(not set)	1	0	0	0	0	1
+
