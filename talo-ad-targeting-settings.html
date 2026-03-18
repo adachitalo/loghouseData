@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALO 広告ターゲティング設定ガイド - 実装用</title>
+<style>
+:root{--primary:#1a365d;--accent:#2b6cb0;--success:#38a169;--warning:#d69e2e;--danger:#e53e3e;--bg:#f0f2f5;--card:#fff;--text:#2c3e50;--muted:#64748b;--border:#e2e8f0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+header{background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;padding:36px 0;margin-bottom:24px}
+header .container{display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:22px;font-weight:700}
+header .sub{font-size:13px;opacity:.85;margin-top:4px}
+header .badge{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:8px;font-size:13px}
+.section{margin-bottom:28px}
+.section-title{font-size:18px;font-weight:700;color:var(--primary);margin-bottom:14px;padding-bottom:8px;border-bottom:3px solid var(--accent);display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:22px}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:16px;font-size:13px}
+th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-size:12px;font-weight:600}
+td{padding:8px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#f7fafc}
+.insight{background:linear-gradient(135deg,#ebf8ff,#e6fffa);border-radius:10px;padding:16px;margin:14px 0;border:1px solid #bee3f8}
+.insight h4{color:var(--accent);font-size:14px;margin-bottom:6px}
+.insight p{font-size:13px}
+.warning-box{background:linear-gradient(135deg,#fff5f5,#fff9db);border-radius:10px;padding:16px;margin:14px 0;border:1px solid #fed7d7}
+.warning-box h4{color:var(--danger);font-size:14px;margin-bottom:6px}
+.warning-box p{font-size:13px}
+.setting-box{background:var(--card);border-radius:12px;padding:20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid var(--accent)}
+.setting-box h4{font-size:15px;color:var(--primary);margin-bottom:8px}
+.setting-box .platform{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-bottom:8px}
+.platform-google{background:#4285f4;color:#fff}
+.platform-meta{background:#0668E1;color:#fff}
+.platform-yahoo{background:#FF0033;color:#fff}
+.setting-item{display:flex;gap:12px;margin-bottom:8px;font-size:13px}
+.setting-label{min-width:140px;font-weight:600;color:var(--primary)}
+.setting-value{flex:1}
+code{background:#edf2f7;padding:2px 6px;border-radius:4px;font-size:12px;font-family:'SF Mono',monospace}
+.s{color:var(--success);font-weight:700}
+.d{color:var(--danger);font-weight:700}
+.w{color:var(--warning);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.card .value{font-size:22px;font-weight:700;color:var(--primary)}
+.card .note{font-size:12px;color:var(--muted);margin-top:2px}
+.card.success{border-left:4px solid var(--success)}
+.card.danger{border-left:4px solid var(--danger)}
+.card.accent{border-left:4px solid var(--accent)}
+.footer{text-align:center;padding:24px 0;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin:2px}
+.tag-add{background:#c6f6d5;color:#276749}
+.tag-remove{background:#fed7d7;color:#c53030}
+.tag-keep{background:#e2e8f0;color:#4a5568}
+.tag-change{background:#fefcbf;color:#975a16}
+</style>
+</head>
+<body>
+
+<header>
+<div class="container">
+<div>
+<h1>TALO 広告ターゲティング設定ガイド</h1>
+<div class="sub">データ分析に基づく具体的な広告管理画面の設定値</div>
+</div>
+<div class="badge">実装用資料</div>
+</div>
+</header>
+
+<div class="container">
+
+<!-- ===== データ根拠 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">📊</span> データが示すスーパーターゲット</div>
+
+<div class="cards">
+<div class="card success">
+<div class="label">予算2500万+ × 工務店 × 土地あり</div>
+<div class="value">発注率 9.83%</div>
+<div class="note">173件中17件発注。代理店経由に匹敵</div>
+</div>
+<div class="card success">
+<div class="label">予算2500万+ × 工務店</div>
+<div class="value">発注率 6.25%</div>
+<div class="note">432件中27件発注。平均の5倍</div>
+</div>
+<div class="card success">
+<div class="label">予算2500万+ × 土地あり</div>
+<div class="value">発注率 5.62%</div>
+<div class="note">605件中34件発注</div>
+</div>
+<div class="card danger">
+<div class="label">予算1500万未満（全体の52%）</div>
+<div class="value">発注率 0.28%</div>
+<div class="note">7,599件中21件。広告費の浪費</div>
+</div>
+</div>
+
+<div class="insight">
+<h4>ターゲティングの核心</h4>
+<p>カタログ請求の<strong>52%（7,599件）が予算1,500万未満</strong>で、この層の発注率はわずか0.28%。一方、予算2,500万以上は全体の12%（1,790件）だが発注率は2.3〜3.5%。<br>
+広告で直接「予算帯」をフィルタすることはできないが、<strong>属性（年齢・興味関心・エリア）で間接的に「予算2,500万以上の人が来やすい」設定にする</strong>のが目的。</p>
+</div>
+</div>
+
+<!-- ===== キャンペーン構成 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">🏗️</span> キャンペーン構成案（3エリア分離）</div>
+
+<table>
+<tr><th>キャンペーン</th><th>エリア</th><th>CVポイント</th><th>LP着地先</th><th>月予算配分</th></tr>
+<tr style="background:#f0fff4">
+<td><strong>A: 代理店エリア</strong></td>
+<td>千葉/山梨/長野/兵庫/静岡/鹿児島</td>
+<td class="s">展示場来場予約</td>
+<td>各代理店展示場LP</td>
+<td>30%（約24万）</td>
+</tr>
+<tr style="background:#ebf8ff">
+<td><strong>B: 首都圏</strong></td>
+<td>東京/神奈川/埼玉</td>
+<td class="s">東京展示場来場予約</td>
+<td>東京展示場LP</td>
+<td>40%（約32万）</td>
+</tr>
+<tr style="background:#fffbeb">
+<td><strong>C: その他全国</strong></td>
+<td>上記以外</td>
+<td>カタログ請求<br>（+LINE登録）</td>
+<td>カタログ請求LP<br>or LINE登録LP</td>
+<td>30%（約24万）</td>
+</tr>
+</table>
+
+<div class="warning-box">
+<h4>現状との違い</h4>
+<p>現在は全国一律で「カタログ請求」をCVポイントにしている（推定）。代理店エリアでは展示場来場に直接誘導すべき。<strong>同じ月80万の予算でも、エリア×CVポイントを分けるだけで構造が変わる。</strong></p>
+</div>
+</div>
+
+<!-- ===== Google検索広告 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">🔍</span> Google 検索広告 ― 設定値</div>
+
+<div class="setting-box">
+<span class="platform platform-google">Google Ads</span>
+<h4>共通設定（全キャンペーン）</h4>
+<div class="setting-item"><div class="setting-label">入札戦略</div><div class="setting-value"><span class="tag tag-change">変更</span> 「コンバージョン値の最大化」に変更<br>※ 来場予約のCV値を資料請求の10倍に設定することで、自動入札が来場を優先</div></div>
+<div class="setting-item"><div class="setting-label">CV値の設定</div><div class="setting-value"><span class="tag tag-add">追加</span> 来場予約 = <code>10,000円</code> / 資料請求 = <code>1,000円</code> / 電話問合せ = <code>5,000円</code></div></div>
+<div class="setting-item"><div class="setting-label">年齢</div><div class="setting-value"><span class="tag tag-change">変更</span> <strong>35〜64歳</strong>に限定<br>18-24歳: 除外 / 25-34歳: 除外 / 35-44歳: 入札+20% / 45-54歳: 入札+30% / 55-64歳: 入札+20% / 65歳以上: 入札-30%<br><span style="font-size:11px;color:var(--muted)">根拠: 成約者の74%が40〜64歳（EUDS分析）</span></div></div>
+<div class="setting-item"><div class="setting-label">配信時間帯</div><div class="setting-value"><span class="tag tag-keep">維持</span> 平日 18:00〜23:00に入札+30% / 土日 10:00〜22:00に入札+20%<br><span style="font-size:11px;color:var(--muted)">富裕層のリサーチ時間帯に集中（MTG議論より）</span></div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-google">Google Ads</span>
+<h4>除外キーワード（全キャンペーン共通）</h4>
+<table>
+<tr><th>除外KW</th><th>理由</th><th>データ根拠</th></tr>
+<tr><td><code>激安</code> <code>格安</code> <code>安い</code></td><td>低予算層を排除</td><td>予算1,500万未満の発注率 0.28%</td></tr>
+<tr><td><code>中古</code> <code>中古ログハウス</code></td><td>新築ターゲットに限定</td><td>中古需要は成約に繋がらない</td></tr>
+<tr><td><code>キット</code> <code>DIY</code></td><td>セルフビルド志向を除外</td><td>セルフビルドの発注率 1.30%（工務店 3.70%の1/3）</td></tr>
+<tr><td><code>坪単価</code></td><td>価格比較だけで離脱する層</td><td>営業担当「坪単価聞かれて、それっきり」</td></tr>
+<tr><td><code>デメリット</code> <code>後悔</code></td><td>ネガティブ検索は広告で取らない</td><td>SEO/コンテンツで対応すべき領域</td></tr>
+</table>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-google">Google Ads</span>
+<h4>キャンペーンA: 代理店エリア</h4>
+<div class="setting-item"><div class="setting-label">配信エリア</div><div class="setting-value">
+千葉県（NH商圏）/ 山梨県（ACT商圏）/ 長野県（FUJI・ACT商圏）/<br>兵庫県+大阪府+京都府+滋賀県（K10商圏）/ 静岡県（HIDE商圏）/ 鹿児島県（CND商圏）</div></div>
+<div class="setting-item"><div class="setting-label">KW（検索）</div><div class="setting-value">
+<span class="tag tag-keep">維持</span> <code>ログハウス</code> <code>ログハウス 価格</code> <code>ログハウス 平屋</code><br>
+<span class="tag tag-add">追加</span> <code>ログハウス 展示場</code> <code>ログハウス 見学</code> <code>ログハウス モデルハウス</code><br>
+<span class="tag tag-add">追加</span> 地域名付き: <code>ログハウス 千葉</code> <code>ログハウス 山梨</code> <code>八ヶ岳 別荘</code> <code>軽井沢 ログハウス</code> 等</div></div>
+<div class="setting-item"><div class="setting-label">LP着地先</div><div class="setting-value"><span class="tag tag-change">変更</span> カタログ請求フォーム → <strong>代理店展示場案内ページ</strong>（来場予約フォーム付き）<br>※ 代理店ごとにLP分離が理想。まずは既存の代理店紹介ページ+来場予約CTAでも可</div></div>
+<div class="setting-item"><div class="setting-label">広告文</div><div class="setting-value"><span class="tag tag-change">変更</span>「カタログ無料」→「<strong>展示場で体感</strong>」「<strong>実物を見て触れる</strong>」に変更<br>「木の香りが違う。まずは展示場でご体感ください」等</div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-google">Google Ads</span>
+<h4>キャンペーンB: 首都圏（東京展示場誘導）</h4>
+<div class="setting-item"><div class="setting-label">配信エリア</div><div class="setting-value">東京都 / 神奈川県 / 埼玉県</div></div>
+<div class="setting-item"><div class="setting-label">KW（検索）</div><div class="setting-value">
+<span class="tag tag-keep">維持</span> <code>ログハウス</code> <code>ログハウス 価格</code> <code>自然素材の家</code><br>
+<span class="tag tag-add">追加</span> <code>別荘 八ヶ岳</code> <code>セカンドハウス 山梨</code> <code>移住 長野</code> <code>二拠点生活</code><br>
+<span class="tag tag-add">追加</span> <code>木の家 注文住宅</code> <code>北欧住宅</code> <code>フィンランド 住宅</code></div></div>
+<div class="setting-item"><div class="setting-label">LP着地先</div><div class="setting-value"><span class="tag tag-change">変更</span> → <strong>東京展示場LP</strong>（来場予約フォーム+ライフスタイル訴求）<br>「東京で体感して、八ヶ岳に建てる」的な訴求</div></div>
+<div class="setting-item"><div class="setting-label">オーディエンス</div><div class="setting-value"><span class="tag tag-add">追加</span> 購買意向の強いユーザー:「不動産」「住宅リフォーム」「注文住宅」<br><span class="tag tag-add">追加</span> アフィニティ:「アウトドア愛好家」「高級住宅」「インテリアデザイン」</div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-google">Google Ads</span>
+<h4>キャンペーンC: その他全国</h4>
+<div class="setting-item"><div class="setting-label">配信エリア</div><div class="setting-value">A・B以外の全国</div></div>
+<div class="setting-item"><div class="setting-label">方針</div><div class="setting-value">予算を絞り、ログハウス系KWのみに限定。別荘・移住KWは代理店エリアと首都圏に集中。<br>LINEが導入されたらCV→LINE登録にシフト。</div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-google">Google Ads</span>
+<h4>停止すべきキャンペーン</h4>
+<table>
+<tr><th>キャンペーン</th><th>現状CVR</th><th>判断</th></tr>
+<tr><td><strong>G_DIS_イベント東京展示場202601</strong></td><td class="d">0.00%</td><td><span class="tag tag-remove">即停止</span></td></tr>
+<tr><td><strong>G_DIS_東京展示場202509</strong></td><td class="d">0.16%</td><td><span class="tag tag-remove">停止</span> → 予算をキャンペーンBに移管</td></tr>
+<tr><td><strong>G_DIS_ファインド250219</strong></td><td class="w">0.36%</td><td><span class="tag tag-change">30%削減</span> → 削減分をキャンペーンA・Bに移管</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===== Meta/Instagram ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">📸</span> Meta / Instagram 広告 ― 設定値</div>
+
+<div class="warning-box">
+<h4>Instagram広告の位置づけ変更</h4>
+<p>CPA ¥1,044（2020年）→ ¥10,744（2024年）と10倍悪化。発注率も0.36%でGoogleの半分。<br>
+<strong>「広く浅く」の認知目的ではなく、「狭く深く」の富裕層ターゲティングに切り替える。</strong>リーチは減るがリードの質を大幅に上げる。</p>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-meta">Meta Ads</span>
+<h4>オーディエンス設定（全広告セット共通）</h4>
+<div class="setting-item"><div class="setting-label">年齢</div><div class="setting-value"><span class="tag tag-change">変更</span> <strong>40〜64歳</strong><br><span style="font-size:11px;color:var(--muted)">根拠: 成約者の74%。30代は18%だが総工費が低めなので優先度下げる</span></div></div>
+<div class="setting-item"><div class="setting-label">配信エリア</div><div class="setting-value"><span class="tag tag-change">変更</span> 全国→<strong>首都圏（東京・神奈川・埼玉・千葉）＋代理店エリア</strong>に限定</div></div>
+<div class="setting-item"><div class="setting-label">興味関心（AND条件）</div><div class="setting-value"><span class="tag tag-change">変更</span> 以下のいずれか1つ以上:<br>
+<strong>住まい系：</strong><code>注文住宅</code> <code>住宅リフォーム</code> <code>建築デザイン</code> <code>インテリアデザイン</code><br>
+<strong>ライフスタイル系：</strong><code>アウトドア</code> <code>キャンプ</code> <code>サウナ</code> <code>北欧インテリア</code> <code>薪ストーブ</code><br>
+<strong>属性シグナル系：</strong><code>経営者</code> <code>起業家</code> <code>ビジネスオーナー</code> <code>医療</code> <code>建築</code></div></div>
+<div class="setting-item"><div class="setting-label">除外オーディエンス</div><div class="setting-value"><span class="tag tag-add">追加</span> 過去180日以内にCV済みのユーザー（リマーケティングリストで除外）</div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-meta">Meta Ads</span>
+<h4>カスタムオーディエンス（類似拡張）</h4>
+<div class="setting-item"><div class="setting-label">ソースリスト</div><div class="setting-value"><span class="tag tag-add">新規作成</span> EUDSの成約者リスト（メールアドレス＋電話番号）をアップロード<br><span style="font-size:11px;color:var(--muted)">MTGで木下さんが「成約者データは出せる」と発言</span></div></div>
+<div class="setting-item"><div class="setting-label">類似オーディエンス</div><div class="setting-value"><span class="tag tag-add">新規作成</span> 上記ソースから<strong>類似1%</strong>（最も近い層）を作成<br>成約者の件数が少ない場合（100件未満）、Metaの推奨最低ラインに注意。まず試してみる価値はある</div></div>
+<div class="setting-item"><div class="setting-label">WEBサイト訪問者</div><div class="setting-value"><span class="tag tag-add">新規作成</span> 代理店ページ訪問者の類似オーディエンス（代理店ページを見る人 ≒ 検討段階が進んでいる人）</div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-meta">Meta Ads</span>
+<h4>クリエイティブの方向転換</h4>
+<table>
+<tr><th>現状（推定）</th><th>変更後</th><th>根拠</th></tr>
+<tr><td>ログハウスの外観写真<br>「カタログ無料プレゼント」</td><td><strong>木の内装・暮らしの写真</strong><br>「自然素材に包まれる暮らし」</td><td>決定理由Top3: プラン提案・営業マン・自由設計。「外観の憧れ」ではなく「暮らしの質」で訴求</td></tr>
+<tr><td>広く浅く認知獲得</td><td><strong>富裕層の価値観に刺さるコピー</strong><br>「大和ハウスでは得られない本物の木の家」<br>「坪150万。全て自然素材。」</td><td>営業担当「大手HMと比べて安いと言われる」層が成約する</td></tr>
+<tr><td>CTA: 資料請求</td><td><strong>CTA: 展示場で体感</strong><br>「まずは東京展示場へ」</td><td>代理店ルート（対面）の発注率が10倍高い</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ===== Yahoo広告 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">🔴</span> Yahoo 広告 ― 設定値</div>
+
+<div class="setting-box">
+<span class="platform platform-yahoo">Yahoo Ads</span>
+<h4>最優先：UTMパラメータの付与</h4>
+<div class="setting-item"><div class="setting-label">全広告URL</div><div class="setting-value"><span class="tag tag-add">追加</span> 以下を全URLの末尾に付与:<br>
+<code>?utm_source=yahoo&amp;utm_medium=cpc&amp;utm_campaign={キャンペーン名}&amp;utm_content={広告グループ名}</code><br>
+<span style="font-size:11px;color:var(--muted)">これがないとGA4でYahoo広告の効果測定が一切できない（現状の最大の計測漏れ）</span></div></div>
+</div>
+
+<div class="setting-box">
+<span class="platform platform-yahoo">Yahoo Ads</span>
+<h4>Yahoo広告の費用対効果の検証</h4>
+<p style="font-size:13px;margin-top:8px">2025年のYahoo CPA ¥15,259はGoogle（¥7,883）の約2倍。CV数も9件と激減。<br>
+UTMを設定してGA4で正確に計測した上で、<strong>3ヶ月後に継続判断</strong>。CPA改善が見られなければYahoo予算をGoogle/Metaに移管を検討。</p>
+</div>
+</div>
+
+<!-- ===== CV計測の再設計 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">📐</span> CV計測の再設計</div>
+
+<div class="setting-box">
+<h4>GAパラメータ設計（イチプロに依頼済み）</h4>
+<table>
+<tr><th>パラメータ</th><th>値の例</th><th>目的</th></tr>
+<tr><td><code>utm_source</code></td><td>google / yahoo / instagram / facebook</td><td>媒体の識別</td></tr>
+<tr><td><code>utm_medium</code></td><td>cpc / display / social</td><td>広告種別の識別</td></tr>
+<tr><td><code>utm_campaign</code></td><td>dealer_chiba / tokyo_sr / national_catalog</td><td>キャンペーン（エリア別）の識別</td></tr>
+<tr><td><code>utm_content</code></td><td>loghouse_price / lifestyle_yatsugatake</td><td>クリエイティブ・広告グループの識別</td></tr>
+</table>
+<p style="font-size:12px;color:var(--muted);margin-top:8px">→ GA4で「どのエリアの、どの広告から、どのLPに来て、何をCVしたか」が追跡可能になる。<br>→ これをEUDSの成約データとタイムスタンプで突合し、「どの広告が実際の成約に繋がったか」を月次で検証。</p>
+</div>
+
+<div class="setting-box">
+<h4>CV値の重み付け設定（Google広告管理画面）</h4>
+<table>
+<tr><th>CVアクション</th><th>現状の値</th><th>変更後の値</th><th>理由</th></tr>
+<tr><td>資料請求</td><td>1（均等）</td><td><code>1,000円</code></td><td>ベースライン</td></tr>
+<tr><td>展示場来場予約</td><td>1（均等）</td><td><code>10,000円</code></td><td>来場→成約の変換率が高い</td></tr>
+<tr><td>電話問合せ</td><td>未設定</td><td><code>5,000円</code></td><td>電話の方が商談に進みやすい（営業担当証言）</td></tr>
+</table>
+<p style="font-size:12px;color:var(--muted);margin-top:8px">→ 入札戦略を「コンバージョン値の最大化」にすると、自動入札が来場予約を優先して入札する。資料請求数は減るが、来場数が増える。</p>
+</div>
+</div>
+
+<!-- ===== 実行順序 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">📋</span> 実行順序（イチプロへの依頼内容）</div>
+
+<table>
+<tr><th>優先度</th><th>タスク</th><th>所要時間</th><th>追加コスト</th></tr>
+<tr style="background:#f0fff4">
+<td><strong>① 即実行</strong></td>
+<td>東京展示場2キャンペーン停止 / ファインド30%削減 / 削減分をGoogle検索に移管</td>
+<td>1日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#f0fff4">
+<td><strong>② 即実行</strong></td>
+<td>除外KW追加（激安/格安/中古/キット/DIY/坪単価/後悔）</td>
+<td>1日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#f0fff4">
+<td><strong>③ 即実行</strong></td>
+<td>年齢ターゲット変更（35〜64歳に限定、25歳未満除外）</td>
+<td>1日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#f0fff4">
+<td><strong>④ 即実行</strong></td>
+<td>CV値の重み付け変更（来場10,000/資料請求1,000/電話5,000）</td>
+<td>1日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#ebf8ff">
+<td><strong>⑤ 1〜2週</strong></td>
+<td>Yahoo広告UTMパラメータ設定 / GAパラメータ再設計</td>
+<td>3〜5日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#ebf8ff">
+<td><strong>⑥ 1〜2週</strong></td>
+<td>キャンペーンのエリア3分割（代理店/首都圏/全国）</td>
+<td>3〜5日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#ebf8ff">
+<td><strong>⑦ 2〜3週</strong></td>
+<td>Meta広告のオーディエンス変更（年齢・興味関心の絞り込み）</td>
+<td>2〜3日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#fffbeb">
+<td><strong>⑧ 1ヶ月</strong></td>
+<td>成約者リストのアップロード → Meta類似オーディエンス作成</td>
+<td>2日</td>
+<td>¥0</td>
+</tr>
+<tr style="background:#fffbeb">
+<td><strong>⑨ 1〜2ヶ月</strong></td>
+<td>代理店展示場LP制作（代理店ごと or 共通テンプレ）</td>
+<td>2〜4週</td>
+<td>LP制作費</td>
+</tr>
+<tr style="background:#fffbeb">
+<td><strong>⑩ 1〜2ヶ月</strong></td>
+<td>東京展示場LP制作（ライフスタイル訴求）</td>
+<td>2〜4週</td>
+<td>LP制作費</td>
+</tr>
+</table>
+
+<div class="insight">
+<h4>①〜⑦は追加コストゼロで今すぐ着手可能</h4>
+<p>広告管理画面の設定変更のみ。LP制作（⑨⑩）が完了するまでは、既存の代理店紹介ページ・東京展示場ページをLPとして使いつつ、ターゲティング・除外KW・CV重み付けの効果を先に検証する。</p>
+</div>
+</div>
+
+<!-- ===== 効果測定 ===== -->
+<div class="section">
+<div class="section-title"><span class="icon">📏</span> 4〜6週間後の効果測定基準</div>
+
+<table>
+<tr><th>指標</th><th>現状ベースライン</th><th>目標値</th><th>測定方法</th></tr>
+<tr><td>CPA</td><td>¥8,105</td><td>¥10,000〜15,000（上がってOK）</td><td>広告管理画面</td></tr>
+<tr><td>CV数（月間）</td><td>約106件</td><td>約60〜80件（減ってOK）</td><td>広告管理画面</td></tr>
+<tr><td>来場予約の割合</td><td>不明（現状カタログ請求が大半）</td><td><strong>30%以上</strong></td><td>GA4（CVポイント別）</td></tr>
+<tr><td>来場→見積依頼率</td><td>不明</td><td>計測開始</td><td>社内CRM / Excel突合</td></tr>
+<tr><td>発注1件コスト</td><td>約¥64万</td><td><strong>¥50万以下</strong></td><td>広告費÷発注数（月次EUDS突合）</td></tr>
+</table>
+
+<div class="warning-box">
+<h4>CPAが上がっても慌てない</h4>
+<p>ターゲティングを絞ると<strong>CPAは必ず上がる</strong>。しかし「来場率」「成約率」が上がれば、<strong>発注1件あたりコストは下がる</strong>。<br>
+広告代理店には「CPAではなく発注1件コストで評価する」と事前に合意しておくことが重要。CPAだけで判断すると、ターゲティングを絞る施策が全て「失敗」に見えてしまう。</p>
+</div>
+</div>
+
+<div class="footer">
+TALO 広告ターゲティング設定ガイド ― 2026年3月<br>
+<a href="https://adachitalo.github.io/loghouseData/talo-targeting-validation.html" style="color:var(--accent)">ターゲティング検証レポート</a> |
+<a href="https://adachitalo.github.io/loghouseData/talo-seo-audit-report.html" style="color:var(--accent)">SEO監査レポート</a>
+</div>
+
+</div>
+</body>
+</html>
