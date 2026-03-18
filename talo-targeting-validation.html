@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALO ターゲティング検証レポート - 成約データ×カタログ請求 突合分析</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--primary:#1a365d;--accent:#2b6cb0;--success:#38a169;--warning:#d69e2e;--danger:#e53e3e;--bg:#f0f2f5;--card:#fff;--text:#2c3e50;--muted:#64748b;--border:#e2e8f0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+header{background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;padding:36px 0;margin-bottom:24px}
+header .container{display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:22px;font-weight:700}
+header .sub{font-size:13px;opacity:.85;margin-top:4px}
+header .badge{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:8px;font-size:13px;text-align:right;line-height:1.5}
+.section{margin-bottom:28px}
+.section-title{font-size:18px;font-weight:700;color:var(--primary);margin-bottom:14px;padding-bottom:8px;border-bottom:3px solid var(--accent);display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border)}
+.card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.card .value{font-size:26px;font-weight:700;color:var(--primary)}
+.card .note{font-size:12px;color:var(--muted);margin-top:2px}
+.card.danger{border-left:4px solid var(--danger)}.card.success{border-left:4px solid var(--success)}.card.warning{border-left:4px solid var(--warning)}.card.accent{border-left:4px solid var(--accent)}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:16px;font-size:13px}
+th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-size:12px;font-weight:600}
+td{padding:8px 14px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f7fafc}
+.bar-h{height:8px;border-radius:4px;background:#edf2f7;overflow:hidden;margin-top:3px}
+.bar-fill{height:100%;border-radius:4px}
+.insight{background:linear-gradient(135deg,#ebf8ff,#e6fffa);border-radius:10px;padding:16px;margin:14px 0;border:1px solid #bee3f8}
+.insight h4{color:var(--accent);font-size:14px;margin-bottom:6px}
+.insight p{font-size:13px}
+.warning-box{background:linear-gradient(135deg,#fff5f5,#fff9db);border-radius:10px;padding:16px;margin:14px 0;border:1px solid #fed7d7}
+.warning-box h4{color:var(--danger);font-size:14px;margin-bottom:6px}
+.warning-box p{font-size:13px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-box{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.chart-box h4{font-size:14px;color:var(--primary);margin-bottom:8px}
+.s{color:var(--success);font-weight:700}.d{color:var(--danger);font-weight:700}.w{color:var(--warning);font-weight:700}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}
+.toc{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:24px}
+.toc h3{font-size:15px;margin-bottom:8px;color:var(--primary)}
+.toc a{display:block;padding:4px 0;color:var(--accent);text-decoration:none;font-size:13px;border-bottom:1px solid var(--border)}
+.toc a:last-child{border-bottom:none}
+.footer{text-align:center;padding:24px 0;color:var(--muted);font-size:11px;border-top:1px solid var(--border);margin-top:20px}
+</style>
+</head>
+<body>
+
+<header>
+<div class="container">
+<div>
+<h1>TALO ターゲティング検証レポート</h1>
+<div class="sub">成約データ290件 × カタログ請求14,643件 突合分析</div>
+</div>
+<div class="badge">2026年3月18日<br>MTG議論用資料</div>
+</div>
+</header>
+
+<div class="container">
+
+<div class="toc">
+<h3>目次</h3>
+<a href="#s1">1. エグゼクティブサマリー ― データが示す「買う人」の実像</a>
+<a href="#s2">2. 成約者プロファイル（2020-2025年 290件）</a>
+<a href="#s3">3. 予算帯×発注率 ― 最強シグナルの発見</a>
+<a href="#s4">4. 情報源×発注率 ― Instagram神話の崩壊</a>
+<a href="#s5">5. 居住地→建設地パターン ― エリア戦略の根拠</a>
+<a href="#s6">6. 職業×総工費 ― 誰が高額案件を発注するか</a>
+<a href="#s7">7. 成約件数と総工費の推移 ― 構造変化の可視化</a>
+<a href="#s8">8. 広告ターゲティング設計案 ― データに基づく検証テスト</a>
+</div>
+
+<!-- ===== 1. サマリー ===== -->
+<div class="section" id="s1">
+<div class="section-title"><span class="icon">🎯</span> 1. エグゼクティブサマリー</div>
+
+<div class="cards">
+<div class="card danger">
+<div class="label">成約件数推移</div>
+<div class="value">83→17</div>
+<div class="note">2020年→2025年: <strong>80%減</strong></div>
+</div>
+<div class="card warning">
+<div class="label">総工費中央値推移</div>
+<div class="value">2,500→4,600万</div>
+<div class="note">2020年→2025年: <strong>84%上昇</strong></div>
+</div>
+<div class="card success">
+<div class="label">最強シグナル</div>
+<div class="value">予算「未記入」</div>
+<div class="note">発注率 5.95%（平均の4.7倍）</div>
+</div>
+<div class="card accent">
+<div class="label">成約者の典型像</div>
+<div class="value">40-60代</div>
+<div class="note">経営者/医師/高所得会社員</div>
+</div>
+</div>
+
+<div class="insight">
+<h4>データが語る3つの真実</h4>
+<p><strong>① 「予算を書かない人」が最も買う。</strong>予算未記入の発注率5.95%は、1,500万未満（0.28%）の21倍。金額を気にしない＝払える人。<br>
+<strong>② Instagram経由は「資料請求は多いが成約しない」。</strong>資料請求CVR 1.16%は最高だが、発注率0.36%はGoogle（0.78%）の半分以下。<br>
+<strong>③ 1件の成約の価値が急上昇。</strong>総工費中央値が5年で2,500万→4,600万に。数は減ったが、1件当たりの粗利は倍増。だからこそ「買える人だけに届ける」精度が生命線。</p>
+</div>
+</div>
+
+<!-- ===== 2. 成約者プロファイル ===== -->
+<div class="section" id="s2">
+<div class="section-title"><span class="icon">👤</span> 2. 成約者プロファイル（2020-2025年）</div>
+
+<div class="two-col">
+<div class="chart-box">
+<h4>年代分布（n=199）</h4>
+<canvas id="ageChart" height="220"></canvas>
+</div>
+<div class="chart-box">
+<h4>職業分布（n=182）</h4>
+<canvas id="jobChart" height="220"></canvas>
+</div>
+</div>
+
+<div style="margin-top:16px">
+<table>
+<tr><th>属性</th><th>データ</th><th>ターゲティングへの示唆</th></tr>
+<tr><td><strong>年代</strong></td><td>60代 26% / 40代 24% / 50代 24% / 30代 18%</td><td>40〜64歳で成約者の<span class="s">74%</span>をカバー</td></tr>
+<tr><td><strong>職業</strong></td><td>経営者/役員15人 / 医師9人 / 自営13人 / IT4人 / 建築6人</td><td>経営者+医師で成約金額Top2（中央値4,600万/3,890万）</td></tr>
+<tr><td><strong>家族</strong></td><td>夫婦のみ 52% / 夫婦+子 34% / 単身 7%</td><td>「子育て完了後の夫婦」が主力層</td></tr>
+<tr><td><strong>用途</strong></td><td>住宅 57% / 別荘 25% / 展示場 7%</td><td>別荘が4分の1。二拠点・移住需要</td></tr>
+<tr><td><strong>ライフスタイル</strong></td><td>アウトドア志向 / 健康住宅・自然素材志向 / 田舎暮らし志向</td><td>Meta広告の興味関心セグメントと直結</td></tr>
+<tr><td><strong>決定理由Top</strong></td><td>プラン提案(1位) / 営業マン(2位) / 自由設計(3位) / 総ログ(4位)</td><td>「自由設計」「完全オーダー」をクリエイティブの軸に</td></tr>
+</table>
+</div>
+
+<div class="warning-box">
+<h4>中坪さんの現場感がデータで完全に裏付けられた</h4>
+<p>MTGでの発言「経営者、役員、IT、建築、医師が多い」「50代〜60代が中心」「4,500〜6,000万を現金で払う」「横須賀・海老名・日野に住んでいる（＝派手な住所ではない）」 ― これら全てがEUDSデータと一致しています。Google広告の「居住地ベース富裕層ターゲティング」ではこの層を捕捉できないことも、データが証明しています。</p>
+</div>
+</div>
+
+<!-- ===== 3. 予算帯×発注率 ===== -->
+<div class="section" id="s3">
+<div class="section-title"><span class="icon">💰</span> 3. 予算帯×発注率 ― 最強シグナルの発見</div>
+
+<div class="chart-box" style="margin-bottom:16px">
+<h4>カタログ請求時の予算帯別 発注率（2021-2025年）</h4>
+<canvas id="budgetChart" height="250"></canvas>
+</div>
+
+<table>
+<tr><th>予算帯</th><th>請求件数</th><th>発注数</th><th>発注率</th><th>vs平均</th><th>発注率バー</th></tr>
+<tr style="background:#fffbeb"><td><strong>未記入</strong></td><td>1,009</td><td>60</td><td class="s">5.95%</td><td class="s">4.7倍</td><td><div class="bar-h"><div class="bar-fill" style="width:100%;background:var(--success)"></div></div></td></tr>
+<tr><td>3,000万台</td><td>626</td><td>22</td><td class="s">3.51%</td><td>2.8倍</td><td><div class="bar-h"><div class="bar-fill" style="width:59%;background:var(--accent)"></div></div></td></tr>
+<tr><td>2,500万台</td><td>898</td><td>22</td><td>2.45%</td><td>1.9倍</td><td><div class="bar-h"><div class="bar-fill" style="width:41%;background:var(--accent)"></div></div></td></tr>
+<tr><td>4,000万+</td><td>266</td><td>6</td><td>2.26%</td><td>1.8倍</td><td><div class="bar-h"><div class="bar-fill" style="width:38%;background:var(--accent)"></div></div></td></tr>
+<tr><td>2,000万台</td><td>1,469</td><td>28</td><td>1.91%</td><td>1.5倍</td><td><div class="bar-h"><div class="bar-fill" style="width:32%;background:var(--warning)"></div></div></td></tr>
+<tr><td>1,500万台</td><td>2,776</td><td>26</td><td>0.94%</td><td>0.7倍</td><td><div class="bar-h"><div class="bar-fill" style="width:16%;background:#a0aec0"></div></div></td></tr>
+<tr><td>1,500万未満</td><td>7,599</td><td>21</td><td class="d">0.28%</td><td class="d">0.2倍</td><td><div class="bar-h"><div class="bar-fill" style="width:5%;background:var(--danger)"></div></div></td></tr>
+</table>
+
+<div class="insight">
+<h4>予算乖離：カタログ予算と実際の総工費の差（n=68）</h4>
+<p>成約した人の「カタログ請求時の予算」と「実際の総工費」を突合した結果：</p>
+</div>
+
+<table>
+<tr><th>カタログ予算帯</th><th>n</th><th>予算平均</th><th>実際の総工費平均</th><th>乖離</th><th>解釈</th></tr>
+<tr><td>1,500万未満</td><td>8</td><td>875万</td><td>2,511万</td><td class="d">+187%</td><td>予算の3倍で購入</td></tr>
+<tr><td>1,500万台</td><td>18</td><td>1,500万</td><td>2,889万</td><td class="d">+93%</td><td>予算の2倍で購入</td></tr>
+<tr><td>2,000万台</td><td>15</td><td>2,000万</td><td>3,371万</td><td class="w">+69%</td><td>予算の1.7倍で購入</td></tr>
+<tr><td>2,500万台</td><td>13</td><td>2,508万</td><td>3,816万</td><td class="w">+52%</td><td>予算の1.5倍で購入</td></tr>
+<tr><td>3,000万台</td><td>10</td><td>3,250万</td><td>3,223万</td><td class="s">-1%</td><td>ほぼ予算通り</td></tr>
+<tr><td>4,000万+</td><td>4</td><td>4,250万</td><td>5,814万</td><td class="w">+36%</td><td>さらに上乗せ</td></tr>
+</table>
+
+<div class="warning-box">
+<h4>示唆：フォームの「予算」設問を再設計すべき</h4>
+<p>カタログ請求時の予算回答は実際の購入額と<strong>中央値で+62%</strong>乖離しており、信頼性が低い。むしろ「予算を書かない人」が最も買う（発注率5.95%）。<br><br>
+<strong>提案①：</strong> 予算の選択肢から「1,000万未満」「1,500万」を削除し、「2,500万〜」「3,000万〜」「3,500万〜」「4,000万〜」「未定/これから検討」に変更。低予算層の請求を自然にフィルタリング。<br>
+<strong>提案②：</strong> あるいは予算欄自体を任意項目にし、「未記入率」を上げることで逆にリードの質を判定する材料にする。</p>
+</div>
+</div>
+
+<!-- ===== 4. 情報源×発注率 ===== -->
+<div class="section" id="s4">
+<div class="section-title"><span class="icon">📡</span> 4. 情報源×発注率 ― Instagram神話の崩壊</div>
+
+<div class="chart-box" style="margin-bottom:16px">
+<h4>情報源別 発注率（2021-2025年）</h4>
+<canvas id="sourceChart" height="250"></canvas>
+</div>
+
+<table>
+<tr><th>情報源</th><th>請求件数</th><th>発注数</th><th>発注率</th><th>資料請求CVR<br>(GA4参考)</th><th>ギャップ</th></tr>
+<tr style="background:#f0fff4"><td><strong>代理店経由</strong></td><td>658</td><td>61</td><td class="s">9.27%</td><td>-</td><td>圧倒的最強チャネル</td></tr>
+<tr><td>田舎暮らし/日経</td><td>194</td><td>4</td><td>2.06%</td><td>-</td><td>ニッチだが質が高い</td></tr>
+<tr><td>その他/WEB</td><td>3,018</td><td>45</td><td>1.49%</td><td>-</td><td>-</td></tr>
+<tr><td>Yahoo</td><td>2,151</td><td>23</td><td>1.07%</td><td>0.69%</td><td>CVRも発注率もまずまず</td></tr>
+<tr><td>Google</td><td>5,281</td><td>41</td><td>0.78%</td><td>0.47%</td><td>最大母数、効率は中程度</td></tr>
+<tr style="background:#fff5f5"><td><strong>Instagram</strong></td><td>2,780</td><td>10</td><td class="d">0.36%</td><td class="s">1.16%</td><td class="d">資料請求多いが成約しない</td></tr>
+<tr style="background:#fff5f5"><td><strong>Facebook</strong></td><td>561</td><td>1</td><td class="d">0.18%</td><td>-</td><td class="d">ほぼ成約ゼロ</td></tr>
+</table>
+
+<div class="warning-box">
+<h4>Instagram CVR 1.16%の裏側</h4>
+<p>MTGアジェンダで「Instagram CVR 1.16%が最優秀、予算シフトすべき」としていたが、<strong>成約まで追うと全く異なる結論</strong>になる。<br><br>
+Instagram経由2,780件のうち発注はわずか10件（0.36%）。Google経由5,281件のうち41件（0.78%）と比べても半分以下。Instagramは「憧れ層」を大量に集めるが、実際に3,000万以上払える人は極めて少ない。<br><br>
+<strong>ただし、</strong>Instagramをやめるべきかというとそうではない。<strong>ターゲティングを「憧れ層」から「富裕層」に切り替え</strong>れば、リーチは減るが発注率は大幅に改善するはず。これが今回の検証テストの核心。</p>
+</div>
+
+<div class="insight">
+<h4>代理店経由 9.27%の意味</h4>
+<p>代理店経由の発注率はWEB広告の<strong>12〜50倍</strong>。これは「人が介在する」ことの価値を如実に示している。LINE/動画セミナーによるナーチャリングは、この「人の介在」をスケーラブルに再現する試み。代理店がない地域でのWEB→LINE→動画→来場という導線設計が鍵。</p>
+</div>
+</div>
+
+<!-- ===== 5. 居住地→建設地 ===== -->
+<div class="section" id="s5">
+<div class="section-title"><span class="icon">🗾</span> 5. 居住地→建設地パターン</div>
+
+<div class="cards">
+<div class="card accent">
+<div class="label">同一県内に建設</div>
+<div class="value">64%</div>
+<div class="note">152件 / 238件</div>
+</div>
+<div class="card warning">
+<div class="label">他県に建設</div>
+<div class="value">36%</div>
+<div class="note">86件（別荘・移住需要）</div>
+</div>
+<div class="card success">
+<div class="label">東京→山梨 最頻出</div>
+<div class="value">12件</div>
+<div class="note">八ヶ岳・北杜市への移住/別荘</div>
+</div>
+<div class="card success">
+<div class="label">東京→長野 2位</div>
+<div class="value">8件</div>
+<div class="note">軽井沢・蓼科への移住/別荘</div>
+</div>
+</div>
+
+<div class="two-col">
+<div>
+<h4 style="font-size:14px;color:var(--primary);margin-bottom:8px">現住所 Top10</h4>
+<table>
+<tr><th>都道府県</th><th>件数</th><th>シェア</th></tr>
+<tr><td><strong>東京都</strong></td><td>34</td><td>14%</td></tr>
+<tr><td>神奈川県</td><td>23</td><td>10%</td></tr>
+<tr><td>埼玉県</td><td>20</td><td>8%</td></tr>
+<tr><td>千葉県</td><td>19</td><td>8%</td></tr>
+<tr><td>兵庫県</td><td>15</td><td>6%</td></tr>
+<tr><td>大阪府</td><td>12</td><td>5%</td></tr>
+<tr><td>静岡県</td><td>12</td><td>5%</td></tr>
+<tr><td>北海道</td><td>11</td><td>5%</td></tr>
+<tr><td>愛知県</td><td>8</td><td>3%</td></tr>
+<tr><td>鳥取県</td><td>6</td><td>3%</td></tr>
+</table>
+<p style="font-size:12px;color:var(--muted);margin-top:4px">首都圏4都県で<strong>40%</strong></p>
+</div>
+<div>
+<h4 style="font-size:14px;color:var(--primary);margin-bottom:8px">建設地 Top10</h4>
+<table>
+<tr><th>都道府県</th><th>件数</th><th>シェア</th></tr>
+<tr><td><strong>長野県</strong></td><td>32</td><td>13%</td></tr>
+<tr><td>千葉県</td><td>25</td><td>10%</td></tr>
+<tr><td>山梨県</td><td>22</td><td>9%</td></tr>
+<tr><td>兵庫県</td><td>20</td><td>8%</td></tr>
+<tr><td>静岡県</td><td>18</td><td>7%</td></tr>
+<tr><td>埼玉県</td><td>16</td><td>7%</td></tr>
+<tr><td>北海道</td><td>14</td><td>6%</td></tr>
+<tr><td>神奈川県</td><td>12</td><td>5%</td></tr>
+<tr><td>茨城県</td><td>8</td><td>3%</td></tr>
+<tr><td>福島県</td><td>8</td><td>3%</td></tr>
+</table>
+<p style="font-size:12px;color:var(--muted);margin-top:4px">長野・山梨で<strong>22%</strong>（別荘地）</p>
+</div>
+</div>
+
+<div style="margin-top:16px">
+<h4 style="font-size:14px;color:var(--primary);margin-bottom:8px">東京在住者の建設地（n=34）</h4>
+<table>
+<tr><th>建設地</th><th>件数</th><th>パターン</th></tr>
+<tr><td><strong>山梨県</strong></td><td>12</td><td>八ヶ岳・北杜市方面（別荘/移住）</td></tr>
+<tr><td><strong>長野県</strong></td><td>8</td><td>軽井沢・蓼科方面（別荘/移住）</td></tr>
+<tr><td>東京都</td><td>3</td><td>都内に住宅として建設</td></tr>
+<tr><td>千葉県</td><td>3</td><td>外房・南房総方面</td></tr>
+<tr><td>静岡県</td><td>2</td><td>伊豆方面</td></tr>
+<tr><td>神奈川県</td><td>2</td><td>-</td></tr>
+<tr><td>その他</td><td>4</td><td>鳥取・群馬・福島・山形</td></tr>
+</table>
+</div>
+
+<div class="insight">
+<h4>広告エリア設計への示唆</h4>
+<p><strong>配信エリアA（現住地ターゲット）：</strong>東京・神奈川・埼玉・千葉 → 成約者の40%をカバー。KWは「別荘」「セカンドハウス」「八ヶ岳 移住」。<br>
+<strong>配信エリアB（建設地ターゲット）：</strong>長野・山梨・静岡 → 建設地の29%をカバー。KWは「ログハウス」「注文住宅 自然素材」。<br>
+<strong>配信エリアC（代理店商圏）：</strong>兵庫・千葉・北海道・鳥取 → 代理店がフォローできるエリアに限定。</p>
+</div>
+</div>
+
+<!-- ===== 6. 職業×総工費 ===== -->
+<div class="section" id="s6">
+<div class="section-title"><span class="icon">💼</span> 6. 職業×総工費 ― 誰が高額案件を発注するか</div>
+
+<div class="chart-box" style="margin-bottom:16px">
+<h4>職業別 総工費中央値（2020-2025年）</h4>
+<canvas id="jobCostChart" height="250"></canvas>
+</div>
+
+<table>
+<tr><th>職業</th><th>成約数</th><th>総工費平均</th><th>総工費中央値</th><th>評価</th></tr>
+<tr style="background:#f0fff4"><td><strong>経営者/役員</strong></td><td>11</td><td>4,289万</td><td class="s">4,600万</td><td>最高単価層</td></tr>
+<tr style="background:#f0fff4"><td><strong>医師/医療</strong></td><td>9</td><td>3,846万</td><td class="s">3,890万</td><td>高単価層</td></tr>
+<tr><td>公務員</td><td>2</td><td>3,916万</td><td>3,916万</td><td>n少/参考値</td></tr>
+<tr><td>士業</td><td>2</td><td>3,270万</td><td>3,270万</td><td>n少/参考値</td></tr>
+<tr><td>会社員</td><td>22</td><td>2,983万</td><td>2,827万</td><td>標準的</td></tr>
+<tr><td>IT</td><td>3</td><td>2,820万</td><td>2,959万</td><td>標準的</td></tr>
+<tr><td>リタイア</td><td>10</td><td>2,799万</td><td>2,625万</td><td>退職金活用</td></tr>
+<tr><td>建築/建設</td><td>5</td><td>2,720万</td><td>2,500万</td><td>業界知見で無駄を省く</td></tr>
+<tr><td>自営業</td><td>5</td><td>2,605万</td><td>2,740万</td><td>標準的</td></tr>
+</table>
+
+<div class="insight">
+<h4>経営者/役員と医師をターゲットする方法</h4>
+<p>Google広告では直接的な職業ターゲティングが困難だが、<strong>Meta/Instagram広告</strong>では可能：<br>
+・興味関心「ビジネスオーナー」「起業家」「経営戦略」→ 経営者層<br>
+・興味関心「医学」「医療」→ 医師層<br>
+・行動「経営幹部」「意思決定者」→ 役員層<br><br>
+さらに「高級住宅」「建築デザイン」「アウトドア」「サウナ」「北欧インテリア」を掛け合わせることで、「金のあるオタク層」（中坪さんの表現）に到達できる。</p>
+</div>
+</div>
+
+<!-- ===== 7. 推移 ===== -->
+<div class="section" id="s7">
+<div class="section-title"><span class="icon">📊</span> 7. 成約件数と総工費の推移</div>
+
+<div class="two-col">
+<div class="chart-box">
+<h4>成約件数推移（2015-2025年）</h4>
+<canvas id="countChart" height="240"></canvas>
+</div>
+<div class="chart-box">
+<h4>総工費中央値推移（万円）</h4>
+<canvas id="costChart" height="240"></canvas>
+</div>
+</div>
+
+<div class="insight" style="margin-top:16px">
+<h4>構造変化：「薄利多売」→「少数高額」</h4>
+<p>2020年：83件×中央値2,500万＝推定売上<strong>約20億円</strong><br>
+2024年：28件×中央値3,500万＝推定売上<strong>約10億円</strong><br>
+2025年(途中)：17件×中央値4,600万＝推定売上<strong>約8億円</strong>（年換算）<br><br>
+件数は半分以下に落ちたが、単価は倍近くに上昇。この構造変化は、広告戦略を「数を集める」から「質の高い1件を確実に取る」に切り替えなければならないことを意味する。<strong>CPAが高くても発注率が高い方が勝ち</strong>、という評価軸の転換が必要。</p>
+</div>
+</div>
+
+<!-- ===== 8. テスト設計 ===== -->
+<div class="section" id="s8">
+<div class="section-title"><span class="icon">🧪</span> 8. 広告ターゲティング設計案 ― データに基づく検証テスト</div>
+
+<table>
+<tr><th>テスト</th><th>チャネル</th><th>セグメント設定</th><th>検証指標</th><th>期間</th></tr>
+<tr>
+<td><strong>テスト1<br>Google足切り</strong></td>
+<td>Google検索</td>
+<td>除外KW：激安/格安/セルフビルド/安い/中古<br>年齢：35〜64歳<br>エリア：首都圏+長野・山梨・静岡<br>CV重み：来場=資料請求×10</td>
+<td>来場予約率<br>見積依頼率</td>
+<td>4〜6週間</td>
+</tr>
+<tr>
+<td><strong>テスト2<br>Meta属性絞り</strong></td>
+<td>Instagram/Meta</td>
+<td>興味：ビジネスオーナー/医療/建築デザイン/サウナ/アウトドア<br>年齢：40〜64歳<br>エリア：首都圏</td>
+<td>発注率<br>（GA4+EUDS突合）</td>
+<td>4〜6週間</td>
+</tr>
+<tr>
+<td><strong>テスト3<br>別荘KW復活</strong></td>
+<td>Google検索</td>
+<td>KW：八ヶ岳 別荘/山梨 移住/長野 セカンドハウス<br>エリア：東京・神奈川<br>（過去CPA高で停止→発注率で再評価）</td>
+<td>発注1件あたりコスト</td>
+<td>4〜6週間</td>
+</tr>
+</table>
+
+<div class="insight">
+<h4>評価基準の転換：CPAではなく「発注1件あたりコスト」</h4>
+<p>
+<strong>現状（全CV均等評価）：</strong><br>
+CPA ≒ ¥10,000 / CV→発注率 1.26%（79CV=1発注）/ 発注1件コスト ≒ ¥77万<br><br>
+<strong>テスト後（A/Bランクターゲット）の期待値：</strong><br>
+CPA ≒ ¥25,000（↑2.5倍）/ CV→発注率 ≒ 6.6%（15CV=1発注）/ 発注1件コスト ≒ ¥38万（<span class="s">▲51%</span>）<br><br>
+<strong>CPAは上がるが、発注あたりのコストは半減するという逆説的構造。</strong>広告代理店にはこの評価軸の切り替えを明確に伝える必要がある。</p>
+</div>
+
+<div class="warning-box">
+<h4>検証に必要な社内準備</h4>
+<p>① GAパラメーター再設計（クイエーション福井さんに依頼済み）<br>
+② カタログ請求→来場→見積→成約の変換をExcelで月次突合する体制<br>
+③ 新田さんにCV価値の重み付け変更（来場予約=資料請求×10）を依頼<br>
+④ 4〜6週間後に「どのセグメントから来た人が来場に進んだか」を集計<br>
+⑤ 成約リスト（このEUDSデータ）の継続的な更新と分析</p>
+</div>
+</div>
+
+<div class="footer">
+TALO ターゲティング検証レポート ― 2026年3月18日<br>
+データソース: 顧客データ.xlsx（EUDS 9,593件）/ カタログ請求21-25.csv（14,643件）/ GA4<br>
+<a href="https://adachitalo.github.io/loghouseData/talo-seo-audit-report.html" style="color:var(--accent)">SEO監査レポート</a> |
+<a href="https://adachitalo.github.io/loghouseData/talo-web-mtg-agenda-20260318.html" style="color:var(--accent)">MTGアジェンダ</a>
+</div>
+
+</div>
+
+<script>
+// Age chart
+new Chart(document.getElementById('ageChart'),{type:'doughnut',data:{labels:['60代 (26%)','40代 (24%)','50代 (24%)','30代 (18%)','70代 (7%)','20代 (2%)'],datasets:[{data:[51,48,47,35,14,4],backgroundColor:['#2b6cb0','#38a169','#d69e2e','#e53e3e','#718096','#a0aec0']}]},options:{plugins:{legend:{position:'right',labels:{font:{size:11}}}}}});
+
+// Job chart
+new Chart(document.getElementById('jobChart'),{type:'doughnut',data:{labels:['その他 (39%)','会社員 (23%)','経営者/役員 (8%)','自営業 (7%)','リタイア (5%)','医師 (5%)','建築 (3%)','公務員 (3%)','教育 (3%)','IT (2%)','士業 (1%)'],datasets:[{data:[71,42,15,13,10,9,6,5,5,4,2],backgroundColor:['#a0aec0','#2b6cb0','#38a169','#d69e2e','#718096','#e53e3e','#805ad5','#dd6b20','#319795','#3182ce','#b794f4']}]},options:{plugins:{legend:{position:'right',labels:{font:{size:10}}}}}});
+
+// Budget chart
+new Chart(document.getElementById('budgetChart'),{type:'bar',data:{labels:['未記入','3000万台','2500万台','4000万+','2000万台','1500万台','1500万未満'],datasets:[{label:'発注率',data:[5.95,3.51,2.45,2.26,1.91,0.94,0.28],backgroundColor:['#38a169','#2b6cb0','#2b6cb0','#2b6cb0','#d69e2e','#a0aec0','#e53e3e']},{label:'全体平均 1.26%',data:[1.26,1.26,1.26,1.26,1.26,1.26,1.26],type:'line',borderColor:'#e53e3e',borderDash:[5,5],pointRadius:0,fill:false}]},options:{scales:{y:{beginAtZero:true,title:{display:true,text:'発注率 (%)'}}},plugins:{legend:{display:true}}}});
+
+// Source chart
+new Chart(document.getElementById('sourceChart'),{type:'bar',data:{labels:['代理店経由','田舎暮らし/日経','その他/WEB','Yahoo','Google','Instagram','Facebook'],datasets:[{label:'発注率',data:[9.27,2.06,1.49,1.07,0.78,0.36,0.18],backgroundColor:['#38a169','#2b6cb0','#718096','#d69e2e','#2b6cb0','#e53e3e','#e53e3e']},{label:'全体平均 1.26%',data:[1.26,1.26,1.26,1.26,1.26,1.26,1.26],type:'line',borderColor:'#e53e3e',borderDash:[5,5],pointRadius:0,fill:false}]},options:{indexAxis:'y',scales:{x:{beginAtZero:true,title:{display:true,text:'発注率 (%)'}}},plugins:{legend:{display:true}}}});
+
+// Job cost chart
+new Chart(document.getElementById('jobCostChart'),{type:'bar',data:{labels:['経営者/役員','医師/医療','公務員','士業','会社員','IT','リタイア','建築','自営業'],datasets:[{label:'総工費中央値（万円）',data:[4600,3890,3916,3270,2827,2959,2625,2500,2740],backgroundColor:['#38a169','#38a169','#718096','#718096','#2b6cb0','#2b6cb0','#d69e2e','#d69e2e','#d69e2e']},{label:'全体中央値 3000万',data:[3000,3000,3000,3000,3000,3000,3000,3000,3000],type:'line',borderColor:'#e53e3e',borderDash:[5,5],pointRadius:0,fill:false}]},options:{scales:{y:{beginAtZero:true,title:{display:true,text:'万円'}}},plugins:{legend:{display:true}}}});
+
+// Count trend
+new Chart(document.getElementById('countChart'),{type:'bar',data:{labels:['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],datasets:[{label:'成約件数',data:[68,89,74,68,64,83,68,45,49,28,17],backgroundColor:['#2b6cb0','#2b6cb0','#2b6cb0','#2b6cb0','#2b6cb0','#2b6cb0','#d69e2e','#d69e2e','#d69e2e','#e53e3e','#e53e3e']}]},options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:false}}}});
+
+// Cost trend
+new Chart(document.getElementById('costChart'),{type:'line',data:{labels:['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],datasets:[{label:'総工費中央値',data:[2500,2306,2710,2600,2800,2500,2800,3168,3000,3500,4600],borderColor:'#e53e3e',backgroundColor:'rgba(229,62,62,0.1)',fill:true,tension:0.3}]},options:{scales:{y:{beginAtZero:false,title:{display:true,text:'万円'}}},plugins:{legend:{display:false}}}});
+</script>
+
+</body>
+</html>
